@@ -7015,7 +7015,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
-.footer__widget--title::before {
+/*.footer__widget--title::before {
   position: absolute;
   content: "";
   height: 0.2rem;
@@ -7023,7 +7023,7 @@ input[type="number"]::-webkit-outer-spin-button {
   background: #909090;
   left: 0;
   bottom: 0;
-}
+}*/
 
 @media only screen and (max-width: 767px) {
   .footer__widget--title::before {

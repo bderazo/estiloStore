@@ -31,7 +31,8 @@ class Articulo extends Model
         'destacado',
         'precio_oferta',
         'porcentaje_descuento',
-        'en_oferta'
+        'en_oferta',
+        'is_active'
     ];
 
     /**
@@ -198,7 +199,7 @@ class Articulo extends Model
     }
     // Acceso rápido a la imagen principal
     public function getImagenPrincipalAttribute() {
-        $img = ArticuloImagen::where('articulo_id','=',$this->id)->orderBy('orden')->first();
+        $img = ArticuloImagen::where('articulo_id','=',$this->id)->where('is_active','=',1)->orderBy('orden')->first();
         return $img ? $img->ruta : 'default.png';
     }
 

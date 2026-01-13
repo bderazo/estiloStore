@@ -27,7 +27,7 @@ class CarritoService
                 'talla' => $variante->talla->nombre ?? 'N/A',
                 'precio' => $variante->articulo->precio_venta,
                 'cantidad' => $cantidad,
-                'imagen' => $variante->articulo->imagen
+                'imagen' => $variante->articulo->imagenPrincipal()
             ];
         }
 

@@ -74,7 +74,7 @@
             <label class="minicart__conditions--label" for="accept">Acepto la <a class="minicart__conditions--link" href="privacy-policy.html">Política de privacidad</a></label>
         </div>
         <div class="minicart__button d-flex justify-content-center">
-            <a class="primary__btn minicart__button--link" href="cart.html">Ver carrito</a>
+            <a class="primary__btn minicart__button--link" href="{{route('web.carrito.index')}}">Ver carrito</a>
             <a class="primary__btn minicart__button--link" href="checkout.html">Proceder al pago</a>
         </div>
     </div>

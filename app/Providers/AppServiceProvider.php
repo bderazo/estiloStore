@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\BannerService;
 use App\Services\CategoriaService;
+use App\Services\FolletoService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -30,6 +31,11 @@ class AppServiceProvider extends ServiceProvider
         $categoriaService = app(CategoriaService::class);
         $categoriasMenu = $categoriaService->getMenuTienda();
         View::share('categoriasMenu', $categoriasMenu);
+        //Folletos
+        $folletoService     = app(FolletoService::class);
+        $folletoPrincipal   = $folletoService->getFolletoPrincipal();
+        View::share('folletoPrincipal', $folletoPrincipal);
+
 
     }
 }
