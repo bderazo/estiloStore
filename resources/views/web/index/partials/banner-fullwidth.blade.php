@@ -1,18 +1,17 @@
-        <!-- Inicio banner ancho completo -->
+@if($publicidadUno && $publicidadUno->imagen_ruta)
+<!-- Inicio banner ancho completo -->
         <section class="banner__section section--padding pt-0">
             <div class="container-fluid">
                 <div class="row row-cols-1">
                     <div class="col">
                         <div class="banner__section--inner position__relative">
-                            <a class="banner__items--thumbnail display-block" href="shop.html"><img
+                            <a class="banner__items--thumbnail display-block" href="{{route('login')}}"><img
                                     class="banner__items--thumbnail__img banner__img--height__md display-block"
-                                    src="{{asset('web/assets/img/banner/banner-bg2.png')}}" alt="banner-img">
+                                    src="{{asset('storage/' . $publicidadUno->imagen_ruta)}}" alt="banner-img">
                                 <div class="banner__content--style2">
-                                    <h2 class="banner__content--style2__title text-white">Need Winter Boots? </h2>
-                                    <p class="banner__content--style2__desc">Lorem ipsum dolor sit amet, consectetur
-                                        adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                                        aliqua enim ad minim veniam, quis nostrud exercitation </p>
-                                    <span class="primary__btn">Shop Now
+                                    <h2 class="banner__content--style2__title text-white">{{$publicidadUno->titulo}} </h2>
+                                    <p class="banner__content--style2__desc">{{$publicidadUno->subtitulo}}</p>
+                                    <span class="primary__btn">Empieza ahora
                                         <svg class="primary__btn--arrow__icon" xmlns="http://www.w3.org/2000/svg"
                                             width="20.2" height="12.2" viewBox="0 0 6.2 6.2">
                                             <path
@@ -28,3 +27,4 @@
             </div>
         </section>
         <!-- Fin banner ancho completo -->
+@endif

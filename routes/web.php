@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LoginController;
 use App\Http\Controllers\Web\NosotrosController;
 use App\Http\Controllers\Web\OrderPaymentController;
+use App\Http\Controllers\Web\PagoController;
 use App\Http\Controllers\Web\RegisterController;
 
 use App\Models\User;
@@ -159,12 +160,20 @@ Route::middleware('guest')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::prefix('carrito')->name('web.carrito.')->group(function () {
+Route::prefix('carrito')->name('web.carrito.')->middleware(['auth'])->group(function () {
     
     Route::get('/', [CarritoController::class, 'index'])->name('index');
-    Route::post('/agregar', [CarritoController::class, 'add'])->name('add');
-    Route::get('/buscar-codigo', [CarritoController::class, 'buscarPorCodigo'])->name('buscar');
-    Route::delete('/eliminar/{id}', [CarritoController::class, 'remove'])->name('remove');
+    Route::post('/agregar', [CarritoController::class, 'agregar'])->name('add');
+    //Route::post('/eliminar', [CarritoController::class, 'eliminar'])->name('eliminar');
+    //Route::post('/pagar', [CarritoController::class, 'procesarPago'])->name('pagar');
+    //Route::get('/buscar-codigo', [CarritoController::class, 'buscarPorCodigo'])->name('buscar');
+    //Route::delete('/eliminar/{id}', [CarritoController::class, 'remove'])->name('remove');
+
+
+    Route::get('/buscar', [CarritoController::class, 'buscar'])->name('buscar');
+    Route::post('/add', [CarritoController::class, 'agregar'])->name('add');
+    Route::delete('/eliminar/{id}', [CarritoController::class, 'eliminar'])->name('eliminar');
+    Route::post('/pagar', [CarritoController::class, 'pagar'])->name('pagar');
 });
 
 Route::group(['middleware' => ['auth']], function () {    
@@ -177,3 +186,17 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::get('/articulo/{slug}', ArticuloDetalleController::class)->name('web.articulo.detalle');
+
+// --- RUTAS DE PAGO (Requieren estar logueado) ---
+
+
+// Rutas de Pago
+Route::get('/pago', [PagoController::class, 'index'])->name('web.pago.index'); // PUBLICA
+
+Route::middleware(['auth'])->group(function () {
+    // Solo el proceso de guardar requiere sesión
+    Route::post('/pago/confirmar', [PagoController::class, 'confirmarPedido'])->name('web.pago.confirmar');
+});
+
+// Ruta adicional para el éxito de la compra
+Route::get('/pedido-finalizado/{id}', [PagoController::class, 'exito'])->name('web.pago.exito');

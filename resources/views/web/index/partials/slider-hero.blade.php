@@ -53,7 +53,7 @@
                     $subtituloPrimeraParte = implode(' ', array_slice($subtituloPalabras, 0, 6));
                     $subtituloSegundaParte = implode(' ', array_slice($subtituloPalabras, 6));
 
-                    $textoDestacado = data_get($item, 'texto_destacado') ?: 'Colección destacada';
+                    $textoDestacado = data_get($item, 'texto_destacado') ?: '';
                     $posicionIzquierda = data_get($item, 'posicion_contenido') === 'Derecha';
                 @endphp
 

@@ -23,7 +23,7 @@
                 ">
                     {{-- Lado Izquierdo: Imagen --}}
                     <div style="width: 40%; background: #f9f9f9; position: relative; overflow: hidden;">
-                        <img src="{{ $prod->imagenes->first() ? asset('storage/'.$prod->imagenes->first()->url) : 'https://via.placeholder.com/200' }}" 
+                        <img src="{{ ($prod->getImagenPrincipalAttribute() && $prod->getImagenPrincipalAttribute()!='default.png') ? asset('storage/articulos/'.$prod->id.'/'.$prod->getImagenPrincipalAttribute()) : 'https://via.placeholder.com/200' }}" 
                              style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
                              class="img-oferta">
                         
@@ -65,8 +65,8 @@
                                 </div>
                             </div>
 
-                            <button class="btn-ver-oferta" 
-                                    onclick="verDetalle({{ $prod->id }})"
+                            <a class="btn-ver-oferta" 
+                                    href="{{route('web.articulo.detalle', $prod->slug)}}"
                                     style="
                                         width: 100%;
                                         background: var(--secondary-color); 
@@ -80,7 +80,7 @@
                                         transition: all 0.3s;
                                     ">
                                 Aprovechar
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

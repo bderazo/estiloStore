@@ -39,6 +39,7 @@
                 $bgSection = $esPar
                     ? 'background: var(--secondary-color-pastel);'
                     : 'background: var(--white-color);';
+                    $bgSection="";
             @endphp
 
             <div class="row align-items-center mb-60 g-0 nosotros__card"
@@ -120,11 +121,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(
+    /*background: linear-gradient(
         135deg,
         var(--secondary-color-pastel),
         var(--light-color)
-    );
+    );*/
 }
 
 /* IMAGEN SIN RECORTE */
@@ -154,19 +155,19 @@
 }
 
 .shape-bg-left::before {
-    background: radial-gradient(
+   /* background: radial-gradient(
         circle at left center,
         var(--secondary-color),
         transparent 65%
-    );
+    );*/
 }
 
 .shape-bg-right::before {
-    background: radial-gradient(
+    /*background: radial-gradient(
         circle at right center,
         var(--primary-color),
         transparent 65%
-    );
+    );*/
 }
 
 /* =============================
@@ -235,11 +236,11 @@
 .nosotros__header-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
+    /*background: linear-gradient(
         180deg,
         rgba(6, 23, 56, 0.55),
         rgba(6, 23, 56, 0.25)
-    );
+    );*/
 }
 
 /* Contenido */

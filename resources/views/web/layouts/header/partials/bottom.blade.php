@@ -10,7 +10,7 @@
 
                             </li>
                             <li class="header__menu--items mega__menu--items">
-                                <a class="header__menu--link" href="shop.html">Tienda
+                                <a class="header__menu--link" href="#">Tienda
                                     <svg class="menu__arrowdown--icon" xmlns="http://www.w3.org/2000/svg" width="12" height="7.41" viewBox="0 0 12 7.41">
                                         <path d="M16.59,8.59,12,13.17,7.41,8.59,6,10l6,6,6-6Z" transform="translate(-6 -8.59)" fill="currentColor" opacity="0.7" />
                                     </svg>
@@ -79,12 +79,13 @@
                                     </li>
                                 </ul>--}}
                             </li>
-                            <li class="header__menu--items">
-                                <a class="header__menu--link" href="{{route('nosotros')}}">Sobre nosotros </a>
-                            </li>
 
                             <li class="header__menu--items d-none d-xl-block">
                                 <a class="header__menu--link" href="{{route('categorias')}}">Categorías </a>
+                            </li>
+                            
+                            <li class="header__menu--items">
+                                <a class="header__menu--link" href="{{route('nosotros')}}">Sobre nosotros </a>
                             </li>
                         </ul>
                     </nav>
