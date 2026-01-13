@@ -204,8 +204,10 @@
                             </div>
                             <p class="text-muted" style="fs-6">Comparte este código con tus amigas y gana 50 puntos por cada una que se registre.</p>
                         </div>
-                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-danger btn-sm w-100 mt-3 fs-5">Cerrar Sesión</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-danger btn-sm w-100 mt-3 fs-5">Cerrar Sesión</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     </div>
 
                     <div class="card border-0 shadow-sm p-4" style="border-radius: 20px; background: var(--primary-color);">

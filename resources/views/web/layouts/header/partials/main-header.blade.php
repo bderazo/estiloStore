@@ -79,6 +79,22 @@
                                 <!--<span class="items__count">02</span>-->
                             </a>
                         </li>
+                        @auth
+                            <li class="header__account--items">
+                                <a class="header__account--btn" href="{{ route('web.pedidos.index') }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path
+                                            d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
+                                        </path>
+                                        <path d="m3.3 7 8.7 5 8.7-5"></path>
+                                        <path d="M12 22V12"></path>
+                                    </svg>
+                                    <span class="header__account--btn__text">Mis Pedidos</span>
+                                </a>
+                            </li>
+                        @endauth
 
                         @if (isset($folletoPrincipal))
                             <li class="header__account--items">
@@ -232,10 +248,21 @@
                                 <span class="visually-hidden">Mi cuenta</span>
                             </a>
                         </li>
-
+@auth
+    <li class="header__account--items header__account2--items">
+        <a class="header__account--btn" href="{{ route('web.pedidos.index') }}" title="Mis Pedidos">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26.51" height="23.443" viewBox="0 0 512 512">
+                <path d="M448 341.37V170.63a32 32 0 00-15.1-27.46l-152-88.8a32 32 0 00-33.8 0l-152 88.8a32 32 0 00-15.1 27.46v170.74a32 32 0 0015.1 27.46l152 88.8a32 32 0 0033.8 0l152-88.8a32 32 0 0015.1-27.46z" 
+                    fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M75 160l181 104 181-104M256 264v200"/>
+            </svg>
+            <span class="visually-hidden">Mis Pedidos</span>
+        </a>
+    </li>
+@endauth
                         <li class="header__account--items header__account2--items">
-                            <a class="header__account--btn " href="{{ Auth::id() ? route('web.carrito.index') : route('login') }}"
-                                data-offcanvas>
+                            <a class="header__account--btn "
+                                href="{{ Auth::id() ? route('web.carrito.index') : route('login') }}" data-offcanvas>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="26.51" height="23.443"
                                     viewBox="0 0 14.706 13.534">
                                     <g transform="translate(0 0)">
