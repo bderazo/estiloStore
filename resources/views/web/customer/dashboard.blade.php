@@ -202,16 +202,18 @@
                                 <input type="text" class="form-control form-control-sm" value="{{ $user->codigo_referido }}" readonly id="refCode">
                                 <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyRef()">Copiar</button>
                             </div>
-                            <p class="text-muted" style="font-size: 0.75rem;">Comparte este código con tus amigas y gana 50 puntos por cada una que se registre.</p>
+                            <p class="text-muted" style="fs-6">Comparte este código con tus amigas y gana 50 puntos por cada una que se registre.</p>
                         </div>
-                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-danger btn-sm w-100 mt-3">Cerrar Sesión</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-danger btn-sm w-100 mt-3 fs-5">Cerrar Sesión</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     </div>
 
                     <div class="card border-0 shadow-sm p-4" style="border-radius: 20px; background: var(--primary-color);">
                         <h6 class="text-white fw-bold mb-3">¿Necesitas ayuda?</h6>
                         <p class="text-white-50 small">Si tienes problemas con la validación de tus pagos, contacta a soporte técnico vía WhatsApp.</p>
-                        <a href="https://wa.me/593..." class="btn btn-light btn-sm w-100 fw-bold" style="color: var(--primary-color);">Soporte por WhatsApp</a>
+                        <a href="https://wa.me/593990273691" class="btn btn-light btn-sm w-100 fw-bold fs-5" style="color: var(--primary-color);">Soporte por WhatsApp</a>
                     </div>
                 </div>
             </div>

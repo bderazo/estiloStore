@@ -16,7 +16,6 @@ class CarritoService
     {
         $variante = ArticuloVariante::with('articulo', 'color', 'talla')->findOrFail($varianteId);
         $carrito = $this->getCarrito();
-
         if (isset($carrito[$varianteId])) {
             $carrito[$varianteId]['cantidad'] += $cantidad;
         } else {
@@ -27,7 +26,7 @@ class CarritoService
                 'talla' => $variante->talla->nombre ?? 'N/A',
                 'precio' => $variante->articulo->precio_venta,
                 'cantidad' => $cantidad,
-                'imagen' => $variante->articulo->imagen
+                'imagen' => $variante->articulo->imagenPrincipal()
             ];
         }
 
@@ -46,5 +45,33 @@ class CarritoService
             'cantidad_items' => $cantidad_items,
             'puede_pagar' => $cantidad_items >= 4
         ];
+    }
+    // 1. FUNCIONALIDAD: ELIMINAR ARTÍCULO
+    public function eliminar($varianteId) {
+        $carrito = $this->getCarrito();
+        if (isset($carrito[$varianteId])) {
+            unset($carrito[$varianteId]);
+            Session::put('carrito', $carrito);
+        }
+        return $carrito;
+    }
+
+    // VALIDACIÓN DE STOCK ANTES DE RESERVAR
+    public function validarStockDisponible() {
+        $carrito = $this->getCarrito();
+        $errores = [];
+
+        foreach ($carrito as $item) {
+            $variante = ArticuloVariante::find($item['id']);
+            if (!$variante || $variante->stock < $item['cantidad']) {
+                $stockActual = $variante ? $variante->stock : 0;
+                $errores[] = "El artículo '{$item['nombre']}' solo tiene {$stockActual} unidades disponibles.";
+            }
+        }
+        return $errores;
+    }
+
+    public function vaciar() {
+        Session::forget('carrito');
     }
 }
