@@ -11,7 +11,7 @@
             <div class="col-6 d-flex align-items-center justify-content-start border-end border-white border-opacity-25">
                 <div class="header__info--inner ps-4">
                     <p class="text-white mb-2" style="font-size: 1.3rem; font-weight: 500;">¿Cómo pagar?</p>
-                    <a class="btn custom-round-btn" href="#">Conocer más</a>
+                    <a class="btn custom-round-btn" href="{{route('web.pago.index')}}">Conocer más</a>
                 </div>
             </div>
 

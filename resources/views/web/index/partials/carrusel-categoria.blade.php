@@ -1,17 +1,16 @@
 <div class="category__section" style="padding: 40px 0; background: #fff;">
     <div class="container">
         <div class="section__heading text-center mb-40">
-            <h2 class="section__heading--title" style="font-weight: 800; color: var(--primary-color);;">Nuestras Líneas</h2>
+            <h2 class="section__heading--title" style="font-weight: 800; color: var(--primary-color);">Nuestras Líneas</h2>
             <div style="width: 60px; height: 3px; background: var(--secondary-color); margin: 10px auto;"></div>
         </div>
 
-        {{-- Contenedor: Recto arriba, Curvo abajo --}}
         <div class="category__arc-container" style="
             display: flex; 
             justify-content: center; 
             align-items: stretch; 
             overflow: hidden; 
-            border-radius: 0 0 50% 50% / 0 0 15% 15%; {{-- Recto arriba (0 0), Curvo abajo (15% 15%) --}}
+            border-radius: 0 0 50% 50% / 0 0 15% 15%;
             border: 1px solid #eee;
             background: #fff;
             box-shadow: 0 15px 35px rgba(0,0,0,0.05);
@@ -23,35 +22,35 @@
                     position: relative;
                     border-right: 1px solid #eee;
                     overflow: hidden;
-                    background: #fff;
+                    background: #fcfcfc; {{-- Color de fondo por si la imagen es pequeña --}}
                 ">
-                    <a href="{{ route('tienda.categoria', $cat->slug) }}" style="display: block; height: 100%; width: 100%; text-decoration: none;">
+                    <a href="{{ route('tienda.categoria', $cat->slug) }}" style="display: flex; flex-direction: column; height: 100%; text-decoration: none;">
                         
-                        {{-- Texto pegado al margen superior (Recto) --}}
+                        {{-- Texto superior fijo --}}
                         <div style="
-                            position: absolute; 
-                            top: 0; 
                             width: 100%; 
                             background: white; 
-                            padding: 20px 10px; 
+                            padding: 15px 5px; 
                             text-align: center;
                             z-index: 10;
                             border-bottom: 1px solid #f5f5f5;
+                            flex-shrink: 0; {{-- Evita que el texto se encoja --}}
                         ">
-                            <span style="color: var(--secondary-color); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;">
+                            <span style="color: var(--secondary-color); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">
                                 {{ $cat->nombre }}
                             </span>
                         </div>
 
-                        {{-- Contenedor de Imagen --}}
+                        {{-- Contenedor de Imagen ajustado --}}
                         <div style="
+                            flex-grow: 1; {{-- Ocupa el resto del espacio --}}
                             width: 100%; 
-                            height: 100%; 
                             background-image: url('{{ $cat->imagen ? asset('storage/'.$cat->imagen) : 'https://via.placeholder.com/400x600?text='.$cat->nombre }}');
-                            background-size: cover;
-                            background-position: center;
-                            transition: transform 0.7s ease;
-                            padding-top: 60px; {{-- Espacio para que la imagen no empiece debajo del texto --}}
+                            background-size: contain; {{-- CAMBIO CLAVE: Muestra la imagen completa sin cortar --}}
+                            background-repeat: no-repeat;
+                            background-position: center bottom; {{-- Se apoya en la curva de abajo --}}
+                            transition: transform 0.5s ease;
+                            margin-bottom: 20px; {{-- Margen para que no toque el filo de la curva --}}
                         " class="category-bg">
                         </div>
                     </a>

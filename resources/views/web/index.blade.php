@@ -1,63 +1,37 @@
-<!doctype html>
-<html lang="zxx">
+@extends('web.layouts.base')
+@section('title', 'Título de la página')
+@push('styles')
+@endpush
 
-<head>
-    <!-- Recursos de cabecera -->
-    @include('web.index.partials.head-recursos')
-</head>
+@section('content')
 
-<body>
+@php
+$carouselItems = ($carouselItems ?? collect())->values();
+@endphp
+<!-- Sección: Slider principal -->
+@include('web.index.partials.slider-hero')
 
-    @php
-        $carouselItems = ($carouselItems ?? collect())->values();
-    @endphp
+<!--Sección categorias -->
+@include('web.index.partials.carrusel-categoria')
 
-    <script id="carousel-data" type="application/json">
-        {!! $carouselItems->toJson(JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
-    </script>
+<!--Sección ofertas -->
+@include('web.index.partials.carrusel-ofertas')
 
-    <!-- Bloque: Preloader -->
-    @include('web.layouts.preloader')
+<!-- Start shipping section -->
 
-    <!-- Bloque: Encabezado -->
-    @include('web.layouts.header')
+<!-- End shipping section -->
+@include('web.index.partials.shipping')
 
-    <main class="main__content_wrapper">
-        <!-- Sección: Slider principal -->
-        @include('web.index.partials.slider-hero')
+<!-- Sección: Promociones dobles -->
+{{--@include('web.index.partials.banner-promos-dobles')--}}
 
-        <!--Sección categorias -->
-        @include('web.index.partials.carrusel-categoria')
-        
-        <!--Sección ofertas -->
-        @include('web.index.partials.carrusel-ofertas')
+<!-- Sección: Banner ancho completo -->
+@include('web.index.partials.banner-fullwidth')
+@include('web.index.partials.banner-dos-fullwidth')
 
-        <!-- Start shipping section -->
-
-        <!-- End shipping section -->
-        @include('web.index.partials.shipping')
-
-        <!-- Sección: Promociones dobles -->
-        @include('web.index.partials.banner-promos-dobles')
-
-        <!-- Sección: Banner ancho completo -->
-        @include('web.index.partials.banner-fullwidth')
-    </main>
-
-    <!-- Bloque: Pie de página -->
-    @include('web.layouts.footer')
-
-    <!-- Bloque: Modal de vista rápida -->
-    @include('web.index.partials.modal-quickview')
-
-    <!-- Bloque: Botón subir -->
-    @include('web.index.partials.boton-scroll-top')
-
-    <!-- Bloque: Scripts principales -->
-    @include('web.index.partials.scripts')
-
-</body>
-
-</html>
-
-
+@push('scripts')
+<script id="carousel-data" type="application/json">
+    {!! $carouselItems->toJson(JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endpush
+@endsection
