@@ -94,4 +94,33 @@ class CategoriaService
         ->withCount('articulos') // Esto requiere que tengas la relación articulos() en el modelo Categoria
         ->get();
 }
+/**
+     * Obtiene solo las categorías padre (sin parent_id) que estén activas.
+     */
+    public function getCategoriasPadre()
+    {
+        return Categoria::whereNull('parent_id')
+            ->where('activo', true)
+            ->orderBy('orden', 'asc')
+            ->get();
+    }
+
+    /**
+     * Busca artículos filtrando opcionalmente por categoría.
+     */
+    public function buscarArticulos($termino, $categoriaId = null)
+    {
+        $query = Articulo::active(); // Usando el scope active definido en el modelo
+
+        if ($categoriaId && $categoriaId != 1) { // 1 es "Todas las categorías"
+            $categoria = Categoria::find($categoriaId);
+            if ($categoria) {
+                // Obtenemos el ID actual y todos sus descendientes para una búsqueda completa
+                $ids = $categoria->getAllIds(); 
+                $query->whereIn('categoria_id', $ids);
+            }
+        }
+
+        return $query->search($termino)->paginate(20); // Usando el scope search
+    }
 }

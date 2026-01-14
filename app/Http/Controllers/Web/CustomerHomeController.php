@@ -30,6 +30,7 @@ class CustomerHomeController extends Controller
         $ordenesPendientes = $this->customerService->getOrdenesPendientes($user);
         $historialOrdenes = $user->orders()->orderBy('created_at', 'desc')->paginate(10);
         $puntosLog = $this->customerService->getPuntosHistorial($user);
+        $niveles = \App\Models\Nivel::orderBy('puntos_minimos', 'asc')->get();
 
         return view('web.customer.dashboard', [
             'user'              => $user,
@@ -38,6 +39,7 @@ class CustomerHomeController extends Controller
             'historial'         => $historialOrdenes,
             'puntosLog'         => $puntosLog,
             'categoriasMenu'    => $categoriasMenu,
+            'niveles'           => $niveles,
         ]);
     }
 }

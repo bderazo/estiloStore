@@ -81,16 +81,7 @@
                                                     <img class="slider__text--shape__icon" src="{{asset('web/assets/img/icon/text-shape-icon.png')}}" alt="text-shape-icon">
                                                     {{ $textoDestacado }}
                                                 </p>
-                                                <h2 class="slider__content--maintitle h1">
-                                                    {{ $nombrePrimeraParte }}<br>
-                                                    {{ $nombreSegundaParte }}
-                                                </h2>
-                                                @if ($subtituloRaw !== '')
-                                                    <p class="slider__content--desc desc2 d-sm-2-none mb-40">
-                                                        {{ $subtituloPrimeraParte }}<br>
-                                                        {{ $subtituloSegundaParte }}
-                                                    </p>
-                                                @endif
+                                                
                                                 @if ($buttonUrl && data_get($item, 'boton.visible'))
                                                     <a class="slider__btn primary__btn" href="{{ $buttonUrl }}" @if ($targetBlank) target="_blank" rel="noopener" @endif>
                                                         {{ $buttonText ?? __('Ver más') }}

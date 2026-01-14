@@ -24,7 +24,7 @@
                         <div class="login__content">
                             <h2 class="fw-bold mb-3" style="color: var(--primary-color); font-size: 2.5rem;">¡Bienvenida
                                 de nuevo, Emprendedora!</h2>
-                            <p class="text-muted mb-4" style="font-size: 1.1rem;">
+                            <p class="text-muted mb-4" style="fs-5">
                                 Tu oficina virtual te espera. Accede para gestionar tus pedidos, revisar tus puntos
                                 acumulados y descargar el catálogo más reciente.
                             </p>
@@ -68,14 +68,14 @@
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Correo Electrónico</label>
-                                    <input type="email" name="email" class="form-control"
+                                    <input type="email" name="email" class="form-control fs-4"
                                         style="border-radius: 12px; padding: 12px;" placeholder="correo@ejemplo.com"
                                         required value="{{ old('email') }}">
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Contraseña</label>
-                                    <input type="password" name="password" class="form-control"
+                                    <input type="password" name="password" class="form-control fs-3"
                                         style="border-radius: 12px; padding: 12px;" placeholder="••••••••" required>
                                 </div>
 

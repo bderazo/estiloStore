@@ -18,30 +18,19 @@
                     </h1>
                 </div>
                 <div class="header__search--widget header__sticky--none d-none d-lg-block">
-                    <form class="d-flex header__search--form" action="#">
+                    <form class="d-flex header__search--form" action="{{ route('web.buscar') }}" method="GET">
                         <div class="header__select--categories select">
-                            <select class="header__select--inner">
+                            <select class="header__select--inner" name="c">
                                 <option selected value="1">Todas las categorías</option>
-                                <option value="2">Accesorios</option>
-                                <option value="3">Accesorios y más</option>
-                                <option value="4">Cámaras y vídeo</option>
-                                <option value="5">Mantequillas y huevos</option>
+                                @foreach($categoriasGlobal as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="header__search--box">
-                            <label>
-                                <input class="header__search--input" placeholder="Palabra clave..." type="text">
-                            </label>
-                            <button class="header__search--button bg__secondary text-white" type="submit"
-                                aria-label="botón de búsqueda">
-                                <svg class="header__search--button__svg" xmlns="http://www.w3.org/2000/svg"
-                                    width="27.51" height="26.443" viewBox="0 0 512 512">
-                                    <path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z"
-                                        fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32">
-                                    </path>
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                        stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"></path>
-                                </svg>
+                            <input class="header__search--input" name="q" placeholder="Buscar productos..." type="text">
+                            <button class="header__search--button" type="submit">
+                                <i class="fas fa-search"></i>
                             </button>
                         </div>
                     </form>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\CategoriaController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Web\ArticuloDetalleController;
+use App\Http\Controllers\Web\BusquedaController;
 use App\Http\Controllers\Web\CustomerHomeController;
 use App\Http\Controllers\Web\FolletoController;
 use App\Http\Controllers\Web\HomeController;
@@ -177,8 +178,9 @@ Route::prefix('carrito')->name('web.carrito.')->group(function () {
     Route::prefix('mis-reservas')->name('web.pedidos.')->group(function () {
         Route::get('/', [PedidoController::class, 'index'])->name('index');
         Route::get('/{id}', [PedidoController::class, 'show'])->name('show');
-        Route::post('/{id}/subir-pago', [PedidoController::class, 'subirPago'])->name('subir_pago');
+        Route::post('/{id}/subir-pago', [PedidoController::class, 'subirPago'])->name('subir_pago');        
     });
+Route::post('/pedidos/{id}/asignar-transporte', [PedidoController::class, 'asignarTransporte'])->name('web.pedidos.asignar_transporte');
 
 Route::group(['middleware' => ['auth']], function () {    
     // Home del Cliente
@@ -204,3 +206,6 @@ Route::middleware(['auth'])->group(function () {
 
 // Ruta adicional para el éxito de la compra
 Route::get('/pedido-finalizado/{id}', [PagoController::class, 'exito'])->name('web.pago.exito');
+
+// Ruta para el buscador global
+Route::get('/buscar', [BusquedaController::class, 'buscar'])->name('web.buscar');

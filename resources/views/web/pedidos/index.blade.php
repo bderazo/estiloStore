@@ -22,12 +22,12 @@
                         <td>{{ $p->created_at->format('d/m/Y') }}</td>
                         <td>${{ number_format($p->total, 2) }}</td>
                         <td>
-                            <span class="badge @if($p->estado == 'pendiente') bg-warning @elseif($p->estado == 'completado') bg-success @else bg-secondary @endif">
+                            <span class="fs-5 badge @if($p->estado == 'pendiente') bg-warning @elseif($p->estado == 'completado') bg-success @else bg-secondary @endif">
                                 {{ ucfirst($p->estado) }}
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('web.pedidos.show', $p->id) }}" class="btn btn-sm btn-dark">Ver Detalles / Pagar</a>
+                            <a href="{{ route('web.pedidos.show', $p->id) }}" class="btn btn-sm btn-dark fs-5">Ver Detalles / Pagar</a>
                         </td>
                     </tr>
                     @endforeach
