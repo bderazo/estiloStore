@@ -284,7 +284,7 @@ const form = reactive<CarruselFormData>({
 // Métodos
 const loadCarrusel = async () => {
     try {
-        const response = await fetch(`/api/carrusel/${route.params.id}`, {
+        const response = await fetch(`/tienda/public/api/carrusel/${route.params.id}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Accept': 'application/json'
@@ -372,7 +372,7 @@ const submitForm = async () => {
             formData.append('imagen', form.imagen)
         }
 
-        const response = await fetch(`/api/carrusel/${form.id}`, {
+        const response = await fetch(`/tienda/public/api/carrusel/${form.id}`, {
             method: 'POST', // Usar POST con _method para manejar archivos
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,

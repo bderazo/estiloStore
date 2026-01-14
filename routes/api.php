@@ -7,6 +7,8 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\ModulesController;
 use App\Http\Controllers\API\CarruselController;
+use App\Http\Controllers\API\EmpresaDatoController;
+use App\Http\Controllers\API\BannerController;
 use App\Http\Controllers\API\CategoriaController;
 use App\Http\Controllers\API\MarcaController;
 use App\Http\Controllers\API\ColorController;
@@ -95,6 +97,29 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('/{carrusel}', [CarruselController::class, 'update'])->middleware('permission:carrusel.edit');
         Route::delete('/{carrusel}', [CarruselController::class, 'destroy'])->middleware('permission:carrusel.delete');
         Route::patch('/{carrusel}/toggle-estado', [CarruselController::class, 'toggleEstado'])->middleware('permission:carrusel.estado');
+    });
+
+    // Rutas de banners
+    Route::group(['prefix' => 'banners'], function () {
+        Route::get('/', [BannerController::class, 'index']);//->middleware('permission:banners.index');
+        Route::post('/', [BannerController::class, 'store']);//->middleware('permission:banners.create');
+        Route::get('/secciones', [BannerController::class, 'getSecciones']);//->middleware('permission:banners.create');
+        Route::get('/{banner}', [BannerController::class, 'show']);//->middleware('permission:banners.show');
+        Route::post('/{banner}', [BannerController::class, 'update']);//->middleware('permission:banners.edit'); // POST para manejar archivos
+        Route::put('/{banner}', [BannerController::class, 'update']);//->middleware('permission:banners.edit');
+        Route::delete('/{banner}', [BannerController::class, 'destroy']);//->middleware('permission:banners.delete');
+        Route::patch('/{banner}/toggle-estado', [BannerController::class, 'toggleEstado']);//->middleware('permission:banners.estado');
+    });
+
+    Route::group(['prefix' => 'empresa-datos'], function () {
+        Route::get('/', [EmpresaDatoController::class, 'index']);//->middleware('permission:empresa-datos.index');
+        Route::post('/', [EmpresaDatoController::class, 'store']);//->middleware('permission:empresa-datos.create');
+        Route::get('/claves', [EmpresaDatoController::class, 'getClaves']);//->middleware('permission:empresa-datos.create');
+        Route::get('/{empresa_dato}', [EmpresaDatoController::class, 'show']);//->middleware('permission:empresa-datos.show');
+        Route::post('/{empresa_dato}', [EmpresaDatoController::class, 'update']);//->middleware('permission:empresa-datos.edit');
+        Route::put('/{empresa_dato}', [EmpresaDatoController::class, 'update']);//->middleware('permission:empresa-datos.edit');
+        Route::delete('/{empresa_dato}', [EmpresaDatoController::class, 'destroy']);//->middleware('permission:empresa-datos.delete');
+        Route::patch('/{empresa_dato}/toggle-activo', [EmpresaDatoController::class, 'toggleActivo']);//->middleware('permission:empresa-datos.estado');
     });
 
     // Rutas de categorías

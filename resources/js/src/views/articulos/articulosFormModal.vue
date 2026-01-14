@@ -359,74 +359,155 @@ const guardar = async () => {
   errores.value = {};
 
   try {
-    // Filtrar solo imágenes que son archivos File válidos
+    // 1. Filtrar solo imágenes que son archivos File válidos
     const imagenesValidas = formulario.value.imagenes.filter(img => img instanceof File);
     console.log('Imágenes válidas a enviar:', imagenesValidas);
 
-    // Convertir IDs de atributos a nombres antes de enviar
-    const variantes = formulario.value.variantes.map(variante => {
+    // 2. Preparar variantes CORREGIDO - asegurar atributos siempre es objeto
+    const variantesAEnviar = formulario.value.variantes.map(variante => {
+      console.log('Variante original:', variante);
+      
+      // Crear atributos convertidos o objeto vacío
       const atributosConvertidos: Record<string, string> = {};
+      
+      // Si hay atributos en la variante, convertirlos
+      if (variante.atributos && typeof variante.atributos === 'object') {
+        for (const [tipo, id] of Object.entries(variante.atributos)) {
+          // Solo procesar si el ID es válido
+          if (id && id !== '') {
+            let lista: Array<{ id: number; nombre: string }> | undefined;
 
-      for (const [tipo, id] of Object.entries(variante.atributos)) {
-        let lista: Array<{ id: number; nombre: string }> | undefined;
+            if (tipo === 'colores') lista = colores.value;
+            else if (tipo === 'tallas') lista = tallas.value;
+            else if (tipo === 'sabores') lista = sabores.value;
+            else if (tipo === 'modelos') lista = modelos.value;
+            else if (tipo === 'tonos') lista = tonos.value;
+            else if (tipo === 'medidas') lista = medidas.value;
+            else if (tipo === 'plazas') lista = plazas.value;
 
-        if (tipo === 'colores') lista = colores.value;
-        else if (tipo === 'tallas') lista = tallas.value;
-        else if (tipo === 'sabores') lista = sabores.value;
-        else if (tipo === 'modelos') lista = modelos.value;
-        else if (tipo === 'tonos') lista = tonos.value;
-        else if (tipo === 'medidas') lista = medidas.value;
-        else if (tipo === 'plazas') lista = plazas.value;
-
-        if (lista) {
-          const item = lista.find(i => i.id === id);
-          if (item) {
-            atributosConvertidos[tipo] = item.nombre;
+            if (lista && Array.isArray(lista)) {
+              const item = lista.find(i => i.id === Number(id));
+              if (item) {
+                atributosConvertidos[tipo] = item.nombre;
+              }
+            }
           }
         }
       }
-
-      return {
+      
+      // VARIANTE FINAL - Asegurar todos los campos requeridos
+      const varianteFinal = {
         ...variante,
-        atributos: atributosConvertidos
+        atributos: Object.keys(atributosConvertidos).length > 0 
+          ? atributosConvertidos 
+          : {}, // ← OBJETO VACÍO SI NO HAY ATRIBUTOS
+        stock: Number(variante.stock) || 0,
+        activo: variante.activo !== undefined ? Boolean(variante.activo) : true,
+        // Asegurar que no haya campos undefined
+        sku: variante.sku || '',
+        precio: variante.precio || 0
       };
+      
+      console.log('Variante procesada:', varianteFinal);
+      return varianteFinal;
     });
 
-    // Preparar datos con tipos correctos
-    const datosArticulo = {
-      nombre: formulario.value.nombre,
-      slug: formulario.value.slug,
-      descripcion: formulario.value.descripcion,
-      especificaciones: formulario.value.especificaciones,
-      precio: Number(formulario.value.precio),
-      sku: formulario.value.sku,
-      categoria_id: formulario.value.categoria_id || null,
-      marca_id: formulario.value.marca_id || null,
-      activo: Boolean(formulario.value.activo),
-      destacado: Boolean(formulario.value.destacado),
-      imagenes: imagenesValidas,
-      imagenes_eliminar: Array.isArray(formulario.value.imagenes_eliminar) ? formulario.value.imagenes_eliminar : [],
-      imagenes_orden: Array.isArray(formulario.value.imagenes_orden) ? formulario.value.imagenes_orden : [],
-      variantes: Array.isArray(variantes) ? variantes : [],
-      variantes_eliminar: Array.isArray(formulario.value.variantes_eliminar) ? formulario.value.variantes_eliminar : [],
-    };
+    console.log('Todas las variantes a enviar:', variantesAEnviar);
 
-    console.log('Datos a enviar:', datosArticulo);
+    // 3. Preparar FormData para enviar
+    const formData = new FormData();
+    
+    // Campos básicos
+    formData.append('nombre', formulario.value.nombre);
+    formData.append('slug', formulario.value.slug);
+    formData.append('descripcion', formulario.value.descripcion || '');
+    formData.append('especificaciones', formulario.value.especificaciones || '');
+    formData.append('precio', String(formulario.value.precio || 0));
+    formData.append('sku', formulario.value.sku || '');
+    formData.append('activo', formulario.value.activo ? '1' : '0');
+    formData.append('destacado', formulario.value.destacado ? '1' : '0');
+    
+    if (formulario.value.categoria_id) {
+      formData.append('categoria_id', String(formulario.value.categoria_id));
+    }
+    if (formulario.value.marca_id) {
+      formData.append('marca_id', String(formulario.value.marca_id));
+    }
 
+    // Imágenes
+    imagenesValidas.forEach((imagen, index) => {
+      formData.append(`imagenes[${index}]`, imagen);
+    });
+
+    // Variantes como JSON
+    formData.append('variantes', JSON.stringify(variantesAEnviar));
+
+    // Log para debug
+    console.log('FormData contenido:');
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    // 4. Enviar petición
+    let url = '/tienda/public/api/articulos';
+    let method = 'POST';
+    
     if (isEditing.value) {
-      await articuloStore.updateArticulo(Number(route.params.id), datosArticulo);
-      Swal.fire('Éxito', 'Artículo actualizado correctamente', 'success');
+      url = `/tienda/public/api/articulos/${route.params.id}`;
+      method = 'POST'; // o 'PUT' dependiendo de tu backend
+    }
+
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Accept': 'application/json',
+        // NO incluir 'Content-Type': 'multipart/form-data' - fetch lo hace automáticamente
+      },
+      body: formData
+    });
+
+    const data = await response.json();
+    console.log('Respuesta del servidor:', data);
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error en la petición');
+    }
+
+    if (data.success) {
+      Swal.fire({
+        icon: 'success',
+        title: isEditing.value ? '¡Actualizado!' : '¡Creado!',
+        text: data.message || 'Operación exitosa',
+        timer: 2000
+      });
+      await router.push('/administrador/articulos');
     } else {
-      await articuloStore.createArticulo(datosArticulo);
-      Swal.fire('Éxito', 'Artículo creado correctamente', 'success');
+      throw new Error(data.message || 'Error desconocido');
     }
-    await router.push('/administrador/articulos');
+
   } catch (error: any) {
-    console.error('Error al guardar:', error);
-    if (error?.response?.data?.errors) {
-      errores.value = error.response.data.errors;
+    console.error('Error completo:', error);
+    
+    // Mostrar error detallado
+    let mensajeError = 'Error al guardar artículo';
+    if (error.response) {
+      const data = await error.response.json();
+      mensajeError = data.message || mensajeError;
+      if (data.errors) {
+        errores.value = data.errors;
+        console.log('Errores de validación:', data.errors);
+      }
+    } else if (error.message) {
+      mensajeError = error.message;
     }
-    Swal.fire('Error', error?.response?.data?.message || 'Error al guardar artículo', 'error');
+    
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: mensajeError,
+      footer: '<small>Revisa la consola para más detalles</small>'
+    });
   } finally {
     cargando.value = false;
   }

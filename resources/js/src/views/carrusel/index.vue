@@ -261,7 +261,7 @@ const loadCarruseles = async () => {
         params.append('per_page', filters.per_page.toString())
         params.append('page', filters.page.toString())
 
-        const response = await fetch(`/api/carrusel?${params}`, {
+        const response = await fetch(`/tienda/public/api/carrusel?${params}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Accept': 'application/json'
@@ -314,7 +314,7 @@ const toggleEstado = async (carrusel: Carrusel) => {
 
     if (result.isConfirmed) {
         try {
-            const response = await fetch(`/api/carrusel/${carrusel.id}/toggle-estado`, {
+            const response = await fetch(`/tienda/public/api/carrusel/${carrusel.id}/toggle-estado`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,

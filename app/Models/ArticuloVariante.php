@@ -19,10 +19,11 @@ class ArticuloVariante extends Model
      */
     protected $fillable = [
         'articulo_id',
+        'atributos', 
         'color_id',   // Llave foránea a colores
         'talla_id',   // Llave foránea a tallas
         'stock',      // Cantidad real de esta combinación
-        'sku_variante' // Opcional: código específico para la variante
+        // 'sku_variante' // Opcional: código específico para la variante
     ];
 
     /**

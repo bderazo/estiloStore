@@ -80,42 +80,130 @@ class ArticuloService
     /**
      * Crear artículo con variantes e imágenes (transaccional)
      */
-    public function crearArticulo(array $datos): Articulo
-    {
-        return DB::transaction(function () use ($datos) {
-            // 1. Crear artículo base
-            $articulo = Articulo::create([
-                'nombre' => $datos['nombre'],
-                'slug' => $datos['slug'],
-                'descripcion' => $datos['descripcion'] ?? null,
-                'especificaciones' => $datos['especificaciones'] ?? null,
-                'precio' => $datos['precio'],
-                'sku' => $datos['sku'] ?? null,
-                'categoria_id' => $datos['categoria_id'] ?? null,
-                'marca_id' => $datos['marca_id'] ?? null,
-                'activo' => $datos['activo'] ?? true,
-                'destacado' => $datos['destacado'] ?? false,
-            ]);
+public function crearArticulo(array $datos): Articulo
+{
+    return DB::transaction(function () use ($datos) {
+        Log::info('=== INICIO crearArticulo ===');
 
-            // 2. Crear variantes (solo atributos y stock)
-            if (!empty($datos['variantes'])) {
-                foreach ($datos['variantes'] as $variante) {
-                    $articulo->variantes()->create([
-                        'atributos' => $variante['atributos'],
-                        'stock' => $variante['stock'] ?? 0,
-                        'activo' => $variante['activo'] ?? true,
-                    ]);
+        // 1. Crear artículo base
+        $articulo = Articulo::create([
+            'nombre' => $datos['nombre'],
+            'slug' => $datos['slug'],
+            'descripcion' => $datos['descripcion'] ?? null,
+            'especificaciones' => $datos['especificaciones'] ?? null,
+            'precio' => $datos['precio'],
+            'sku' => $datos['sku'] ?? null,
+            'categoria_id' => $datos['categoria_id'] ?? null,
+            'marca_id' => $datos['marca_id'] ?? null,
+            'activo' => $datos['activo'] ?? true,
+            'destacado' => $datos['destacado'] ?? false,
+        ]);
+
+        Log::info("✅ Artículo creado ID: {$articulo->id}");
+
+        // 2. Crear variantes
+        if (!empty($datos['variantes'])) {
+            Log::info('Procesando variantes...');
+            
+            // Decodificar JSON si es string
+            $variantes = is_string($datos['variantes']) 
+                ? json_decode($datos['variantes'], true) 
+                : $datos['variantes'];
+            
+            if (!is_array($variantes)) {
+                Log::warning('Variantes no es un array válido');
+                $variantes = [];
+            }
+            
+            Log::info('Variantes a procesar:', $variantes);
+            
+            foreach ($variantes as $index => $varianteData) {
+                Log::info("Creando variante {$index}:", $varianteData);
+                
+                // Asegurar que atributos sea un array NO VACÍO
+                $atributos = $varianteData['atributos'] ?? [];
+                
+                if (!is_array($atributos)) {
+                    Log::warning('Atributos no es array, convirtiendo');
+                    $atributos = [];
+                }
+                
+                // IMPORTANTE: Si está vacío, poner al menos un array vacío como JSON
+                if (empty($atributos)) {
+                    $atributos = []; // JSON: []
+                }
+                
+                Log::info("Atributos procesados:", $atributos);
+                
+                // Buscar IDs de color/talla si vienen como nombres
+                $colorId = null;
+                $tallaId = null;
+                
+                if (isset($atributos['colores']) && is_string($atributos['colores'])) {
+                    $color = \App\Models\Color::where('nombre', $atributos['colores'])->first();
+                    if ($color) {
+                        $colorId = $color->id;
+                        Log::info("Color encontrado: {$atributos['colores']} → ID: {$colorId}");
+                    }
+                }
+                
+                if (isset($atributos['tallas']) && is_string($atributos['tallas'])) {
+                    $talla = \App\Models\Talla::where('nombre', $atributos['tallas'])->first();
+                    if ($talla) {
+                        $tallaId = $talla->id;
+                        Log::info("Talla encontrada: {$atributos['tallas']} → ID: {$tallaId}");
+                    }
+                }
+                
+                // Preparar datos EXACTAMENTE como los espera la tabla
+                $datosVariante = [
+                    'articulo_id' => $articulo->id,
+                    'atributos' => $atributos,  // ← Array que se convertirá a JSON
+                    'stock' => $varianteData['stock'] ?? 0,
+                    'activo' => $varianteData['activo'] ?? true,
+                ];
+                
+                // Agregar color_id y talla_id solo si se encontraron
+                if ($colorId !== null) {
+                    $datosVariante['color_id'] = $colorId;
+                }
+                if ($tallaId !== null) {
+                    $datosVariante['talla_id'] = $tallaId;
+                }
+                
+                Log::info("Datos para crear variante:", $datosVariante);
+                
+                try {
+                    // Usar el método correcto: new + save para mejor control
+                    $variante = new ArticuloVariante($datosVariante);
+                    $variante->save();
+                    
+                    Log::info("✅ Variante creada exitosamente ID: {$variante->id}");
+                    Log::info("Atributos guardados como JSON:", ['json' => $variante->atributos]);
+                    
+                } catch (\Exception $e) {
+                    Log::error("❌ Error creando variante: " . $e->getMessage());
+                    Log::error("Datos que causaron error:", $datosVariante);
+                    throw $e;
                 }
             }
+        } else {
+            Log::info('No hay variantes para crear');
+        }
 
-            // 3. Subir imágenes
-            if (!empty($datos['imagenes'])) {
-                $this->guardarImagenes($articulo, $datos['imagenes']);
-            }
+        // 3. Subir imágenes
+        if (!empty($datos['imagenes'])) {
+            Log::info('Procesando imágenes...');
+            $this->guardarImagenes($articulo, $datos['imagenes']);
+        }
 
-            return $articulo->load(['categoria', 'marca', 'imagenes', 'variantes']);
-        });
-    }
+        // Cargar relaciones
+        $articulo->load(['categoria', 'marca', 'imagenes', 'variantes']);
+        
+        Log::info('=== FIN crearArticulo - Éxito ===');
+        return $articulo;
+    });
+}
 
     /**
      * Actualizar artículo (transaccional)
