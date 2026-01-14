@@ -175,4 +175,59 @@ public function pointTransactions() {
 public function canOrder() {
     return $this->active && $this->fallos_reserva < 2;
 }   
+
+
+/**
+     * Accesor para obtener el total de puntos actuales.
+     * Suma todas las transacciones de la tabla point_transactions.
+     */
+    public function getPuntosAttribute()
+    {
+        return $this->pointTransactions()->sum('cantidad');
+    }
+
+    /**
+     * Lógica para obtener el Nivel Actual y el Siguiente
+     */
+    public function getNivelActual()
+    {
+        $totalPuntos = $this->puntos;
+
+        // Nivel más alto alcanzado
+        $actual = Nivel::where('puntos_minimos', '<=', $totalPuntos)
+            ->orderBy('puntos_minimos', 'desc')
+            ->first();
+
+        // Si no ha llegado ni al nivel Bronce, creamos un objeto genérico o null
+        if (!$actual) {
+            $actual = (object) [
+                'nombre' => 'Iniciante',
+                'color_hex' => '#6c757d',
+                'puntos_minimos' => 0,
+                'premio_descripcion' => 'Sigue acumulando puntos para ganar'
+            ];
+        }
+
+        // Siguiente meta
+        $siguiente = Nivel::where('puntos_minimos', '>', $totalPuntos)
+            ->orderBy('puntos_minimos', 'asc')
+            ->first();
+
+        // Cálculo de porcentaje para la barra de progreso
+        $progreso = 0;
+        if ($siguiente) {
+            // Progreso relativo entre el nivel actual y el siguiente
+            $rango = $siguiente->puntos_minimos - ($actual->puntos_minimos ?? 0);
+            $puntosGanadosEnNivel = $totalPuntos - ($actual->puntos_minimos ?? 0);
+            $progreso = ($puntosGanadosEnNivel / $rango) * 100;
+        } else {
+            $progreso = 100; // Nivel máximo alcanzado
+        }
+
+        return [
+            'actual' => $actual,
+            'siguiente' => $siguiente,
+            'progreso' => min(100, max(0, $progreso)) // Asegura que esté entre 0 y 100
+        ];
+    }
 }

@@ -178,8 +178,9 @@ Route::prefix('carrito')->name('web.carrito.')->group(function () {
     Route::prefix('mis-reservas')->name('web.pedidos.')->group(function () {
         Route::get('/', [PedidoController::class, 'index'])->name('index');
         Route::get('/{id}', [PedidoController::class, 'show'])->name('show');
-        Route::post('/{id}/subir-pago', [PedidoController::class, 'subirPago'])->name('subir_pago');
+        Route::post('/{id}/subir-pago', [PedidoController::class, 'subirPago'])->name('subir_pago');        
     });
+Route::post('/pedidos/{id}/asignar-transporte', [PedidoController::class, 'asignarTransporte'])->name('web.pedidos.asignar_transporte');
 
 Route::group(['middleware' => ['auth']], function () {    
     // Home del Cliente

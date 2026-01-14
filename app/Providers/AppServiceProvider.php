@@ -23,30 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $bannerService = app(BannerService::class);
-        $bannerHeader = $bannerService->getBannerBySeccion('initial_header');
-        View::share('bannerHeader', $bannerHeader);
-
         
-        $categoriaService = app(CategoriaService::class);
-        $categoriasMenu = $categoriaService->getMenuTienda();
-        View::share('categoriasMenu', $categoriasMenu);
-        
-        //Folletos
-        $folletoService     = app(FolletoService::class);
-        $folletoPrincipal   = $folletoService->getFolletoPrincipal();
-        View::share('folletoPrincipal', $folletoPrincipal);
-
-        //Folletos
-        $categorias     = app(FolletoService::class);
-        $folletoPrincipal   = $folletoService->getFolletoPrincipal();
-        View::share('folletoPrincipal', $folletoPrincipal);
-    
-        $categoriaService = app(\App\Services\CategoriaService::class);
-        $categoriasMenu = $categoriaService->getCategoriasPadre();
-    
-        // Compartir con todas las vistas
-        \Illuminate\Support\Facades\View::share('categoriasGlobal', $categoriasMenu);
 
     }
 }
