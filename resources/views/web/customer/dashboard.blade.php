@@ -123,7 +123,7 @@
                             </div>
                             @empty
                             <div class="text-center py-4">
-                                <img src="{{ asset('assets/img/check-ok.png') }}" style="width: 60px; opacity: 0.5;">
+                                {{--<img src="{{ asset('assets/img/check-ok.png') }}" style="width: 60px; opacity: 0.5;">--}}
                                 <p class="text-muted mt-2">No tienes pagos pendientes. ¡Estás al día!</p>
                             </div>
                             @endforelse
@@ -190,17 +190,19 @@
 
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm p-4 text-center mb-4" style="border-radius: 20px; background: white;">
+                        <!--
                         <div class="position-relative d-inline-block mb-3">
                             <img src="{{ asset('assets/img/avatar-placeholder.png') }}" class="rounded-circle" style="width: 100px; border: 4px solid var(--secondary-color-pastel);">
                         </div>
+                        -->
                         <h5 class="fw-bold mb-1">{{ $user->nombres }} {{ $user->apellidos }}</h5>
                         <p class="text-muted small mb-3">{{ $user->email }}</p>
                         <hr>
                         <div class="text-start">
                             <p class="mb-2 small"><strong>Mi Código de Referida:</strong></p>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control form-control-sm" value="{{ $user->codigo_referido }}" readonly id="refCode">
-                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyRef()">Copiar</button>
+                                <input type="text" class="form-control form-control-sm fs-3" style="font-weight: bold;" value="{{ $user->codigo_referido }}" readonly id="refCode">
+                                <button class="btn btn-outline-secondary btn-sm fs-4" type="button" onclick="copyRef()">Copiar</button>
                             </div>
                             <p class="text-muted" style="fs-6">Comparte este código con tus amigas y gana 50 puntos por cada una que se registre.</p>
                         </div>

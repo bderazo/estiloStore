@@ -31,11 +31,22 @@ class AppServiceProvider extends ServiceProvider
         $categoriaService = app(CategoriaService::class);
         $categoriasMenu = $categoriaService->getMenuTienda();
         View::share('categoriasMenu', $categoriasMenu);
+        
         //Folletos
         $folletoService     = app(FolletoService::class);
         $folletoPrincipal   = $folletoService->getFolletoPrincipal();
         View::share('folletoPrincipal', $folletoPrincipal);
 
+        //Folletos
+        $categorias     = app(FolletoService::class);
+        $folletoPrincipal   = $folletoService->getFolletoPrincipal();
+        View::share('folletoPrincipal', $folletoPrincipal);
+    
+        $categoriaService = app(\App\Services\CategoriaService::class);
+        $categoriasMenu = $categoriaService->getCategoriasPadre();
+    
+        // Compartir con todas las vistas
+        \Illuminate\Support\Facades\View::share('categoriasGlobal', $categoriasMenu);
 
     }
 }
