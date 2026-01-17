@@ -4,12 +4,6 @@
 
 @push('styles')
 <style>
-    :root {
-        --primary-color: #2b3d51;
-        --secondary-color: #ff007f;
-        --secondary-color-pastel: #fff0f6;
-    }
-
     .product__details--wrapper { padding: 60px 0; background: #fff; }
     
     .product__media--container {
@@ -115,25 +109,25 @@
                     <div class="product__info--content">
                         
                         <div class="badge__puntos mb-3">
-                            <i class="fas fa-gem me-2"></i> Gana {{ $articulo->puntos_ganados ?? floor($articulo->precio_venta) }} puntos Ser Dama
+                            <i class="fas fa-gem me-2"></i> Gana {{ floor($articulo->precio_venta) }} puntos Estilo Store
                         </div>
 
                         <h1 class="fw-bold mb-2" style="color: var(--primary-color);">{{ $articulo->nombre }}</h1>
-                        <p class="text-muted mb-4 small">CÓDIGO: {{ $articulo->codigo }}</p>
+                        <p class="text-muted mb-4 small fs-4">CÓDIGO: {{ $articulo->sku }}</p>
 
                         <span class="product__price--value">
                             ${{ number_format($articulo->precio_venta, 2) }}
                         </span>
 
-                        <form action="#{{-- route('web.carrito.add') --}}" method="POST">
+                        <form id="form-add-to-cart" action="{{route('web.carrito.add')}}" method="POST">
                             @csrf
                             <input type="hidden" name="articulo_id" value="{{ $articulo->id }}">
 
                             <div class="row mb-4">
                                 @if(isset($articulo->opciones['colores']) && $articulo->opciones['colores']->count() > 0)
                                 <div class="col-md-6 mb-3">
-                                    <label class="variant__label">Color</label>
-                                    <select name="color_id" class="form-select form-select-custom" required>
+                                    <label class="variant__label fs-4">Color</label>
+                                    <select name="color_id" class="form-select form-select-custom fs-4" required>
                                         <option value="">Seleccionar...</option>
                                         @foreach($articulo->opciones['colores'] as $color)
                                             <option value="{{ $color->id }}">{{ $color->nombre }}</option>
@@ -144,8 +138,8 @@
 
                                 @if(isset($articulo->opciones['tallas']) && $articulo->opciones['tallas']->count() > 0)
                                 <div class="col-md-6 mb-3">
-                                    <label class="variant__label">Talla</label>
-                                    <select name="talla_id" class="form-select form-select-custom" required>
+                                    <label class="variant__label fs-4">Talla</label>
+                                    <select name="talla_id" class="form-select form-select-custom fs-4" required>
                                         <option value="">Seleccionar...</option>
                                         @foreach($articulo->opciones['tallas'] as $talla)
                                             <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
@@ -157,17 +151,18 @@
 
                             <div class="row g-3 align-items-center mb-5">
                                 <div class="col-md-4">
-                                    <label class="variant__label">Cantidad</label>
+                                    <label class="variant__label fs-5">Cantidad</label>
                                     <div class="input-group border rounded-pill p-1">
-                                        <button type="button" class="btn btn-sm" onclick="document.getElementById('qty').stepDown()">-</button>
-                                        <input type="number" id="qty" name="cantidad" class="form-control border-0 text-center bg-transparent fw-bold" value="1" min="1">
-                                        <button type="button" class="btn btn-sm" onclick="document.getElementById('qty').stepUp()">+</button>
+                                        <button type="button" class="btn btn-sm fs-5" onclick="document.getElementById('qty').stepDown()">-</button>
+                                        <input type="number" id="qty" name="cantidad" class="form-control border-0 text-center bg-transparent fw-bold fs-5" value="1" min="1">
+                                        <button type="button" class="btn btn-sm fs-5" onclick="document.getElementById('qty').stepUp()">+</button>
                                     </div>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="variant__label d-none d-md-block">&nbsp;</label>
                                     <button type="submit" class="btn__add--cart" {{ ($articulo->stock ?? 1) <= 0 ? 'disabled' : '' }}>
-                                        <i class="fas fa-shopping-basket"></i> Añadir al Pedido
+                                        <i class="fas fa-shopping-basket"></i> 
+                                        <span class="btn-text">Añadir al Pedido</span>
                                     </button>
                                 </div>
                             </div>
@@ -177,16 +172,16 @@
                             <h5 class="fw-bold border-bottom pb-2 mb-3">Detalles del Producto</h5>
                             <table class="info__table">
                                 <tr>
-                                    <td class="info__label">Categoría</td>
-                                    <td class="info__value">{{ $articulo->categoria->nombre ?? 'General' }}</td>
+                                    <td class="info__label fs-5">Categoría</td>
+                                    <td class="info__value fs-5">{{ $articulo->categoria->nombre ?? 'General' }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="info__label">Marca</td>
-                                    <td class="info__value">{{ $articulo->marca->nombre ?? 'Ser Dama' }}</td>
+                                    <td class="info__label fs-5">Marca</td>
+                                    <td class="info__value fs-5">{{ $articulo->marca->nombre ?? 'Ser Dama' }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="info__label">Descripción</td>
-                                    <td class="info__value" style="font-weight: 400; color: #666;">
+                                    <td class="info__label fs-5">Descripción</td>
+                                    <td class="info__value fs-5" style="font-weight: 400; color: #666;">
                                         {{ $articulo->descripcion ?? 'Producto Ser Dama.' }}
                                     </td>
                                 </tr>
@@ -198,10 +193,14 @@
         </div>
     </section>
 </main>
+
 @push('scripts')
 <script>
-    const stockData = @json($articulo->mapa_stock);
+    // Clonamos el stock inicial para manejarlo localmente
+    let stockData = @json($articulo->mapa_stock);
+    const form = document.getElementById('form-add-to-cart');
     const btnAdd = document.querySelector('.btn__add--cart');
+    const btnText = btnAdd.querySelector('.btn-text');
     const qtyInput = document.getElementById('qty');
 
     function actualizarStock() {
@@ -213,13 +212,15 @@
 
         if (stockDisponible > 0) {
             qtyInput.max = stockDisponible;
-            qtyInput.value = 1;
+            if(parseInt(qtyInput.value) > stockDisponible) qtyInput.value = stockDisponible;
+            if(parseInt(qtyInput.value) <= 0) qtyInput.value = 1;
+            
             btnAdd.disabled = false;
-            btnAdd.innerHTML = `<i class="fas fa-shopping-basket"></i> Añadir al Pedido (${stockDisponible} disp.)`;
+            btnText.innerText = `Añadir al Pedido (${stockDisponible} disp.)`;
         } else {
             qtyInput.value = 0;
             btnAdd.disabled = true;
-            btnAdd.innerHTML = `<i class="fas fa-times-circle"></i> Agotado`;
+            btnText.innerText = `Agotado`;
         }
     }
 
@@ -227,6 +228,56 @@
     document.querySelectorAll('.form-select-custom').forEach(select => {
         select.addEventListener('change', actualizarStock);
     });
+
+    // Manejar el envío AJAX
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const colorId = formData.get('color_id') || 0;
+        const tallaId = formData.get('talla_id') || 0;
+        const cantSolicitada = parseInt(formData.get('cantidad'));
+        const key = `${colorId}-${tallaId}`;
+
+        // Bloquear botón mientras procesa
+        btnAdd.disabled = true;
+        btnText.innerText = "Procesando...";
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // RESTAR STOCK LOCALMENTE
+                if (stockData[key]) {
+                    stockData[key] -= cantSolicitada;
+                }
+                
+                // Actualizar interfaz
+                actualizarStock();
+                
+                // Opcional: Notificar éxito (puedes cambiar esto por un Toast)
+                alert("¡Producto añadido con éxito!");
+            } else {
+                alert(result.error || "Error al añadir al carrito");
+                actualizarStock();
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error de conexión al servidor");
+            actualizarStock();
+        }
+    });
+
+    // Ejecutar al cargar por si hay pre-selección
+    actualizarStock();
 </script>
 @endpush
 @endsection

@@ -127,61 +127,7 @@
                     </div>
                     @endforeach
                 </div>
-
-                @if($isLogged)
-                <div class="card border-0 shadow-sm mt-4 p-4" style="border-radius: 15px;">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-file-invoice me-2 text-primary"></i>Adjuntar Comprobante</h5>
-                    <div class="input-group">
-                        <input type="file" name="comprobante" class="form-control" accept="image/*" required>
-                    </div>
-                    <small class="text-muted mt-2 d-block">Suba la captura de su transferencia (Máximo 2MB).</small>
-                </div>
-                @endif
-
-                <div class="mt-4 d-flex justify-content-between align-items-center">
-                    @if($isLogged)
-                    <a href="{{ route('web.carrito.index') }}" class="btn btn-link text-muted text-decoration-none">
-                        <i class="fas fa-chevron-left me-1 fs-4"></i> Regresar al carrito
-                    </a>
-                    @endif
-                    @if($isLogged)
-                        <button type="submit" class="btn btn-dark btn-lg px-5 rounded-pill shadow fw-bold">Confirmar Pago</button>
-                    @endif
-                </div>
             </form>
-        </div>
-
-        <div class="col-lg-4">
-            @if($isLogged)
-                <div class="sticky-summary">
-                    <div class="card border-0 shadow-sm p-4" style="border-radius: 20px; background: white;">
-                        <h5 class="fw-bold mb-4">Resumen de Orden</h5>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal:</span>
-                            <span class="fw-bold">${{ number_format($total, 2) }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="text-muted">Envío:</span>
-                            <span class="text-success fw-bold">Gratis</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="h5 fw-bold">Total:</span>
-                            <span class="h4 fw-bold" style="color: var(--primary-color);">${{ number_format($total, 2) }}</span>
-                        </div>
-
-                        <div class="alert alert-info py-2 small mb-0">
-                            <i class="fas fa-info-circle me-1"></i> Una vez verificado el pago, procesaremos tu pedido.
-                        </div>
-                    </div>
-                </div>
-            @else
-                <div class="card border-0 bg-dark text-white p-4 shadow-sm" style="border-radius: 20px;">
-                    <h5 class="fw-bold text-primary">¡Bienvenido!</h5>
-                    <p class="small mb-0 opacity-75">Inicia sesión para poder seleccionar un método de pago, adjuntar tu comprobante y finalizar tu compra.</p>
-                    <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm mt-3 rounded-pill fs-4">Iniciar Sesión</a>
-                </div>
-            @endif
         </div>
     </div>
 </div>

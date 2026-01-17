@@ -90,7 +90,6 @@
                 </div>
 
                 <div class="col-md-3">
-                    {{-- Botón Pagar Ahora con feedback visual --}}
                     <button type="button" onclick="pagarReserva()" id="btnPagarAccion"
                         class="card h-100 border-0 shadow-sm text-center p-3 w-100 transition-all 
                         {{ !$totales['puede_pagar'] ? 'opacity-50 cursor-not-allowed' : 'btn-hover-success' }}">
@@ -106,38 +105,44 @@
             <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
                 <h5 class="fw-bold mb-4">Resumen de Compra</h5>
 
-                {{-- Barra de Progreso UX --}}
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small fw-bold">Progreso del pedido</span>
-                        <span class="small fw-bold text-primary">{{ $totales['cantidad_items'] ?? 0 }}/4 Artículos</span>
-                    </div>
-                    <div class="progress" style="height: 12px; border-radius: 10px;">
-                        @php
-                            $cantidad = $totales['cantidad_items'] ?? 0;
-                            $porcentaje = ($cantidad / 4) * 100;
-                            $porcentaje = $porcentaje > 100 ? 100 : $porcentaje;
-                            $colorBarra = $porcentaje < 100 ? 'bg-warning' : 'bg-success';
-                        @endphp
-                        <div class="progress-bar progress-bar-striped progress-bar-animated {{ $colorBarra }}" 
-                             role="progressbar" style="width: {{ $porcentaje }}%"></div>
-                    </div>
-                    
-                    @if (!($totales['puede_pagar'] ?? false))
-                        <div class="mt-3 p-2 bg-light rounded-3 text-center">
-                            <small class="text-dark">
-                                <i class="fas fa-shopping-bag text-warning me-1"></i> 
-                                Faltan <strong>{{ 4 - $cantidad }}</strong> productos para poder realizar tu reserva.
-                            </small>
+                @if(!($totales['es_cliente_antiguo'] ?? false))
+                    {{-- Barra de Progreso UX SOLO PARA NUEVOS --}}
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-bold">Progreso del pedido</span>
+                            <span class="small fw-bold text-primary">{{ $totales['cantidad_items'] ?? 0 }}/4 Artículos</span>
                         </div>
-                    @else
-                        <div class="mt-3 p-2 bg-light rounded-3 text-center border border-success">
-                            <small class="text-success fw-bold">
-                                <i class="fas fa-check-circle me-1"></i> ¡Mínimo alcanzado! Ya puedes pagar.
-                            </small>
+                        <div class="progress" style="height: 12px; border-radius: 10px;">
+                            @php
+                                $cantidad = $totales['cantidad_items'] ?? 0;
+                                $porcentaje = ($cantidad / 4) * 100;
+                                $porcentaje = $porcentaje > 100 ? 100 : $porcentaje;
+                                $colorBarra = $porcentaje < 100 ? 'bg-warning' : 'bg-success';
+                            @endphp
+                            <div class="progress-bar progress-bar-striped progress-bar-animated {{ $colorBarra }}" 
+                                 role="progressbar" style="width: {{ $porcentaje }}%"></div>
                         </div>
-                    @endif
-                </div>
+                        
+                        @if (!($totales['puede_pagar'] ?? false))
+                            <div class="mt-3 p-2 bg-light rounded-3 text-center">
+                                <small class="text-dark">
+                                    <i class="fas fa-shopping-bag text-warning me-1"></i> 
+                                    Faltan <strong>{{ 4 - $cantidad }}</strong> productos para tu primera reserva.
+                                </small>
+                            </div>
+                        @else
+                            <div class="mt-3 p-2 bg-light rounded-3 text-center border border-success">
+                                <small class="text-success fw-bold">
+                                    <i class="fas fa-check-circle me-1"></i> ¡Mínimo alcanzado! Ya puedes pagar.
+                                </small>
+                            </div>
+                        @endif
+                    </div>
+                @else
+                    <div class="alert alert-success border-0 small p-2" style="background-color: #e8f5e9; color: #2e7d32;">
+                        <i class="fas fa-star me-1"></i> Cliente frecuente: No aplicas a pedido mínimo.
+                    </div>
+                @endif
 
                 <div class="d-flex justify-content-between mb-2">
                     <span>Subtotal</span>
@@ -149,7 +154,11 @@
                 </div>
                 <hr>
                 <div class="text-muted small">
-                    * Recuerda que el pedido mínimo es de 4 artículos.
+                    @if(!($totales['es_cliente_antiguo'] ?? false))
+                        * Recuerda que el pedido mínimo inicial es de 4 artículos.
+                    @else
+                        * Puedes procesar tu reserva con cualquier cantidad de artículos.
+                    @endif
                 </div>
             </div>
         </div>
@@ -236,10 +245,16 @@
     }
 
     function pagarReserva() {
-        // Validación extra por JavaScript para el usuario despistado
+        const puedePagar = {{ $totales['puede_pagar'] ? 'true' : 'false' }};
+        const esAntiguo = {{ ($totales['es_cliente_antiguo'] ?? false) ? 'true' : 'false' }};
         const cantidadActual = {{ $totales['cantidad_items'] ?? 0 }};
-        if (cantidadActual < 4) {
-            alert("¡Atención! No has alcanzado el mínimo de 4 artículos. \n\nTe faltan " + (4 - cantidadActual) + " productos para poder procesar el pago.");
+
+        if (!puedePagar) {
+            if (!esAntiguo && cantidadActual < 4) {
+                alert("¡Atención! Para tu primera compra necesitas al menos 4 artículos. \n\nTe faltan " + (4 - cantidadActual) + " productos.");
+            } else if (cantidadActual === 0) {
+                alert("Tu carrito está vacío.");
+            }
             return;
         }
 
