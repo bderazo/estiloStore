@@ -51,13 +51,17 @@ class EmpresaDato extends Model
         return self::CLAVES[$this->clave] ?? $this->clave;
     }
 
-    public function getImagenUrlAttribute()
+    public function getImagenUrlAttribute(): string
     {
         if (!$this->imagen) {
-            return null;
+            return '';
         }
 
-        return Storage::url($this->imagen);
+        if (str_starts_with($this->imagen, 'http')) {
+            return $this->imagen;
+        }
+
+        return asset('storage/' . $this->imagen);
     }
 
     public function getActivoLabelAttribute()

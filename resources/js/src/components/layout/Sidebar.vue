@@ -500,39 +500,70 @@
                             </vue-collapsible>
                         </li>
 
-                        <!-- Folletos (Catálogo) -->
                         <li class="menu nav-item">
-                            <button
-                                type="button"
-                                class="nav-link group w-full"
-                                :class="{ active: activeDropdown === 'folletos' }"
-                                @click="activeDropdown === 'folletos' ? (activeDropdown = null) : (activeDropdown = 'folletos')"
+                            <button 
+                            type="button" 
+                            class="nav-link group w-full" 
+                            :class="{ active: activeDropdown === 'folletos' }" 
+                            @click="toggleDropdown('folletos')"
                             >
-                                <div class="flex items-center">
-                                    <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z" stroke="currentColor" stroke-width="1.5"/>
-                                        <path d="M8 7H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M8 12H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M8 17H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg>
-                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Folletos</span>
-                                </div>
-                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'folletos' }">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center">
+                                <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5"/>
+                                <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.5"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5"/>
+                                <polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M18 13v-2a4 4 0 0 0-4-4H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                Folletos y Catálogos
+                                </span>
+                            </div>
+                            <div :class="['rtl:rotate-180', { '!rotate-90': activeDropdown === 'folletos' }]">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
                             </button>
-                            <vue-collapsible :isOpen="activeDropdown === 'folletos'">
-                                <ul class="sub-menu text-gray-500">
-                                    <li>
-                                        <router-link to="/administrador/folletos" @click="toggleMobileMenu">Catálogo de Folletos</router-link>
-                                    </li>
-                                    <li>
-                                        <router-link to="/administrador/folletos/crear" @click="toggleMobileMenu">Nuevo Folleto</router-link>
-                                    </li>
-                                </ul>
-                            </vue-collapsible>
+                            <ul v-show="activeDropdown === 'folletos'" class="sub-menu text-gray-500">
+                            <li>
+                                <router-link 
+                                to="/administrador/folletos" 
+                                @click="toggleMobileMenu"
+                                class="flex items-center"
+                                >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Lista de Folletos
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link 
+                                to="/administrador/folletos/crear" 
+                                @click="toggleMobileMenu"
+                                class="flex items-center"
+                                >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Nuevo Folleto
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link 
+                                to="/administrador/folletos/estadisticas" 
+                                @click="toggleMobileMenu"
+                                class="flex items-center"
+                                >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                Estadísticas
+                                </router-link>
+                            </li>
+                            </ul>
                         </li>
 
                         <!-- Métodos de Pago -->
@@ -611,5 +642,9 @@
         if (window.innerWidth < 1024) {
             store.toggleSidebar();
         }
+    };
+
+    const toggleDropdown = (name: string) => {
+        activeDropdown.value = activeDropdown.value === name ? null : name;
     };
 </script>

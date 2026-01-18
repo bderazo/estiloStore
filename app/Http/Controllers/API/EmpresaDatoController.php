@@ -10,6 +10,7 @@ use App\Models\EmpresaDato;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class EmpresaDatoController extends Controller
 {
@@ -57,83 +58,83 @@ class EmpresaDatoController extends Controller
     }
 
     public function store(StoreEmpresaDatoRequest $request)
-{
-    // DEBUG: Ver qué está llegando
-    \Log::info('📥 Datos recibidos en store:', [
-        'all' => $request->all(),
-        'activo' => $request->input('activo'),
-        'activo_type' => gettype($request->input('activo')),
-        'headers' => $request->headers->all(),
-        'content_type' => $request->header('Content-Type'),
-        'has_imagen' => $request->hasFile('imagen')
-    ]);
-
-    \Log::info('🔧 Configuración de base de datos:', [
-    'connection' => config('database.default'),
-    'database' => config('database.connections.' . config('database.default') . '.database')
-]);
-    
-    DB::beginTransaction();
-    try {
-        // Obtener datos validados
-        $data = $request->validated();
-
-        // DEBUG: Ver datos validados
-        \Log::info('📝 Datos validados después de validated():', $data);
-        \Log::info('📝 Datos validados - activo:', [
-            'value' => $data['activo'] ?? 'not set',
-            'type' => isset($data['activo']) ? gettype($data['activo']) : 'not set'
+    {
+        // DEBUG: Ver qué está llegando
+        \Log::info('📥 Datos recibidos en store:', [
+            'all' => $request->all(),
+            'activo' => $request->input('activo'),
+            'activo_type' => gettype($request->input('activo')),
+            'headers' => $request->headers->all(),
+            'content_type' => $request->header('Content-Type'),
+            'has_imagen' => $request->hasFile('imagen')
         ]);
 
-        // // Manejo de imagen
-        // if ($request->hasFile('imagen')) {
-        //     \Log::info('📸 Tiene imagen para subir');
-        //     $path = $request->file('imagen')->store('empresa_datos', 'public');
-        //     $data['imagen'] = $path;
-        //     \Log::info('📸 Imagen guardada en:', ['path' => $path]);
-        // } else {
-        //     \Log::info('📸 No tiene imagen');
-        // }
-
-        // DEBUG: Ver datos antes de crear
-        \Log::info('🗄️ Datos para crear:', $data);
-        \Log::info('🗄️ Verificando fillable del modelo:', (new EmpresaDato())->getFillable());
-
-        // Crear el registro
-        $empresaDato = EmpresaDato::create($data);
+        \Log::info('🔧 Configuración de base de datos:', [
+            'connection' => config('database.default'),
+            'database' => config('database.connections.' . config('database.default') . '.database')
+        ]);
         
-        // DEBUG: Verificar si se creó
-        \Log::info('✅ Registro creado:', [
-            'id' => $empresaDato->id,
-            'clave' => $empresaDato->clave,
-            'activo' => $empresaDato->activo,
-            'created' => $empresaDato->created_at
-        ]);
+        DB::beginTransaction();
+        try {
+            // Obtener datos validados
+            $data = $request->validated();
 
-        DB::commit();
+            // DEBUG: Ver datos validados
+            \Log::info('📝 Datos validados después de validated():', $data);
+            \Log::info('📝 Datos validados - activo:', [
+                'value' => $data['activo'] ?? 'not set',
+                'type' => isset($data['activo']) ? gettype($data['activo']) : 'not set'
+            ]);
 
-        \Log::info('🎉 Transacción completada exitosamente');
+            // Manejo de imagen
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $filename = time() . '_' . Str::random(10) . '.' . $imagen->getClientOriginalExtension();
+                $path = $imagen->storeAs('empresa_datos', $filename, 'public');
+                $data['imagen'] = $path;
+            } else {
+                \Log::info('📸 No tiene imagen');
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Dato de empresa creado exitosamente',
-            'data' => new EmpresaDatoResource($empresaDato)
-        ], 201);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('❌ Error en store:', [
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al crear el dato de empresa',
-            'error' => $e->getMessage()
-        ], 500);
+            // DEBUG: Ver datos antes de crear
+            \Log::info('🗄️ Datos para crear:', $data);
+            \Log::info('🗄️ Verificando fillable del modelo:', (new EmpresaDato())->getFillable());
+
+            // Crear el registro
+            $empresaDato = EmpresaDato::create($data);
+            
+            // DEBUG: Verificar si se creó
+            \Log::info('✅ Registro creado:', [
+                'id' => $empresaDato->id,
+                'clave' => $empresaDato->clave,
+                'activo' => $empresaDato->activo,
+                'created' => $empresaDato->created_at
+            ]);
+
+            DB::commit();
+
+            \Log::info('🎉 Transacción completada exitosamente');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Dato de empresa creado exitosamente',
+                'data' => new EmpresaDatoResource($empresaDato)
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('❌ Error en store:', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el dato de empresa',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     public function show(EmpresaDato $empresaDato)
     {

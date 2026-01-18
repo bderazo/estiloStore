@@ -44,6 +44,13 @@ return [
             'throw' => false,
         ],
 
+        'folletos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/folletos'),
+            'url' => env('APP_URL').'/storage/folletos',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

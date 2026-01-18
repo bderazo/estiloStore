@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import App from "@/App.vue";
+import App from "./App.vue";
 
 const app = createApp(App);
 
@@ -8,7 +8,7 @@ import { createPinia } from "pinia";
 const pinia = createPinia();
 app.use(pinia);
 
-import router from "@/router";
+import router from "./router";
 app.use(router);
 
 // main app css
@@ -24,11 +24,11 @@ const head = createHead();
 app.use(head);
 
 // set default settings
-import appSetting from "@/app-setting";
+import appSetting from "./app-setting";
 appSetting.init();
 
 //vue-i18n
-import i18n from "@/i18n";
+import i18n from "./i18n";
 app.use(i18n);
 
 // tippy tooltips
@@ -42,7 +42,7 @@ app.directive("maska", vMaska);
 //markdown editor
 import VueEasymde from "vue3-easymde";
 import "easymde/dist/easymde.min.css";
-app.use(VueEasymde);
+app.component("VueEasymde", VueEasymde);
 
 // popper
 import Popper from "vue3-popper";
@@ -50,6 +50,27 @@ app.component("Popper", Popper);
 
 // json to excel
 import vue3JsonExcel from "vue3-json-excel";
-app.use(vue3JsonExcel);
+app.component("JsonExcel", vue3JsonExcel);
+
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
+app.use(Toast, {
+    position: 'top-right',
+    timeout: 3000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: false,
+    hideProgressBar: false,
+    closeButton: 'button',
+    icon: true,
+    rtl: false
+});
+
+import ConfirmDialog from './components/ui/ConfirmDialog.vue';
+
+app.component('ConfirmDialog', ConfirmDialog);
 
 app.mount("#app");

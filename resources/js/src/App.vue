@@ -10,12 +10,11 @@
 <script lang="ts" setup>
     import { computed } from 'vue';
 
-    import appLayout from '@/layouts/app-layout.vue';
-    import authLayout from '@/layouts/auth-layout.vue';
+    import appLayout from './layouts/app-layout.vue';
+    import authLayout from './layouts/auth-layout.vue';
 
-    import { useAppStore } from '@/stores/index';
-    import { useMeta } from '@/composables/use-meta';
-
+    import { useAppStore } from './stores/index';
+    import { useMeta } from './composables/use-meta';
     const store = useAppStore();
 
     // meta

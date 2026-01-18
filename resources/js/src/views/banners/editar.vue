@@ -96,11 +96,11 @@
                         <label class="mb-1 block font-semibold">Imagen</label>
                         <div class="flex flex-col gap-4">
                             <!-- Imagen actual -->
-                            <div v-if="bannerStore.banner.imagen_ruta" class="w-full max-w-md">
+                            <div v-if="bannerStore.banner.imagen_url" class="w-full max-w-md">
                                 <p class="mb-2 text-sm font-medium">Imagen actual:</p>
                                 <div class="relative h-48 w-full overflow-hidden rounded-lg border-2 border-gray-200">
                                     <img 
-                                        :src="getImageUrl(bannerStore.banner.imagen_ruta)" 
+                                        :src="getImageUrl(bannerStore.banner.imagen_url)" 
                                         alt="Imagen actual" 
                                         class="h-full w-full object-contain"
                                     />

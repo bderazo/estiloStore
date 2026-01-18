@@ -5,6 +5,7 @@ export interface Banner {
     titulo: string | null;
     subtitulo: string | null;
     imagen_ruta: string;
+    imagen_url: string;
     url_destino: string | null;
     estado: boolean;
     created_at: string | null;

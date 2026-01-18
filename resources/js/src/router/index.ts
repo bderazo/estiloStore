@@ -189,31 +189,73 @@ const routes: RouteRecordRaw[] = [
     },
 
     // Sistema de Folletos (Catálogo)
+     {
+      path: '/administrador/folletos',
+      name: 'folletos.index',
+      component: () => import('../views/folletos/index.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.index',
+        title: 'Folletos y Catálogos'
+      }
+    },
     {
-        path: '/administrador/folletos',
-        name: 'folletos.index',
-        component: () => import('../views/folletos/index.vue'),
+      path: '/administrador/folletos/crear',
+      name: 'folletos.crear',
+      component: () => import('../views/folletos/crear.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.create',
+        title: 'Nuevo Folleto'
+      }
+    },
+    {
+      path: '/administrador/folletos/:id/editar',
+      name: 'folletos.editar',
+      component: () => import('../views/folletos/editar.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.edit',
+        title: 'Editar Folleto'
+      }
+    },
+    {
+      path: '/administrador/folletos/estadisticas',
+      name: 'folletos.estadisticas',
+      component: () => import('../views/folletos/Estadisticas.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.estadisticas',
+        title: 'Estadísticas de Folletos'
+      }
+    },
+
+    {
+        path: '/administrador/metodos-pago',
+        name: 'administrador.metodos-pago.index',
+        component: () => import('../views/metodos-pago/index.vue'),
         meta: {
-            permission: 'folletos.index',
-            title: 'Folletos'
+            permission: 'metodos-pago.index',
+            title: 'Métodos de Pago'
         }
     },
     {
-        path: '/administrador/folletos/crear',
-        name: 'folletos.crear',
-        component: () => import('../views/folletos/crear.vue'),
+        path: '/administrador/metodos-pago/crear',
+        name: 'administrador.metodos-pago.crear',
+        component: () => import('../views/metodos-pago/crear.vue'),
         meta: {
-            permission: 'folletos.create',
-            title: 'Crear Folleto'
+            permission: 'metodos-pago.create',
+            title: 'Nuevo Método de Pago'
         }
     },
     {
-        path: '/administrador/folletos/:id/editar',
-        name: 'folletos.editar',
-        component: () => import('../views/folletos/editar.vue'),
+        path: '/administrador/metodos-pago/editar/:id',
+        name: 'administrador.metodos-pago.editar',
+        component: () => import('../views/metodos-pago/editar.vue'),
+        props: true,
         meta: {
-            permission: 'folletos.edit',
-            title: 'Editar Folleto'
+            permission: 'metodos-pago.edit',
+            title: 'Editar Método de Pago'
         }
     },
 
