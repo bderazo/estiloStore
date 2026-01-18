@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\MetodoPago;
 use App\Models\Pedido;
 use App\Models\PedidoPago;
 use App\Models\Transporte;
@@ -17,7 +18,9 @@ class PedidoController extends Controller
         $pedidos = Pedido::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('web.pedidos.index', compact('pedidos'));
+       $metodos = MetodoPago::where('activo', 1)->get();
+        $isLogged = auth()->check();
+        return view('web.pedidos.index', compact('pedidos','metodos','isLogged'));
     }
 
     // Detalle de una reserva específica y formulario de abono

@@ -25,6 +25,16 @@ class CarritoController extends Controller
     {
         $items = $this->carritoService->getCarrito();
         $totales = $this->carritoService->calcularTotales();
+        $tienePedidosCompletados = Pedido::where('user_id', auth()->id())
+            ->where('estado', 'completado')
+            ->exists();
+        if ($tienePedidosCompletados) {
+            $totales['puede_pagar'] = count($items) > 0;
+            $totales['es_cliente_antiguo'] = true;
+        } else {
+            $totales['puede_pagar'] = ($totales['cantidad_items'] ?? 0) >= 4;
+            $totales['es_cliente_antiguo'] = false;
+        }
         return view('web.carrito.index', compact('items', 'totales'));
     }
 
@@ -68,7 +78,33 @@ class CarritoController extends Controller
 
     public function agregar(Request $request)
     {
-        $variante = ArticuloVariante::with('articulo')->find($request->variante_id);
+        
+        $varianteId = $request->input('variante_id');
+        if (!$varianteId) {
+            // Si no viene el ID directo (caso Detalle), lo buscamos por la combinación
+            $request->validate([
+                'articulo_id' => 'required|exists:articulos,id',
+                'color_id'    => 'nullable|exists:colores,id',
+                'talla_id'    => 'nullable|exists:tallas,id',
+            ]);
+
+            $variante = ArticuloVariante::where('articulo_id', $request->articulo_id)
+                ->when($request->color_id, function ($query, $colorId) {
+                    return $query->where('color_id', $colorId);
+                })
+                ->when($request->talla_id, function ($query, $tallaId) {
+                    return $query->where('talla_id', $tallaId);
+                })
+                ->first();
+
+            if (!$variante) {
+                return back()->with('error', 'La combinación de color y talla seleccionada no existe.');
+            }
+
+            $varianteId = $variante->id;
+        }
+
+        $variante = ArticuloVariante::with('articulo')->find($varianteId);
         $cantidadAAgregar = intval($request->cantidad);
 
         $carrito = session()->get('carrito', []);
