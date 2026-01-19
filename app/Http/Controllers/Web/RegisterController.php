@@ -37,7 +37,8 @@ class RegisterController extends Controller
 
         return view('web.register', [
             'categoriasMenu' => $categoriasMenu,
-            'legalService'   => $legalService // Para los links de términos y condiciones
+            'urlTerminos'    => $legalService->getDocumentUrl('TERMINOS'),
+            'urlPrivacidad'  => $legalService->getDocumentUrl('PRIVACIDAD'),
         ]);
     }
 

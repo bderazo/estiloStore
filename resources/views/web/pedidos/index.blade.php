@@ -1,55 +1,41 @@
 @extends('web.layouts.base')
 
-@section('title', 'Finalizar Pago')
-
-@push('styles')
-<style>
-    /* Z-index bajo para que el sticky no tape el menú desplegable (Navbar) */
-    .sticky-summary {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 100px; /* Distancia desde el tope de la ventana */
-        z-index: 10; 
-    }
-
-    .payment-card {
-        border: 2px solid #f0f0f0;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        border-radius: 15px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* Efecto cuando el radio button está seleccionado */
-    input[type="radio"]:checked + .payment-card {
-        border-color: var(--primary-color) !important;
-        background-color: #fff9fb;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
-
-    /* Check visual para la tarjeta seleccionada */
-    input[type="radio"]:checked + .payment-card::after {
-        content: "\f058";
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: var(--primary-color);
-        font-size: 1.2rem;
-    }
-
-    .icon-box {
-        width: 50px; 
-        height: 50px; 
-        background-color: #f8f9fa; 
-        border: 1px solid #eee;
-    }
-</style>
-@endpush
-
 @section('content')
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Mis Reservas</h2>
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive p-3">
+            <table class="table align-middle">
+                <thead>
+                    <tr class="text-muted">
+                        <th>Código</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($pedidos as $p)
+                    <tr>
+                        <td class="fw-bold">{{ $p->codigo_reserva }}</td>
+                        <td>{{ $p->created_at->format('d/m/Y') }}</td>
+                        <td>${{ number_format($p->total, 2) }}</td>
+                        <td>
+                            <span class="fs-5 badge @if($p->estado == 'pendiente') bg-warning @elseif($p->estado == 'completado') bg-success @else bg-secondary @endif">
+                                {{ ucfirst($p->estado) }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ route('web.pedidos.show', $p->id) }}" class="btn btn-sm btn-dark fs-5">Ver Detalles / Pagar</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-8">

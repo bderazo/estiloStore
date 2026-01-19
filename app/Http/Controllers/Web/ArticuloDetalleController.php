@@ -23,7 +23,7 @@ class ArticuloDetalleController extends Controller
         // Procesar imagen
         $articulo->imagen_full = $this->resolveImageUrl($imagen);
         $articulo->imagen_full = $imagen;
-
+        $articulo->precio_venta = $articulo->precio_oferta ?? $articulo->precio;
         return view('web.articulos.detalle', [
             'articulo' => $articulo,
             'categoriasMenu' => $categoriasMenu

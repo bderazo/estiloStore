@@ -248,7 +248,7 @@
                                             <label class="form-check-label text-muted" for="terms1"
                                                 style="font-size: 1.2rem;">
                                                 Si, acepto <a
-                                                    href="{{ $legalService->getDocumentUrl('terminos_ser_dama') }}"
+                                                    href="{{ $urlTerminos }}"
                                                     target="_blank" class="legal-link">Ser Dama</a> (Descargar otros
                                                 términos y condiciones)
                                             </label>
@@ -259,7 +259,7 @@
                                             <label class="form-check-label text-muted" for="terms2"
                                                 style="font-size: 1.2rem;">
                                                 Si, acepto <a
-                                                    href="{{ $legalService->getDocumentUrl('aviso_privacidad') }}"
+                                                    href="{{ $urlPrivacidad }}"
                                                     target="_blank" class="legal-link">Aviso de Privacidad</a>
                                                 (Descargar términos y condiciones)
                                             </label>
