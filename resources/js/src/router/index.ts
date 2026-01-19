@@ -159,6 +159,156 @@ const routes: RouteRecordRaw[] = [
         }
     },
 
+    // Sistema de Banners
+    {
+        path: '/administrador/banners',
+        name: 'banners.index',
+        component: () => import('../views/banners/index.vue'),
+        meta: {
+            permission: 'banners.index',
+            title: 'Banners'
+        }
+    },
+    {
+        path: '/administrador/banners/crear',
+        name: 'banners.crear',
+        component: () => import('../views/banners/crear.vue'),
+        meta: {
+            permission: 'banners.create',
+            title: 'Crear Banner'
+        }
+    },
+    {
+        path: '/administrador/banners/:id/editar',
+        name: 'banners.editar',
+        component: () => import('../views/banners/editar.vue'),
+        meta: {
+            permission: 'banners.edit',
+            title: 'Editar Banner'
+        }
+    },
+
+    // Sistema de Folletos (Catálogo)
+     {
+      path: '/administrador/folletos',
+      name: 'folletos.index',
+      component: () => import('../views/folletos/index.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.index',
+        title: 'Folletos y Catálogos'
+      }
+    },
+    {
+      path: '/administrador/folletos/crear',
+      name: 'folletos.crear',
+      component: () => import('../views/folletos/crear.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.create',
+        title: 'Nuevo Folleto'
+      }
+    },
+    {
+      path: '/administrador/folletos/:id/editar',
+      name: 'folletos.editar',
+      component: () => import('../views/folletos/editar.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.edit',
+        title: 'Editar Folleto'
+      }
+    },
+    {
+      path: '/administrador/folletos/estadisticas',
+      name: 'folletos.estadisticas',
+      component: () => import('../views/folletos/Estadisticas.vue'),
+      meta: { 
+        // requiresAuth: true,
+        permission: 'folletos.estadisticas',
+        title: 'Estadísticas de Folletos'
+      }
+    },
+
+    {
+        path: '/administrador/metodos-pago',
+        name: 'administrador.metodos-pago.index',
+        component: () => import('../views/metodos-pago/index.vue'),
+        meta: {
+            permission: 'metodos-pago.index',
+            title: 'Métodos de Pago'
+        }
+    },
+    {
+        path: '/administrador/metodos-pago/crear',
+        name: 'administrador.metodos-pago.crear',
+        component: () => import('../views/metodos-pago/crear.vue'),
+        meta: {
+            permission: 'metodos-pago.create',
+            title: 'Nuevo Método de Pago'
+        }
+    },
+    {
+        path: '/administrador/metodos-pago/editar/:id',
+        name: 'administrador.metodos-pago.editar',
+        component: () => import('../views/metodos-pago/editar.vue'),
+        props: true,
+        meta: {
+            permission: 'metodos-pago.edit',
+            title: 'Editar Método de Pago'
+        }
+    },
+
+    // Sistema de Empresa (Información general)
+    {
+      path: '/administrador/empresa',
+      name: 'empresa-datos',
+      component: () => import('../views/empresa/index.vue'),
+      meta: { title: 'Datos de Empresa' }
+    },
+    {
+      path: '/administrador/empresa/crear',
+      name: 'empresa-datos-crear',
+      component: () => import('../views/empresa/crear.vue'),
+      meta: { title: 'Crear Dato' }
+    },
+    {
+      path: '/administrador/empresa/:id/editar',
+      name: 'empresa-datos-editar',
+      component: () => import('../views/empresa/editar.vue'),
+      meta: { title: 'Editar Dato' },
+      props: true
+    },
+
+    // Sistema de Métodos de Pago
+    {
+        path: '/administrador/metodos-pago',
+        name: 'metodos-pago.index',
+        component: () => import('../views/metodos-pago/index.vue'),
+        meta: {
+            permission: 'metodos-pago.index',
+            title: 'Métodos de Pago'
+        }
+    },
+    {
+        path: '/administrador/metodos-pago/crear',
+        name: 'metodos-pago.crear',
+        component: () => import('../views/metodos-pago/crear.vue'),
+        meta: {
+            permission: 'metodos-pago.create',
+            title: 'Crear Método de Pago'
+        }
+    },
+    {
+        path: '/administrador/metodos-pago/:id/editar',
+        name: 'metodos-pago.editar',
+        component: () => import('../views/metodos-pago/editar.vue'),
+        meta: {
+            permission: 'metodos-pago.edit',
+            title: 'Editar Método de Pago'
+        }
+    },
+
     // Sistema de Categorías
     {
         path: '/administrador/categorias',
@@ -322,6 +472,15 @@ const routes: RouteRecordRaw[] = [
         meta: {
             permission: 'articulos.create',
             title: 'Crear Artículo'
+        }
+    },
+    {
+        path: '/administrador/articulos/:id',
+        name: 'articulos-show',
+        component: () => import('../views/articulos/Show.vue'), // O el nombre correcto
+        meta: {
+            permission: 'articulos.show',
+            title: 'Detalle del Artículo'
         }
     },
     {

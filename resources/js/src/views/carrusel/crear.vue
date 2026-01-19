@@ -276,7 +276,7 @@ const submitForm = async () => {
             formData.append('imagen', form.imagen)
         }
 
-        const response = await fetch('/api/carrusel', {
+        const response = await fetch('/tienda/public/api/carrusel', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,

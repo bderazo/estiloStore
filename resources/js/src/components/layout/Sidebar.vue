@@ -417,20 +417,190 @@
                             </vue-collapsible>
                         </li>
 
-                        <!-- Nosotros -->
-                        <li v-if="canViewNosotros" class="menu nav-item">
-                            <router-link to="/administrador/nosotros" class="nav-link group" @click="toggleMobileMenu">
+                        <!-- ==================== BANNERS ==================== -->
+                        <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1 mt-6">
+                            <svg class="w-4 h-5 flex-none mr-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                <line x1="9" y1="21" x2="9" y2="9"></line>
+                            </svg>
+                            <span>Banners</span>
+                        </h2>
+
+                        <!-- Banners -->
+                        <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'banners' }"
+                                @click="activeDropdown === 'banners' ? (activeDropdown = null) : (activeDropdown = 'banners')"
+                            >
                                 <div class="flex items-center">
                                     <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="currentColor" stroke-width="1.5" />
-                                        <path d="M12 8V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                        <path d="M12 16H12.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        <path d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5Z" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M3 9H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M9 21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                     </svg>
-                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Nosotros</span>
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Banners</span>
                                 </div>
-                            </router-link>
+                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'banners' }">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <vue-collapsible :isOpen="activeDropdown === 'banners'">
+                                <ul class="sub-menu text-gray-500">
+                                    <li>
+                                        <router-link to="/administrador/banners" @click="toggleMobileMenu">Lista de Banners</router-link>
+                                    </li>
+                                    <li>
+                                        <router-link to="/administrador/banners/crear" @click="toggleMobileMenu">Crear Banner</router-link>
+                                    </li>
+                                </ul>
+                            </vue-collapsible>
                         </li>
 
+                        <!-- Empresa (Sobre Nosotros) -->
+                        <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'empresa' }"
+                                @click="activeDropdown === 'empresa' ? (activeDropdown = null) : (activeDropdown = 'empresa')"
+                            >
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M3 21H21" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M9 7H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M9 11H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M9 15H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Empresa</span>
+                                </div>
+                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'empresa' }">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <vue-collapsible :isOpen="activeDropdown === 'empresa'">
+                                <ul class="sub-menu text-gray-500">
+                                    <li>
+                                        <router-link to="/administrador/empresa" @click="toggleMobileMenu">Datos empresa</router-link>
+                                    </li>
+                                    <li>
+                                        <router-link to="/administrador/empresa/crear" @click="toggleMobileMenu">Crear datos</router-link>
+                                    </li>
+                                    <!-- <li>
+                                        <router-link to="/administrador/empresa/:id/editar" @click="toggleMobileMenu">Contacto</router-link>
+                                    </li> -->
+                                </ul>
+                            </vue-collapsible>
+                        </li>
+
+                        <li class="menu nav-item">
+                            <button 
+                            type="button" 
+                            class="nav-link group w-full" 
+                            :class="{ active: activeDropdown === 'folletos' }" 
+                            @click="toggleDropdown('folletos')"
+                            >
+                            <div class="flex items-center">
+                                <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5"/>
+                                <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.5"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5"/>
+                                <polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M18 13v-2a4 4 0 0 0-4-4H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                Folletos y Catálogos
+                                </span>
+                            </div>
+                            <div :class="['rtl:rotate-180', { '!rotate-90': activeDropdown === 'folletos' }]">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            </button>
+                            <ul v-show="activeDropdown === 'folletos'" class="sub-menu text-gray-500">
+                            <li>
+                                <router-link 
+                                to="/administrador/folletos" 
+                                @click="toggleMobileMenu"
+                                class="flex items-center"
+                                >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Lista de Folletos
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link 
+                                to="/administrador/folletos/crear" 
+                                @click="toggleMobileMenu"
+                                class="flex items-center"
+                                >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Nuevo Folleto
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link 
+                                to="/administrador/folletos/estadisticas" 
+                                @click="toggleMobileMenu"
+                                class="flex items-center"
+                                >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                Estadísticas
+                                </router-link>
+                            </li>
+                            </ul>
+                        </li>
+
+                        <!-- Métodos de Pago -->
+                        <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'metodos-pago' }"
+                                @click="activeDropdown === 'metodos-pago' ? (activeDropdown = null) : (activeDropdown = 'metodos-pago')"
+                            >
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 10H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                        <circle cx="7.5" cy="14.5" r="1.5" fill="currentColor"/>
+                                        <circle cx="12" cy="14.5" r="1.5" fill="currentColor"/>
+                                        <circle cx="16.5" cy="14.5" r="1.5" fill="currentColor"/>
+                                    </svg>
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Métodos de Pago</span>
+                                </div>
+                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'metodos-pago' }">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <vue-collapsible :isOpen="activeDropdown === 'metodos-pago'">
+                                <ul class="sub-menu text-gray-500">
+                                    <li>
+                                        <router-link to="/administrador/metodos-pago" @click="toggleMobileMenu">Lista de Métodos</router-link>
+                                    </li>
+                                    <li>
+                                        <router-link to="/administrador/metodos-pago/crear" @click="toggleMobileMenu">Agregar Método</router-link>
+                                    </li>
+                                </ul>
+                            </vue-collapsible>
+                        </li>
 
                     </ul>
                 </perfect-scrollbar>
@@ -472,5 +642,9 @@
         if (window.innerWidth < 1024) {
             store.toggleSidebar();
         }
+    };
+
+    const toggleDropdown = (name: string) => {
+        activeDropdown.value = activeDropdown.value === name ? null : name;
     };
 </script>

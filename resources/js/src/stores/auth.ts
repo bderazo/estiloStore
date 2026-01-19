@@ -114,6 +114,8 @@ export const useAuthStore = defineStore('auth', {
 
             try {
                 const response = await api.get('/auth/me');
+                console.log('User response:', response.data); // <-- Agrega esto
+                console.log('User permissions:', response.data.data.user.permissions); // <-- Y esto
 
                 if (response.data.success) {
                     this.user = response.data.data.user;
@@ -128,7 +130,7 @@ export const useAuthStore = defineStore('auth', {
                 this.clearAuth();
                 return false;
             }
-        },
+        },  
 
         async refreshToken() {
             if (!this.token) return false;
@@ -173,6 +175,12 @@ export const useAuthStore = defineStore('auth', {
         },
 
         hasPermission(permission: string): boolean {
+            // Para desarrollo, permitir todo
+            if (import.meta.env.DEV) {
+                console.log(`DEV MODE: Skipping permission check for "${permission}"`);
+                return true;
+            }
+            
             return this.userPermissions.includes(permission);
         },
 

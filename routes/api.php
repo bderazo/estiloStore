@@ -7,8 +7,12 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\ModulesController;
 use App\Http\Controllers\API\CarruselController;
+use App\Http\Controllers\API\EmpresaDatoController;
+use App\Http\Controllers\API\BannerController;
 use App\Http\Controllers\API\CategoriaController;
 use App\Http\Controllers\API\MarcaController;
+use App\Http\Controllers\API\FolletoController;
+use App\Http\Controllers\API\MetodoPagoController;
 use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\API\TallaController;
 use App\Http\Controllers\API\PlazaController;
@@ -96,6 +100,84 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('/{carrusel}', [CarruselController::class, 'destroy'])->middleware('permission:carrusel.delete');
         Route::patch('/{carrusel}/toggle-estado', [CarruselController::class, 'toggleEstado'])->middleware('permission:carrusel.estado');
     });
+
+    // Rutas de banners
+    Route::group(['prefix' => 'banners'], function () {
+        Route::get('/', [BannerController::class, 'index']);//->middleware('permission:banners.index');
+        Route::post('/', [BannerController::class, 'store']);//->middleware('permission:banners.create');
+        Route::get('/secciones', [BannerController::class, 'getSecciones']);//->middleware('permission:banners.create');
+        Route::get('/{banner}', [BannerController::class, 'show']);//->middleware('permission:banners.show');
+        Route::post('/{banner}', [BannerController::class, 'update']);//->middleware('permission:banners.edit'); // POST para manejar archivos
+        Route::put('/{banner}', [BannerController::class, 'update']);//->middleware('permission:banners.edit');
+        Route::delete('/{banner}', [BannerController::class, 'destroy']);//->middleware('permission:banners.delete');
+        Route::patch('/{banner}/toggle-estado', [BannerController::class, 'toggleEstado']);//->middleware('permission:banners.estado');
+    });
+
+    // Rutas de datos de la empresa
+    Route::group(['prefix' => 'empresa-datos'], function () {
+        Route::get('/', [EmpresaDatoController::class, 'index']);//->middleware('permission:empresa-datos.index');
+        Route::post('/', [EmpresaDatoController::class, 'store']);//->middleware('permission:empresa-datos.create');
+        Route::get('/claves', [EmpresaDatoController::class, 'getClaves']);//->middleware('permission:empresa-datos.create');
+        Route::get('/{empresa_dato}', [EmpresaDatoController::class, 'show']);//->middleware('permission:empresa-datos.show');
+        Route::post('/{empresa_dato}', [EmpresaDatoController::class, 'update']);//->middleware('permission:empresa-datos.edit');
+        Route::put('/{empresa_dato}', [EmpresaDatoController::class, 'update']);//->middleware('permission:empresa-datos.edit');
+        Route::delete('/{empresa_dato}', [EmpresaDatoController::class, 'destroy']);//->middleware('permission:empresa-datos.delete');
+        Route::patch('/{empresa_dato}/toggle-activo', [EmpresaDatoController::class, 'toggleActivo']);//->middleware('permission:empresa-datos.estado');
+    });
+
+    // Rutas públicas
+    Route::get('/folletos/descargar/{id}', [FolletoController::class, 'descargar'])
+        ->name('folletos.descargar.publico');
+
+    Route::get('/folletos/estadisticas', [FolletoController::class, 'estadisticas'])
+        ->name('folletos.estadisticas.publico');
+
+    // Rutas protegidas (requieren autenticación)
+        Route::prefix('folletos')->group(function () {
+            Route::get('/', [FolletoController::class, 'index']);
+                // ->middleware('can:folletos.index')
+                // ->name('folletos.index');
+            
+            Route::get('/{folleto}', [FolletoController::class, 'show'])
+                // ->middleware('can:folletos.view')
+                ->name('folletos.show');
+            
+            Route::post('/', [FolletoController::class, 'store'])
+                // ->middleware('can:folletos.create')
+                ->name('folletos.store');
+            
+            Route::put('/{folleto}', [FolletoController::class, 'update'])
+                // ->middleware('can:folletos.edit')
+                ->name('folletos.update');
+            
+            Route::delete('/{folleto}', [FolletoController::class, 'destroy'])
+                // ->middleware('can:folletos.delete')
+                ->name('folletos.destroy');
+            
+            Route::patch('/{folleto}/toggle-estado', [FolletoController::class, 'toggleEstado'])
+                // ->middleware('can:folletos.edit')
+                ->name('folletos.toggle-estado');
+            
+            Route::post('/{folleto}/registrar-descarga', [FolletoController::class, 'incrementarDescargas'])
+                // ->middleware('can:folletos.view')
+                ->name('folletos.registrar-descarga');
+        });
+    
+        // Ruta para métodos de pago
+
+            Route::apiResource('metodos-pago', MetodoPagoController::class);
+            
+            Route::patch('metodos-pago/{metodoPago}/toggle-activo', 
+                [MetodoPagoController::class, 'toggleActivo']);
+            
+            Route::post('metodos-pago/ordenar', 
+                [MetodoPagoController::class, 'ordenar']);
+        
+        Route::get('metodos-pago-activos', 
+            [MetodoPagoController::class, 'activos']);
+
+    Route::get('metodos-pago-publicos', 
+        [MetodoPagoController::class, 'activos']);
 
     // Rutas de categorías
     Route::group(['prefix' => 'categorias'], function () {
