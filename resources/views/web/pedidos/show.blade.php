@@ -107,6 +107,106 @@
                 <div class="sticky-top" style="top: 20px; z-index: 5;">
                     <div class="card border-0 shadow-sm p-4 rounded-4 border-top border-primary border-5">
                         <h5 class="fw-bold mb-3"><i class="fas fa-wallet me-2"></i>Completar mi Pedido</h5>
+
+                        {{-- Botón para ver medios de pago --}}
+            <div class="mb-4">
+                <button type="button" class="btn btn-outline-primary w-100 py-3" onclick="toggleMediosPago()" id="btnTogglePagos">
+                    <i class="fas fa-credit-card me-2"></i>Ver Medios de Pago Disponibles
+                    <i class="fas fa-chevron-down ms-2" id="iconToggle"></i>
+                </button>
+            </div>
+            
+            {{-- Sección de Métodos de Pago (oculta inicialmente) --}}
+            <div id="seccionMetodosPago" class="d-none">
+                <div class="border rounded-4 p-3 mb-4 bg-light">
+                    <h6 class="fw-bold mb-3 text-dark">
+                        <i class="fas fa-university me-2"></i>Información para Transferencias/Depósitos
+                    </h6>
+                    
+                    <div class="row g-3">
+                        @foreach($metodosPago as $metodo)
+                            <div class="col-12">
+                                <div class="card border shadow-sm mb-3">
+                                    <div class="card-body">
+                                        {{-- Encabezado --}}
+                                        <div class="d-flex align-items-start mb-3">
+                                            <div class="me-3">
+                                                @if($metodo->logo_banco)
+                                                    <img src="{{ asset('storage/' . $metodo->logo_banco) }}" 
+                                                         alt="{{ $metodo->nombre_banco }}" 
+                                                         style="width: 50px; height: 50px; object-fit: contain;">
+                                                @else
+                                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                                         style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-university"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold mb-0 text-dark">{{ $metodo->nombre_banco }}</h6>
+                                                <span class="badge 
+                                                    @if($metodo->tipo_pago == 'Transferencia') bg-primary
+                                                    @elseif($metodo->tipo_pago == 'QR') bg-success
+                                                    @endif">
+                                                    {{ $metodo->tipo_pago }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        {{-- Información del método --}}
+                                        @if($metodo->tipo_pago == 'Transferencia')
+                                            <div class="row small">
+                                                <div class="col-md-6 mb-2">
+                                                    <span class="text-muted">Titular:</span>
+                                                    <p class="fw-bold mb-1">{{ $metodo->nombre_titular }}</p>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <span class="text-muted">N° Cuenta:</span>
+                                                    <p class="fw-bold mb-1 text-primary">{{ $metodo->numero_cuenta }}</p>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <span class="text-muted">Tipo de Cuenta:</span>
+                                                    <p class="fw-bold mb-1">{{ $metodo->tipo_cuenta }}</p>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <span class="text-muted">Identificación:</span>
+                                                    <p class="fw-bold mb-1">{{ $metodo->identificacion }}</p>
+                                                </div>
+                                            </div>
+                                        @elseif($metodo->tipo_pago == 'QR')
+                                            <div class="text-center">
+                                                @if($metodo->imagen_qr)
+                                                    <img src="{{ asset('storage/' . $metodo->imagen_qr) }}" 
+                                                         alt="QR {{ $metodo->nombre_banco }}" 
+                                                         class="img-fluid mb-2" 
+                                                         style="max-width: 200px;">
+                                                @endif
+                                                <p class="small text-success mb-0">
+                                                    <i class="fas fa-qrcode me-1"></i>Escanea el código QR para pagar
+                                                </p>
+                                            </div>
+                                        @endif
+                                        
+                                        {{-- Instrucciones --}}
+                                        @if($metodo->instrucciones)
+                                            <div class="alert alert-light border mt-3 small">
+                                                <i class="fas fa-info-circle text-primary me-1"></i>
+                                                {{ $metodo->instrucciones }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    
+                    {{-- Recordatorio --}}
+                    <div class="alert alert-info border-0 small mt-3">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        <strong>Importante:</strong> Después de realizar el pago, sube el comprobante en el formulario de abajo.
+                    </div>
+                </div>
+            </div>
                         
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-muted">1. SELECCIONA TU RUTA DE ENVÍO</label>
@@ -224,6 +324,27 @@
         loader.classList.add('d-none');
         select.disabled = false;
     });
+}
+function toggleMediosPago() {
+    const seccion = document.getElementById('seccionMetodosPago');
+    const icon = document.getElementById('iconToggle');
+    const btn = document.getElementById('btnTogglePagos');
+    
+    if (seccion.classList.contains('d-none')) {
+        // Mostrar
+        seccion.classList.remove('d-none');
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-primary', 'text-white');
+    } else {
+        // Ocultar
+        seccion.classList.add('d-none');
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+        btn.classList.remove('btn-primary', 'text-white');
+        btn.classList.add('btn-outline-primary');
+    }
 }
     </script>
 @endsection

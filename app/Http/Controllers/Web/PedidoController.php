@@ -12,78 +12,75 @@ use Illuminate\Support\Facades\Storage;
 
 class PedidoController extends Controller
 {
-    // Listado de todas mis reservas
     public function index()
     {
         $pedidos = Pedido::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
-       $metodos = MetodoPago::where('activo', 1)->get();
+        $metodos = MetodoPago::where('activo', 1)->get();
         $isLogged = auth()->check();
         return view('web.pedidos.index', compact('pedidos','metodos','isLogged'));
     }
 
-    // Detalle de una reserva específica y formulario de abono
-// ... arriba agregar: use App\Models\Transporte;
 
-public function show($id)
-{
-    $pedido = Pedido::with(['detalles.variante.articulo', 'pagos', 'transporte'])
-        ->where('user_id', auth()->id())
-        ->findOrFail($id);
-    
-    // Obtenemos todas las rutas disponibles
-    $rutas = Transporte::orderBy('ruta', 'asc')->get();
+    public function show($id)
+    {
+        $pedido = Pedido::with(['detalles.variante.articulo', 'pagos', 'transporte'])
+            ->where('user_id', auth()->id())
+            ->findOrFail($id);
         
-    return view('web.pedidos.show', compact('pedido', 'rutas'));
-}
+        // Obtenemos todas las rutas disponibles
+        $rutas = Transporte::orderBy('ruta', 'asc')->get();
+        $metodosPago = MetodoPago::where('activo', 1)->get();
+            
+        return view('web.pedidos.show', compact('pedido', 'rutas', 'metodosPago'));
+    }
 
-public function asignarTransporte(Request $request, $id)
-{
-    $request->validate([
-        'transporte_id' => 'required|exists:transportes,id'
-    ]);
+    public function asignarTransporte(Request $request, $id)
+    {
+        $request->validate([
+            'transporte_id' => 'required|exists:transportes,id'
+        ]);
 
-    $pedido = Pedido::where('user_id', auth()->id())->findOrFail($id);
-    $transporte = \App\Models\Transporte::findOrFail($request->transporte_id);
+        $pedido = Pedido::where('user_id', auth()->id())->findOrFail($id);
+        $transporte = \App\Models\Transporte::findOrFail($request->transporte_id);
 
-    $pedido->update([
-        'transporte_id' => $transporte->id,
-        'costo_envio' => $transporte->precio
-    ]);
+        $pedido->update([
+            'transporte_id' => $transporte->id,
+            'costo_envio' => $transporte->precio
+        ]);
 
-    return response()->json([
-        'success' => true,
-        'subtotal_productos' => number_format($pedido->total, 2),
-        'costo_envio' => number_format($pedido->costo_envio, 2),
-        'total_final' => number_format($pedido->total + $pedido->costo_envio, 2),
-        'cooperativa' => $transporte->cooperativa
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'subtotal_productos' => number_format($pedido->total, 2),
+            'costo_envio' => number_format($pedido->costo_envio, 2),
+            'total_final' => number_format($pedido->total + $pedido->costo_envio, 2),
+            'cooperativa' => $transporte->cooperativa
+        ]);
+    }
 
-/*public function asignarTransporte(Request $request, $id)
-{
-    $request->validate([
-        'transporte_id' => 'required|exists:transportes,id'
-    ]);
+    /*public function asignarTransporte(Request $request, $id)
+    {
+        $request->validate([
+            'transporte_id' => 'required|exists:transportes,id'
+        ]);
 
-    $pedido = Pedido::where('user_id', auth()->id())->findOrFail($id);
-    $transporte = Transporte::findOrFail($request->transporte_id);
+        $pedido = Pedido::where('user_id', auth()->id())->findOrFail($id);
+        $transporte = Transporte::findOrFail($request->transporte_id);
 
-    $pedido->update([
-        'transporte_id' => $transporte->id,
-        'costo_envio' => $transporte->precio
-    ]);
+        $pedido->update([
+            'transporte_id' => $transporte->id,
+            'costo_envio' => $transporte->precio
+        ]);
 
-    return response()->json([
-        'success' => true,
-        'nuevo_total' => number_format($pedido->total + $pedido->costo_envio, 2),
-        'costo_envio' => number_format($pedido->costo_envio, 2),
-        'cooperativa' => $transporte->cooperativa
-    ]);
-}*/
+        return response()->json([
+            'success' => true,
+            'nuevo_total' => number_format($pedido->total + $pedido->costo_envio, 2),
+            'costo_envio' => number_format($pedido->costo_envio, 2),
+            'cooperativa' => $transporte->cooperativa
+        ]);
+    }*/
 
-    // Lógica para subir el vaucher (Abono)
     public function subirPago(Request $request, $id)
     {
         

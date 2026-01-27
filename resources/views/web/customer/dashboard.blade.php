@@ -268,7 +268,7 @@
                                         <p class="small mb-0 text-muted">
                                             <strong class=" fs-6">Premio:</strong><br>
                                             {{ $n->premio_descripcion }} <br>
-                                            <span class="badge bg-light text-dark border mt-1 font-weight-normal fs-4">${{ number_format($n->premio_valor, 0) }}</span>
+                                            <!-- <span class="badge bg-light text-dark border mt-1 font-weight-normal fs-4">${{ number_format($n->premio_valor, 0) }}</span> -->
                                         </p>
                                     </div>
                                 </div>

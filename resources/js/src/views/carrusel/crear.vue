@@ -106,35 +106,91 @@
                                 />
                                 <span class="ml-2">Activar Botón de Acción</span>
                             </label>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Si se desactiva, se mostrará el botón "Iniciar sesión"
+                            </p>
                         </div>
 
-                        <!-- URL del botón -->
-                        <div v-if="form.activar_boton">
-                            <label for="url_boton" class="form-label">URL del Botón</label>
-                            <input
-                                id="url_boton"
-                                v-model="form.url_boton"
-                                type="url"
-                                class="form-input"
-                                :class="{ 'border-red-500': errors.url_boton }"
-                                placeholder="https://ejemplo.com"
-                            />
-                            <div v-if="errors.url_boton" class="text-red-500 text-sm mt-1">
-                                {{ errors.url_boton[0] }}
-                            </div>
-                        </div>
-
-                        <!-- Redirigir en la misma página -->
-                        <div v-if="form.activar_boton">
-                            <label for="redirigir_misma_pagina" class="flex items-center cursor-pointer">
+                        <!-- Sección de configuración del botón personalizado -->
+                        <div v-if="form.activar_boton" class="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                            <!-- Texto del botón -->
+                            <div>
+                                <label for="texto_boton" class="form-label">Texto del Botón</label>
                                 <input
-                                    id="redirigir_misma_pagina"
-                                    v-model="form.redirigir_misma_pagina"
-                                    type="checkbox"
-                                    class="form-checkbox"
+                                    id="texto_boton"
+                                    v-model="form.texto_boton"
+                                    type="text"
+                                    class="form-input"
+                                    :class="{ 'border-red-500': errors.texto_boton }"
+                                    placeholder="Ej: Ver más, Comprar ahora, Descubrir"
                                 />
-                                <span class="ml-2">Abrir en la misma página</span>
-                            </label>
+                                <div v-if="errors.texto_boton" class="text-red-500 text-sm mt-1">
+                                    {{ errors.texto_boton[0] }}
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Dejar vacío para usar "Ver más"
+                                </p>
+                            </div>
+
+                            <!-- Color del botón -->
+                            <div>
+                                <label for="color_boton" class="form-label">Color del Botón</label>
+                                <div class="flex items-center gap-4">
+                                    <input
+                                        id="color_boton"
+                                        v-model="form.color_boton"
+                                        type="color"
+                                        class="w-12 h-12 cursor-pointer rounded border"
+                                    />
+                                    <input
+                                        type="text"
+                                        v-model="form.color_boton"
+                                        class="form-input flex-1 font-mono"
+                                        :class="{ 'border-red-500': errors.color_boton }"
+                                        placeholder="#3B82F6"
+                                        pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                                    />
+                                    <div class="w-20 h-10 rounded border" :style="{ backgroundColor: form.color_boton || '#3B82F6' }"></div>
+                                </div>
+                                <div v-if="errors.color_boton" class="text-red-500 text-sm mt-1">
+                                    {{ errors.color_boton[0] }}
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Color en formato hexadecimal (ej: #3B82F6)
+                                </p>
+                            </div>
+
+                            <!-- URL del botón -->
+                            <div>
+                                <label for="url_boton" class="form-label">URL del Botón</label>
+                                <input
+                                    id="url_boton"
+                                    v-model="form.url_boton"
+                                    type="url"
+                                    class="form-input"
+                                    :class="{ 'border-red-500': errors.url_boton }"
+                                    placeholder="https://ejemplo.com"
+                                />
+                                <div v-if="errors.url_boton" class="text-red-500 text-sm mt-1">
+                                    {{ errors.url_boton[0] }}
+                                </div>
+                            </div>
+
+                            <!-- Redirigir en la misma página -->
+                            <div>
+                                <label for="redirigir_misma_pagina" class="flex items-center cursor-pointer">
+                                    <input
+                                        id="redirigir_misma_pagina"
+                                        v-model="form.redirigir_misma_pagina"
+                                        type="checkbox"
+                                        class="form-checkbox"
+                                    />
+                                    <span class="ml-2">Abrir en la misma página</span>
+                                </label>
+                                <p class="text-sm text-gray-500 ml-6 mt-1">
+                                    Si está desactivado, se abrirá en una nueva pestaña
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -217,6 +273,8 @@ interface CarruselFormData {
     activar_subtitulo: boolean
     activar_boton: boolean
     url_boton: string
+    texto_boton: string
+    color_boton: string
     redirigir_misma_pagina: boolean
     posicion_contenido: string
     imagen: File | null
@@ -241,6 +299,8 @@ const form = reactive<CarruselFormData>({
     activar_subtitulo: true,
     activar_boton: false,
     url_boton: '',
+    texto_boton: '',
+    color_boton: '#3B82F6',
     redirigir_misma_pagina: false,
     posicion_contenido: '',
     imagen: null,
@@ -267,6 +327,12 @@ const submitForm = async () => {
         formData.append('subtitulo', form.subtitulo || '')
         formData.append('activar_subtitulo', form.activar_subtitulo ? '1' : '0')
         formData.append('activar_boton', form.activar_boton ? '1' : '0')
+        
+        // Nuevos campos del botón
+        formData.append('texto_boton', form.texto_boton || '')
+        formData.append('color_boton', form.color_boton || '#3B82F6')
+        
+        // Campos existentes
         formData.append('url_boton', form.url_boton || '')
         formData.append('redirigir_misma_pagina', form.redirigir_misma_pagina ? '1' : '0')
         formData.append('posicion_contenido', form.posicion_contenido)
@@ -298,11 +364,7 @@ const submitForm = async () => {
             router.push('/administrador/carrusel')
         } else {
             if (data.errors) {
-                if (typeof data.errors === 'object') {
-                    errors.value = data.errors
-                } else {
-                    throw new Error(data.message || 'Error de validación')
-                }
+                errors.value = data.errors
             } else {
                 throw new Error(data.message || 'Error al crear el carrusel')
             }
@@ -337,6 +399,29 @@ onMounted(() => {
 })
 </script>
 
+<style scoped>
+input[type="color"] {
+    -webkit-appearance: none;
+    border: 2px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 0.25rem;
+}
+
+/* Estilo para el visualizador de color */
+.w-20.h-10 {
+    min-width: 5rem;
+}
+</style>
+
 <style>
 .custom-file-container {
     border: 2px dashed #d1d5db;
@@ -352,4 +437,19 @@ onMounted(() => {
     content: ' *';
     color: #ef4444;
 }
+.custom-file-container {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.custom-file-container.border-red-500 {
+    border-color: #ef4444 !important;
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: #ef4444;
+}
+
 </style>

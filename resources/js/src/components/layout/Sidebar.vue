@@ -566,7 +566,7 @@
                             </ul>
                         </li>
 
-                        <!-- Métodos de Pago -->
+                       <!-- Métodos de Pago -->
                         <li class="menu nav-item">
                             <button
                                 type="button"
@@ -593,10 +593,110 @@
                             <vue-collapsible :isOpen="activeDropdown === 'metodos-pago'">
                                 <ul class="sub-menu text-gray-500">
                                     <li>
-                                        <router-link to="/administrador/metodos-pago" @click="toggleMobileMenu">Lista de Métodos</router-link>
+                                        <router-link to="/administrador/metodos-pago">
+                                            Lista de Métodos
+                                        </router-link>
                                     </li>
                                     <li>
-                                        <router-link to="/administrador/metodos-pago/crear" @click="toggleMobileMenu">Agregar Método</router-link>
+                                        <router-link to="/administrador/metodos-pago/crear">
+                                            Agregar Método
+                                        </router-link>
+                                    </li>
+                                </ul>
+                            </vue-collapsible>
+                        </li>
+
+                        <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'transportes' }"
+                                @click="activeDropdown === 'transportes' ? (activeDropdown = null) : (activeDropdown = 'transportes')"
+                            >
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 3H1V16H16V3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M16 8H20L23 11V16H16V8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.5 21C6.88071 21 8 19.8807 8 18.5C8 17.1193 6.88071 16 5.5 16C4.11929 16 3 17.1193 3 18.5C3 19.8807 4.11929 21 5.5 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M18.5 21C19.8807 21 21 19.8807 21 18.5C21 17.1193 19.8807 16 18.5 16C17.1193 16 16 17.1193 16 18.5C16 19.8807 17.1193 21 18.5 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Transportes</span>
+                                </div>
+                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'transportes' }">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <vue-collapsible :isOpen="activeDropdown === 'transportes'">
+                                <ul class="sub-menu text-gray-500">
+                                    <li>
+                                        <router-link 
+                                            to="/administrador/transportes" 
+                                        >
+                                            Lista de Transportes
+                                        </router-link>
+                                    </li>
+                                    <li>
+                                        <router-link 
+                                            to="/administrador/transportes/crear" 
+                                        >
+                                            Agregar Transporte
+                                        </router-link>
+                                    </li>
+                                </ul>
+                            </vue-collapsible>
+                        </li>
+
+                        <!-- Panel de Pedidos -->
+                        <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'pedidos-admin' }"
+                                @click="activeDropdown === 'pedidos-admin' ? (activeDropdown = null) : (activeDropdown = 'pedidos-admin')"
+                            >
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M9 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M9 19H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                        <circle cx="5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                        <circle cx="5" cy="19" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Gestión de Pedidos</span>
+                                </div>
+                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'pedidos-admin' }">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <vue-collapsible :isOpen="activeDropdown === 'pedidos-admin'">
+                                <ul class="sub-menu text-gray-500">
+                                    <li>
+                                        <router-link to="/administrador/pedidos">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="ltr:mr-2 rtl:ml-2">
+                                                <path d="M9 5H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                <path d="M9 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                <path d="M9 19H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                <circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                                <circle cx="5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                                <circle cx="5" cy="19" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                            </svg>
+                                            Lista de Pedidos
+                                        </router-link>
+                                    </li>
+                                    <li>
+                                        <router-link to="/administrador/pedidos/pagos-pendientes">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="ltr:mr-2 rtl:ml-2">
+                                                <path d="M9 12H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                <path d="M12 9V15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                                            </svg>
+                                            Pagos Pendientes
+                                        </router-link>
                                     </li>
                                 </ul>
                             </vue-collapsible>
@@ -611,7 +711,7 @@
 
 <script lang="ts" setup>
     import { ref, onMounted, computed } from 'vue';
-
+    import { nextTick } from 'vue';
     import { useAppStore } from '../../stores/index';
     import { useAuthStore } from '../../stores/auth';
     import VueCollapsible from 'vue-height-collapsible/vue3';
@@ -638,7 +738,8 @@
         }
     });
 
-    const toggleMobileMenu = () => {
+    const toggleMobileMenu = async () => {
+        await nextTick();
         if (window.innerWidth < 1024) {
             store.toggleSidebar();
         }

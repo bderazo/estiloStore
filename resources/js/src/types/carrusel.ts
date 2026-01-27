@@ -1,10 +1,12 @@
-export interface Carrusel {
+interface Carrusel {
     id: number
     titulo: string
     subtitulo: string | null
     activar_subtitulo: boolean
     activar_boton: boolean
     url_boton: string | null
+    texto_boton: string | null          // NUEVO
+    color_boton: string | null          // NUEVO
     redirigir_misma_pagina: boolean
     posicion_contenido: 'Izquierda' | 'Derecha'
     imagen: string | null
@@ -12,6 +14,9 @@ export interface Carrusel {
     estado: boolean
     created_at: string
     updated_at: string
+    // Campos formateados (opcionales)
+    texto_boton_formateado?: string     // NUEVO (opcional)
+    color_boton_formateado?: string     // NUEVO (opcional)
 }
 
 export interface CarruselFormData {

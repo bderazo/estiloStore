@@ -96,31 +96,79 @@
                                 />
                                 <span class="ml-2">Activar Botón de Acción</span>
                             </label>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Si se desactiva, se mostrará el botón "Iniciar sesión"
+                            </p>
                         </div>
 
-                        <!-- URL del botón -->
-                        <div v-if="form.activar_boton">
-                            <label for="url_boton" class="form-label">URL del Botón</label>
-                            <input
-                                id="url_boton"
-                                v-model="form.url_boton"
-                                type="url"
-                                class="form-input"
-                                placeholder="https://ejemplo.com"
-                            />
-                        </div>
-
-                        <!-- Redirigir en la misma página -->
-                        <div v-if="form.activar_boton">
-                            <label for="redirigir_misma_pagina" class="flex items-center cursor-pointer">
+                        <!-- Sección de configuración del botón personalizado -->
+                        <div v-if="form.activar_boton" class="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                            <!-- Texto del botón -->
+                            <div>
+                                <label for="texto_boton" class="form-label">Texto del Botón</label>
                                 <input
-                                    id="redirigir_misma_pagina"
-                                    v-model="form.redirigir_misma_pagina"
-                                    type="checkbox"
-                                    class="form-checkbox"
+                                    id="texto_boton"
+                                    v-model="form.texto_boton"
+                                    type="text"
+                                    class="form-input"
+                                    placeholder="Ej: Ver más, Comprar ahora, Descubrir"
                                 />
-                                <span class="ml-2">Abrir en la misma página</span>
-                            </label>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Dejar vacío para usar "Ver más"
+                                </p>
+                            </div>
+
+                            <!-- Color del botón -->
+                            <div>
+                                <label for="color_boton" class="form-label">Color del Botón</label>
+                                <div class="flex items-center gap-4">
+                                    <input
+                                        id="color_boton"
+                                        v-model="form.color_boton"
+                                        type="color"
+                                        class="w-12 h-12 cursor-pointer rounded border"
+                                    />
+                                    <input
+                                        type="text"
+                                        v-model="form.color_boton"
+                                        class="form-input flex-1 font-mono"
+                                        placeholder="#3B82F6"
+                                        pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                                    />
+                                    <div class="w-20 h-10 rounded border" :style="{ backgroundColor: form.color_boton || '#3B82F6' }"></div>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Color en formato hexadecimal (ej: #3B82F6)
+                                </p>
+                            </div>
+
+                            <!-- URL del botón -->
+                            <div>
+                                <label for="url_boton" class="form-label">URL del Botón</label>
+                                <input
+                                    id="url_boton"
+                                    v-model="form.url_boton"
+                                    type="url"
+                                    class="form-input"
+                                    placeholder="https://ejemplo.com"
+                                />
+                            </div>
+
+                            <!-- Redirigir en la misma página -->
+                            <div>
+                                <label for="redirigir_misma_pagina" class="flex items-center cursor-pointer">
+                                    <input
+                                        id="redirigir_misma_pagina"
+                                        v-model="form.redirigir_misma_pagina"
+                                        type="checkbox"
+                                        class="form-checkbox"
+                                    />
+                                    <span class="ml-2">Abrir en la misma página</span>
+                                </label>
+                                <p class="text-sm text-gray-500 ml-6 mt-1">
+                                    Si está desactivado, se abrirá en una nueva pestaña
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,6 +293,8 @@ interface CarruselFormData {
     activar_subtitulo: boolean
     activar_boton: boolean
     url_boton: string
+    texto_boton: string
+    color_boton: string
     redirigir_misma_pagina: boolean
     posicion_contenido: string
     imagen: File | null
@@ -278,7 +328,9 @@ const form = reactive<CarruselFormData>({
     posicion_contenido: '',
     imagen: null,
     imagen_url: '',
-    estado: true
+    estado: true,
+    texto_boton: '',
+    color_boton: '#3B82F6'
 })
 
 // Métodos
@@ -294,7 +346,23 @@ const loadCarrusel = async () => {
         const data = await response.json()
 
         if (data.success) {
-            Object.assign(form, data.data)
+            // Mapear los datos del API al formulario
+            form.id = data.data.id
+            form.titulo = data.data.titulo || ''
+            form.subtitulo = data.data.subtitulo || ''
+            form.activar_subtitulo = data.data.activar_subtitulo !== false
+            form.activar_boton = data.data.activar_boton || false
+            
+            // Nuevos campos para el botón
+            form.texto_boton = data.data.texto_boton || ''
+            form.color_boton = data.data.color_boton || '#3B82F6' // Color por defecto
+            
+            // Campos existentes
+            form.url_boton = data.data.url_boton || ''
+            form.redirigir_misma_pagina = data.data.redirigir_misma_pagina || false
+            form.posicion_contenido = data.data.posicion_contenido || ''
+            form.imagen_url = data.data.imagen_url || ''
+            form.estado = data.data.estado !== false
         } else {
             throw new Error(data.message)
         }
@@ -361,6 +429,12 @@ const submitForm = async () => {
         formData.append('subtitulo', form.subtitulo || '')
         formData.append('activar_subtitulo', form.activar_subtitulo ? '1' : '0')
         formData.append('activar_boton', form.activar_boton ? '1' : '0')
+        
+        // Nuevos campos del botón
+        formData.append('texto_boton', form.texto_boton || '')
+        formData.append('color_boton', form.color_boton || '#3B82F6')
+        
+        // Campos existentes
         formData.append('url_boton', form.url_boton || '')
         formData.append('redirigir_misma_pagina', form.redirigir_misma_pagina ? '1' : '0')
         formData.append('posicion_contenido', form.posicion_contenido)
@@ -373,7 +447,7 @@ const submitForm = async () => {
         }
 
         const response = await fetch(`/tienda/public/api/carrusel/${form.id}`, {
-            method: 'POST', // Usar POST con _method para manejar archivos
+            method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Accept': 'application/json'
@@ -394,11 +468,7 @@ const submitForm = async () => {
             router.push('/administrador/carrusel')
         } else {
             if (data.errors) {
-                if (typeof data.errors === 'object') {
-                    errors.value = data.errors
-                } else {
-                    throw new Error(data.message || 'Error de validación')
-                }
+                errors.value = data.errors
             } else {
                 throw new Error(data.message || 'Error al actualizar el carrusel')
             }
@@ -431,5 +501,20 @@ onMounted(() => {
 .form-label.required::after {
     content: ' *';
     color: #ef4444;
+}
+input[type="color"] {
+    -webkit-appearance: none;
+    border: 2px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 0.25rem;
 }
 </style>

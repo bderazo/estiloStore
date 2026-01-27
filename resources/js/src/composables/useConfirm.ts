@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
-interface ConfirmOptions {
+export interface ConfirmOptions {
     title: string;
     message: string;
     type?: 'danger' | 'warning' | 'info' | 'success';

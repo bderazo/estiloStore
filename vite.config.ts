@@ -14,6 +14,7 @@ export default defineConfig({
         vue({
             template: {
                 transformAssetUrls: {
+                    base: null,
                     includeAbsolute: false,
                 },
             },
@@ -30,4 +31,11 @@ export default defineConfig({
     optimizeDeps: {
         include: ["quill"],
     },
+    build: {
+        manifest: true,
+        outDir: 'public/build',
+        rollupOptions: {
+            input: 'resources/js/src/main.ts'
+        }
+    }
 });

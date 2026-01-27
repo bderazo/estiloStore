@@ -165,7 +165,7 @@ const routes: RouteRecordRaw[] = [
         name: 'banners.index',
         component: () => import('../views/banners/index.vue'),
         meta: {
-            permission: 'banners.index',
+            permission: 'carrusel.index',
             title: 'Banners'
         }
     },
@@ -174,7 +174,7 @@ const routes: RouteRecordRaw[] = [
         name: 'banners.crear',
         component: () => import('../views/banners/crear.vue'),
         meta: {
-            permission: 'banners.create',
+            permission: 'carrusel.create',
             title: 'Crear Banner'
         }
     },
@@ -183,110 +183,86 @@ const routes: RouteRecordRaw[] = [
         name: 'banners.editar',
         component: () => import('../views/banners/editar.vue'),
         meta: {
-            permission: 'banners.edit',
+            permission: 'carrusel.edit',
             title: 'Editar Banner'
         }
     },
 
     // Sistema de Folletos (Catálogo)
-     {
-      path: '/administrador/folletos',
-      name: 'folletos.index',
-      component: () => import('../views/folletos/index.vue'),
-      meta: { 
-        // requiresAuth: true,
-        permission: 'folletos.index',
-        title: 'Folletos y Catálogos'
-      }
-    },
     {
-      path: '/administrador/folletos/crear',
-      name: 'folletos.crear',
-      component: () => import('../views/folletos/crear.vue'),
-      meta: { 
-        // requiresAuth: true,
-        permission: 'folletos.create',
-        title: 'Nuevo Folleto'
-      }
-    },
-    {
-      path: '/administrador/folletos/:id/editar',
-      name: 'folletos.editar',
-      component: () => import('../views/folletos/editar.vue'),
-      meta: { 
-        // requiresAuth: true,
-        permission: 'folletos.edit',
-        title: 'Editar Folleto'
-      }
-    },
-    {
-      path: '/administrador/folletos/estadisticas',
-      name: 'folletos.estadisticas',
-      component: () => import('../views/folletos/Estadisticas.vue'),
-      meta: { 
-        // requiresAuth: true,
-        permission: 'folletos.estadisticas',
-        title: 'Estadísticas de Folletos'
-      }
-    },
-
-    {
-        path: '/administrador/metodos-pago',
-        name: 'administrador.metodos-pago.index',
-        component: () => import('../views/metodos-pago/index.vue'),
+        path: '/administrador/folletos',
+        name: 'folletos.index',
+        component: () => import('../views/folletos/index.vue'),
         meta: {
-            permission: 'metodos-pago.index',
-            title: 'Métodos de Pago'
+            permission: 'carrusel.index',
+            title: 'Folletos y Catálogos'
         }
     },
     {
-        path: '/administrador/metodos-pago/crear',
-        name: 'administrador.metodos-pago.crear',
-        component: () => import('../views/metodos-pago/crear.vue'),
+        path: '/administrador/folletos/crear',
+        name: 'folletos.crear',
+        component: () => import('../views/folletos/crear.vue'),
         meta: {
-            permission: 'metodos-pago.create',
-            title: 'Nuevo Método de Pago'
+            permission: 'carrusel.create',
+            title: 'Nuevo Folleto'
         }
     },
     {
-        path: '/administrador/metodos-pago/editar/:id',
-        name: 'administrador.metodos-pago.editar',
-        component: () => import('../views/metodos-pago/editar.vue'),
-        props: true,
+        path: '/administrador/folletos/:id/editar',
+        name: 'folletos.editar',
+        component: () => import('../views/folletos/editar.vue'),
         meta: {
-            permission: 'metodos-pago.edit',
-            title: 'Editar Método de Pago'
+            permission: 'carrusel.edit',
+            title: 'Editar Folleto'
+        }
+    },
+    {
+        path: '/administrador/folletos/estadisticas',
+        name: 'folletos.estadisticas',
+        component: () => import('../views/folletos/Estadisticas.vue'),
+        meta: {
+            permission: 'carrusel.edit',
+            title: 'Estadísticas de Folletos'
         }
     },
 
-    // Sistema de Empresa (Información general)
+    // Sistema de Empresa (Información general) - ¡ESTAS SON LAS QUE FUNCIONAN!
     {
-      path: '/administrador/empresa',
-      name: 'empresa-datos',
-      component: () => import('../views/empresa/index.vue'),
-      meta: { title: 'Datos de Empresa' }
+        path: '/administrador/empresa',
+        name: 'empresa-datos',
+        component: () => import('../views/empresa/index.vue'),
+        meta: {
+            permission: 'carrusel.index',  // ¡AGREGA EL PERMISO!
+            title: 'Datos de Empresa'
+        }
     },
     {
-      path: '/administrador/empresa/crear',
-      name: 'empresa-datos-crear',
-      component: () => import('../views/empresa/crear.vue'),
-      meta: { title: 'Crear Dato' }
+        path: '/administrador/empresa/crear',
+        name: 'empresa-datos-crear',
+        component: () => import('../views/empresa/crear.vue'),
+        meta: {
+            permission: 'carrusel.create',  // ¡AGREGA EL PERMISO!
+            title: 'Crear Dato'
+        }
     },
     {
-      path: '/administrador/empresa/:id/editar',
-      name: 'empresa-datos-editar',
-      component: () => import('../views/empresa/editar.vue'),
-      meta: { title: 'Editar Dato' },
-      props: true
+        path: '/administrador/empresa/:id/editar',
+        name: 'empresa-datos-editar',
+        component: () => import('../views/empresa/editar.vue'),
+        meta: {
+            permission: 'carrusel.edit',  // ¡AGREGA EL PERMISO!
+            title: 'Editar Dato'
+        },
+        props: true
     },
 
-    // Sistema de Métodos de Pago
+    // Sistema de Métodos de Pago - ¡CORREGIDO Y UNIFICADO!
     {
         path: '/administrador/metodos-pago',
         name: 'metodos-pago.index',
         component: () => import('../views/metodos-pago/index.vue'),
         meta: {
-            permission: 'metodos-pago.index',
+            permission: 'carrusel.index',
             title: 'Métodos de Pago'
         }
     },
@@ -295,7 +271,7 @@ const routes: RouteRecordRaw[] = [
         name: 'metodos-pago.crear',
         component: () => import('../views/metodos-pago/crear.vue'),
         meta: {
-            permission: 'metodos-pago.create',
+            permission: 'carrusel.create',
             title: 'Crear Método de Pago'
         }
     },
@@ -304,9 +280,64 @@ const routes: RouteRecordRaw[] = [
         name: 'metodos-pago.editar',
         component: () => import('../views/metodos-pago/editar.vue'),
         meta: {
-            permission: 'metodos-pago.edit',
+            permission: 'carrusel.edit',
             title: 'Editar Método de Pago'
         }
+    },
+
+    {
+        path: '/administrador/transportes',
+        name: 'transportes.index',
+        component: () => import('../views/transportes/index.vue'),
+        meta: { 
+            permission: 'carrusel.index',
+            title: 'Gestión de Transportes',
+        }
+    },
+    {
+        path: '/administrador/transportes/crear',
+        name: 'transportes.crear',
+        component: () => import('../views/transportes/FormView.vue'),
+        meta: { 
+            permission: 'carrusel.create',
+            title: 'Nueva Ruta de Transporte',
+        }
+    },
+    {
+        path: '/administrador/transportes/:id/editar',
+        name: 'transportes.editar',
+        component: () => import('../views/transportes/FormView.vue'),
+        props: true,
+        meta: { 
+            permission: 'carrusel.edit',
+            title: 'Editar Transporte',
+        }
+    },
+
+    {
+        path: '/administrador/pedidos',
+        name: 'pedidos.index',
+        component: () => import('../views/pedidos/Index.vue'),
+        meta: { title: 'Lista de Pedidos', auth: true, admin: true }
+    },
+    {
+        path: '/administrador/pedidos/:id',
+        name: 'pedidos.show',
+        component: () => import('../views/pedidos/Show.vue'),
+        props: true,
+        meta: { title: 'Detalle de Pedido', auth: true, admin: true }
+    },
+    {
+        path: '/administrador/pedidos/pagos-pendientes',
+        name: 'pedidos.pagos-pendientes',
+        component: () => import('../views/pedidos/PedidosPagosPendientes.vue'),
+        meta: { title: 'Pagos Pendientes', auth: true, admin: true }
+    },
+    {
+        path: '/administrador/pedidos/estadisticas',
+        name: 'pedidos.estadisticas',
+        component: () => import('../views/pedidos/PedidosEstadisticas.vue'),
+        meta: { title: 'Estadísticas de Pedidos', auth: true, admin: true }
     },
 
     // Sistema de Categorías

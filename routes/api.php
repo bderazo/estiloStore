@@ -22,6 +22,8 @@ use App\Http\Controllers\API\SaborController;
 use App\Http\Controllers\API\ModeloController;
 use App\Http\Controllers\API\TonoController;
 use App\Http\Controllers\API\ArticuloController;
+use App\Http\Controllers\API\ReporteController;
+use App\Http\Controllers\API\TransporteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -311,6 +313,52 @@ Route::middleware(['jwt.auth'])->group(function () {
             Route::post('/decrementar', [ArticuloController::class, 'decrementarStock'])->middleware('permission:articulos.decrementar_stock');
         });
     });
+
+    // Reportes API
+    Route::prefix('reportes')->group(function () {
+        Route::get('/dashboard', [ReporteController::class, 'dashboard']);
+        Route::get('/pedidos/estadisticas', [ReporteController::class, 'estadisticasPedidos']);
+        Route::get('/pedidos/detallado', [ReporteController::class, 'listadoPedidos']);
+        Route::get('/reservas/estadisticas', [ReporteController::class, 'estadisticasReservas']);
+        Route::get('/reservas/detallado', [ReporteController::class, 'listadoReservas']);
+        Route::get('/ventas-mensuales', [ReporteController::class, 'ventasMensuales']);
+        Route::get('/emprendedoras', [ReporteController::class, 'reporteEmprendedoras']);
+        Route::get('/estadisticas-pedidos-simple', [ReporteController::class, 'estadisticasPedidosSimple']);
+        Route::get('/ordenes-recientes', [ReporteController::class, 'ordenesRecientes']);
+        Route::get('/top-productos', [ReporteController::class, 'topProductos']);
+        Route::get('/dashboard-completo', [ReporteController::class, 'dashboardCompleto']);
+    });
+
+    // Rutas públicas (para checkout)
+    Route::prefix('transportes')->group(function () {
+        // Rutas públicas
+        Route::get('/rutas/disponibles', [TransporteController::class, 'rutasDisponibles']);
+        Route::get('/cooperativas', [TransporteController::class, 'cooperativas']);
+        
+        // Rutas protegidas
+        Route::get('/', [TransporteController::class, 'index']);
+        Route::get('/estadisticas', [TransporteController::class, 'estadisticas']); // ✅ AÑADIR ESTA RUTA
+        Route::post('/', [TransporteController::class, 'store']);
+        Route::get('/{transporte}', [TransporteController::class, 'show']);
+        Route::put('/{transporte}', [TransporteController::class, 'update']);
+        Route::delete('/{transporte}', [TransporteController::class, 'destroy']);
+        Route::patch('/{transporte}/toggle-estado', [TransporteController::class, 'toggleEstado']);
+        Route::patch('/{id}/restore', [TransporteController::class, 'restore']);
+    });
+
+    // Pedidos
+    Route::get('/pedidos', [AdminPedidoController::class, 'index']);
+    Route::get('/pedidos/{id}', [AdminPedidoController::class, 'show']);
+    Route::get('/pedidos/{id}/pagos', [AdminPedidoController::class, 'pagos']);
+    Route::get('/pedidos/estados', [AdminPedidoController::class, 'estados']);
+    
+    // Pagos
+    Route::post('/pagos/{id}/aprobar', [AdminPedidoController::class, 'aprobarPago']);
+    Route::post('/pagos/{id}/rechazar', [AdminPedidoController::class, 'rechazarPago']);
+    Route::get('/pagos/pendientes/count', [AdminPedidoController::class, 'pagosPendientesCount']);
+    
+    // Estadísticas
+    Route::get('/pedidos/estadisticas', [AdminPedidoController::class, 'estadisticas']);
 
     // Ruta de inicio/dashboard
     Route::get('/dashboard', function (Request $request) {

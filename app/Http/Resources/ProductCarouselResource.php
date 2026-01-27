@@ -23,15 +23,24 @@ class ProductCarouselResource extends JsonResource
             'titulo' => $this->titulo,
             'slug' => Str::slug($this->titulo ?? (string) $this->id),
             'alt_text' => $this->resolveAltText(),
-          
             'subtitulo' => $this->subtitulo,
-            'boton' => [
-                'visible' => (bool) $this->activar_boton,
-                'texto' => $this->activar_boton ? (data_get($this, 'boton_texto') ?? __('Ver más')) : null,
-                'url' => $this->url_boton,
-                'nueva_pestana' => ! $this->redirigir_misma_pagina,
-            ],
+            'texto_destacado' => $this->subtitulo,
+            
+            // CAMPOS NUEVOS - Asegurar que existan
+            'activar_boton' => $this->activar_boton ?? false,
+            'url_boton' => $this->url_boton ?? null,
+            'texto_boton' => $this->texto_boton ?? null,      // Asegurar que use el campo correcto
+            'color_boton' => $this->color_boton ?? '#3B82F6', // Valor por defecto
+            'redirigir_misma_pagina' => $this->redirigir_misma_pagina ?? false,
             'posicion_contenido' => $this->posicion_contenido,
+            
+            // Estructura antigua para compatibilidad
+            'boton' => [
+                'visible' => (bool) ($this->activar_boton ?? false),
+                'texto' => $this->texto_boton ?? __('Ver más'), // Usar texto_boton
+                'url' => $this->url_boton ?? null,
+                'nueva_pestana' => ! ($this->redirigir_misma_pagina ?? false),
+            ],
             'imagenes' => $variants,
         ];
     }

@@ -54,10 +54,11 @@
             <div v-else-if="carruseles.length > 0" class="table-responsive">
                 <table class="table-hover">
                     <thead>
-                        <tr>
+                       <tr>
                             <th>Imagen</th>
                             <th>Título</th>
                             <th>Subtítulo</th>
+                            <th>Botón</th> <!-- NUEVA COLUMNA -->
                             <th>Posición</th>
                             <th>Estado</th>
                             <th>Creado</th>
@@ -83,10 +84,39 @@
                             </td>
                             <td>
                                 <div class="font-semibold">{{ carrusel.titulo }}</div>
-                                <div v-if="carrusel.activar_boton && carrusel.url_boton" class="text-xs text-gray-500">
-                                    <a :href="carrusel.url_boton" target="_blank" class="text-primary hover:underline">
-                                        Ver enlace
-                                    </a>
+                                <div v-if="carrusel.activar_boton" class="mt-1 space-y-1">
+                                    <!-- Mostrar botón personalizado si está activo -->
+                                    <div v-if="carrusel.url_boton" class="flex items-center gap-2">
+                                        <!-- Visualización del color -->
+                                        <div 
+                                            class="w-4 h-4 rounded-full border border-gray-300"
+                                            :style="{ backgroundColor: carrusel.color_boton_formateado || carrusel.color_boton || '#3B82F6' }"
+                                        ></div>
+                                        <!-- Texto del botón -->
+                                        <span class="text-xs font-medium text-gray-700">
+                                            {{ carrusel.texto_boton_formateado || carrusel.texto_boton || 'Ver más' }}
+                                        </span>
+                                        <!-- Enlace -->
+                                        <a 
+                                            :href="carrusel.url_boton" 
+                                            target="_blank" 
+                                            class="text-xs text-primary hover:underline ml-1"
+                                            title="Ver enlace"
+                                        >
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <div v-else class="text-xs text-gray-500 italic">
+                                        Sin enlace configurado
+                                    </div>
+                                    <!-- Mostrar si abre en nueva pestaña -->
+                                    <div v-if="carrusel.activar_boton && carrusel.url_boton" class="text-xs text-gray-500">
+                                        <span :class="carrusel.redirigir_misma_pagina ? 'text-yellow-600' : 'text-blue-600'">
+                                            {{ carrusel.redirigir_misma_pagina ? 'Misma página' : 'Nueva pestaña' }}
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
                             <td>
@@ -203,6 +233,8 @@ interface Carrusel {
     activar_subtitulo: boolean
     activar_boton: boolean
     url_boton: string | null
+    texto_boton: string | null          // NUEVO
+    color_boton: string | null          // NUEVO
     redirigir_misma_pagina: boolean
     posicion_contenido: 'Izquierda' | 'Derecha'
     imagen: string | null
@@ -210,6 +242,9 @@ interface Carrusel {
     estado: boolean
     created_at: string
     updated_at: string
+    // Campos formateados (opcionales)
+    texto_boton_formateado?: string     // NUEVO (opcional)
+    color_boton_formateado?: string     // NUEVO (opcional)
 }
 
 interface CarruselFilters {

@@ -12,7 +12,7 @@
                     </p>
                 </div>
                 <router-link
-                    :to="{ name: 'administrador.metodos-pago.index' }"
+                    to="/administrador/metodos-pago"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:bg-gray-100 transition"
                 >
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -380,7 +380,7 @@
                                 <!-- Botones -->
                                 <div class="flex items-center justify-end space-x-4 pt-6 border-t dark:border-gray-700">
                                     <router-link
-                                        :to="{ name: 'administrador.metodos-pago.index' }"
+                                        to="/administrador/metodos-pago"
                                         class="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition"
                                     >
                                         Cancelar

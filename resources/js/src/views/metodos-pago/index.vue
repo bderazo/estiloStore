@@ -82,7 +82,7 @@
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <!-- Botón Nuevo -->
                     <router-link 
-                        :to="{ name: 'administrador.metodos-pago.crear' }"
+                        to="/administrador/metodos-pago/crear"
                         class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 disabled:opacity-25 transition"
                     >
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +221,7 @@
                                 </p>
                                 <div class="mt-6">
                                     <router-link
-                                        :to="{ name: 'administrador.metodos-pago.crear' }"
+                                        to="/administrador/metodos-pago/crear"
                                         class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                     >
                                         <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,7 +322,7 @@
                                 <div class="flex items-center space-x-2">
                                     <!-- Editar -->
                                     <router-link
-                                        :to="{ name: 'administrador.metodos-pago.editar', params: { id: metodo.id } }"
+                                        :to="`/administrador/metodos-pago/${metodo.id}/editar`"
                                         class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                                         title="Editar"
                                     >
@@ -480,17 +480,32 @@ const confirmDelete = (metodo: MetodoPago) => {
     });
 };
 
-const getImageUrl = (path: string) => {
+const getImageUrl = (path: string | null | undefined): string => {
+    // Si no hay ruta, retorna un placeholder
     if (!path) return '/assets/images/placeholder.png';
     
-    // Si ya es una URL completa, retornarla
-    if (path.startsWith('http')) return path;
+    // Si ya es una URL completa, retórnala tal cual
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path;
+    }
     
-    // Si la ruta ya incluye /storage/, limpiarla
-    const cleanPath = path.replace(/^\/?storage\//, '');
+    // Obtén la URL base desde las variables de entorno
+    const APP_URL = import.meta.env.VITE_APP_URL || 'http://127.0.0.1/tienda/public';
     
-    // Retornar la ruta correcta
-    return `http://127.0.0.1/tienda/public/storage/${cleanPath}`;
+    // Limpia la ruta
+    let cleanPath = path;
+    
+    // Remueve "/storage/" si existe al inicio
+    if (cleanPath.startsWith('/storage/')) {
+        cleanPath = cleanPath.substring('/storage/'.length);
+    } 
+    // Remueve "storage/" si existe al inicio
+    else if (cleanPath.startsWith('storage/')) {
+        cleanPath = cleanPath.substring('storage/'.length);
+    }
+    
+    // Construye y retorna la URL completa
+    return `${APP_URL}/storage/${cleanPath}`;
 };
 
 // Lifecycle
