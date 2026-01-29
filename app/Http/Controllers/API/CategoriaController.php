@@ -9,7 +9,7 @@ use App\Http\Resources\CategoriaResource;
 use App\Models\Categoria;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 class CategoriaController extends Controller
 {
     /**
@@ -29,10 +29,10 @@ class CategoriaController extends Controller
             }
 
             if ($request->has('search') && $request->search !== '') {
-                $query->where(function($q) use ($request) {
+                $query->where(function ($q) use ($request) {
                     $q->where('nombre', 'like', '%' . $request->search . '%')
-                      ->orWhere('descripcion', 'like', '%' . $request->search . '%')
-                      ->orWhere('slug', 'like', '%' . $request->search . '%');
+                        ->orWhere('descripcion', 'like', '%' . $request->search . '%')
+                        ->orWhere('slug', 'like', '%' . $request->search . '%');
                 });
             }
 
@@ -96,9 +96,16 @@ class CategoriaController extends Controller
         try {
             $data = $request->validated();
 
-            // Si no se especifica orden, usar el siguiente disponible
+            if ($request->hasFile('imagen')) {
+                $path = $request->file('imagen')->store('categorias', 'public');
+                $data['imagen'] = $path; // Esto guardará: "categorias/nombre-imagen.jpg"
+
+            }
+
             if (!isset($data['orden'])) {
-                $data['orden'] = Categoria::where('parent_id', $data['parent_id'])->max('orden') + 1;
+                $maxOrden = Categoria::where('parent_id', $data['parent_id'] ?? null)
+                    ->max('orden') ?? 0;
+                $data['orden'] = $maxOrden + 1;
             }
 
             $categoria = Categoria::create($data);
@@ -113,7 +120,7 @@ class CategoriaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear la categoría',
+                'message' => 'Error al crear la categoría: ' . $e->getMessage(),
                 'data' => null,
                 'errors' => $e->getMessage()
             ], 500);
@@ -155,6 +162,28 @@ class CategoriaController extends Controller
         try {
             $data = $request->validated();
 
+            // Manejar eliminación de imagen
+            if ($request->has('imagen_eliminar') && $request->imagen_eliminar) {
+                // Eliminar imagen anterior si existe
+                if ($categoria->imagen) {
+                    Storage::disk('public')->delete($categoria->imagen);
+                    $data['imagen'] = null;
+                }
+            }
+
+            // Manejar nueva imagen si existe
+            if ($request->hasFile('imagen')) {
+                // Eliminar imagen anterior si existe
+                if ($categoria->imagen) {
+                    Storage::disk('public')->delete($categoria->imagen);
+                }
+
+                // Guardar nueva imagen
+                $path = $request->file('imagen')->store('categorias', 'public');
+                $data['imagen'] = $path;
+            }
+
+            // Actualizar categoría
             $categoria->update($data);
             $categoria->load(['parent', 'children']);
 
@@ -163,11 +192,11 @@ class CategoriaController extends Controller
                 'message' => 'Categoría actualizada exitosamente',
                 'data' => new CategoriaResource($categoria),
                 'errors' => null
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar la categoría',
+                'message' => 'Error al actualizar la categoría: ' . $e->getMessage(),
                 'data' => null,
                 'errors' => $e->getMessage()
             ], 500);

@@ -688,16 +688,6 @@
                                             Lista de Pedidos
                                         </router-link>
                                     </li>
-                                    <li>
-                                        <router-link to="/administrador/pedidos/pagos-pendientes">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="ltr:mr-2 rtl:ml-2">
-                                                <path d="M9 12H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                                <path d="M12 9V15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                                            </svg>
-                                            Pagos Pendientes
-                                        </router-link>
-                                    </li>
                                 </ul>
                             </vue-collapsible>
                         </li>

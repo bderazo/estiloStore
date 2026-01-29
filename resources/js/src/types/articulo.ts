@@ -46,8 +46,8 @@ export interface ArticuloForm {
     especificaciones: string;
     precio: number;
     sku: string;
-    categoria_id: number;
-    marca_id: number;
+    categoria_id?: number;
+    marca_id?: number;
     activo: boolean;
     destacado: boolean;
     imagenes: File[];

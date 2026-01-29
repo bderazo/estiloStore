@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./api";
 import {
     CategoriaListResponse,
     CategoriaResponse,
@@ -6,9 +6,10 @@ import {
     CategoriaFilters,
     CreateCategoriaRequest,
     UpdateCategoriaRequest,
-    ReorderCategoriesRequest
-} from '../types/categoria';class CategoriaService {
-    private readonly baseUrl = '/categorias';
+    ReorderCategoriesRequest,
+} from "../types/categoria";
+class CategoriaService {
+    private readonly baseUrl = "/categorias";
 
     /**
      * Obtener lista de categorías con filtros y paginación
@@ -18,7 +19,7 @@ import {
 
         if (filters) {
             Object.entries(filters).forEach(([key, value]) => {
-                if (value !== null && value !== undefined && value !== '') {
+                if (value !== null && value !== undefined && value !== "") {
                     params.append(key, String(value));
                 }
             });
@@ -39,16 +40,48 @@ import {
     /**
      * Crear nueva categoría
      */
-    async create(data: CreateCategoriaRequest): Promise<CategoriaResponse> {
-        const response = await api.post(this.baseUrl, data);
+    async create(
+        data: CreateCategoriaRequest | FormData,
+    ): Promise<CategoriaResponse> {
+        let response;
+
+        // Determinar si es FormData (tiene archivos) o JSON
+        if (data instanceof FormData) {
+            // Si es FormData, usar multipart/form-data
+            response = await api.post(this.baseUrl, data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+        } else {
+            // Si es JSON normal
+            response = await api.post(this.baseUrl, data);
+        }
+
         return response.data;
     }
 
     /**
      * Actualizar categoría existente
      */
-    async update(id: number, data: UpdateCategoriaRequest): Promise<CategoriaResponse> {
-        const response = await api.put(`${this.baseUrl}/${id}`, data);
+    async update(
+        id: number,
+        data: UpdateCategoriaRequest | FormData,
+    ): Promise<CategoriaResponse> {
+        let response;
+
+        if (data instanceof FormData) {
+            // Para FormData (con imagen)
+            response = await api.post(`${this.baseUrl}/${id}`, data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+        } else {
+            // Para JSON normal (sin imagen)
+            response = await api.put(`${this.baseUrl}/${id}`, data);
+        }
+
         return response.data;
     }
 
@@ -74,10 +107,12 @@ import {
         const params = new URLSearchParams();
 
         if (excludeId) {
-            params.append('exclude', String(excludeId));
+            params.append("exclude", String(excludeId));
         }
 
-        const response = await api.get(`${this.baseUrl}/for-select?${params.toString()}`);
+        const response = await api.get(
+            `${this.baseUrl}/for-select?${params.toString()}`,
+        );
         return response.data;
     }
 
@@ -91,21 +126,28 @@ import {
     /**
      * Obtener categorías en estructura jerárquica
      */
-    async getHierarchical(filters?: Omit<CategoriaFilters, 'hierarchical'>): Promise<CategoriaListResponse> {
+    async getHierarchical(
+        filters?: Omit<CategoriaFilters, "hierarchical">,
+    ): Promise<CategoriaListResponse> {
         return this.getAll({ ...filters, hierarchical: true });
     }
 
     /**
      * Obtener categorías principales (sin padre)
      */
-    async getPrincipales(filters?: Omit<CategoriaFilters, 'parent_id'>): Promise<CategoriaListResponse> {
+    async getPrincipales(
+        filters?: Omit<CategoriaFilters, "parent_id">,
+    ): Promise<CategoriaListResponse> {
         return this.getAll({ ...filters, parent_id: null });
     }
 
     /**
      * Obtener subcategorías de una categoría padre
      */
-    async getSubcategorias(parentId: number, filters?: Omit<CategoriaFilters, 'parent_id'>): Promise<CategoriaListResponse> {
+    async getSubcategorias(
+        parentId: number,
+        filters?: Omit<CategoriaFilters, "parent_id">,
+    ): Promise<CategoriaListResponse> {
         return this.getAll({ ...filters, parent_id: parentId });
     }
 }

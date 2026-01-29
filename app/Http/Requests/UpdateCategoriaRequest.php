@@ -22,27 +22,16 @@ class UpdateCategoriaRequest extends FormRequest
      */
     public function rules(): array
     {
-        $categoriaId = $this->route('categoria');
-
         return [
             'nombre' => 'required|string|max:255',
-            'slug' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('categorias', 'slug')->ignore($categoriaId)
-            ],
             'descripcion' => 'nullable|string|max:1000',
-            'parent_id' => [
-                'nullable',
-                'exists:categorias,id',
-                Rule::notIn([$categoriaId]) // No puede ser padre de sí mismo
-            ],
-            'activo' => 'boolean',
-            'orden' => 'nullable|integer|min:0'
+            'parent_id' => 'nullable|exists:categorias,id',
+            'activo' => 'required|boolean',
+            'orden' => 'nullable|integer|min:0',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'imagen_eliminar' => 'nullable|boolean',
         ];
     }
-
     /**
      * Get custom messages for validator errors.
      *
@@ -127,7 +116,8 @@ class UpdateCategoriaRequest extends FormRequest
     private function wouldCreateCircularReference($categoriaId, $parentId): bool
     {
         $categoria = \App\Models\Categoria::find($categoriaId);
-        if (!$categoria) return false;
+        if (!$categoria)
+            return false;
 
         // Verificar si el parent_id es un descendiente de la categoría actual
         $descendants = $this->getDescendants($categoriaId);

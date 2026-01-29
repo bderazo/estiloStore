@@ -24,6 +24,8 @@ use App\Http\Controllers\API\TonoController;
 use App\Http\Controllers\API\ArticuloController;
 use App\Http\Controllers\API\ReporteController;
 use App\Http\Controllers\API\TransporteController;
+use App\Http\Controllers\API\AdminPedidoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -348,9 +350,10 @@ Route::middleware(['jwt.auth'])->group(function () {
 
     // Pedidos
     Route::get('/pedidos', [AdminPedidoController::class, 'index']);
+    Route::get('/pedidos/estadisticas', [AdminPedidoController::class, 'estadisticas']);
+    Route::get('/pedidos/estados', [AdminPedidoController::class, 'estados']);
     Route::get('/pedidos/{id}', [AdminPedidoController::class, 'show']);
     Route::get('/pedidos/{id}/pagos', [AdminPedidoController::class, 'pagos']);
-    Route::get('/pedidos/estados', [AdminPedidoController::class, 'estados']);
     
     // Pagos
     Route::post('/pagos/{id}/aprobar', [AdminPedidoController::class, 'aprobarPago']);
@@ -358,7 +361,6 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/pagos/pendientes/count', [AdminPedidoController::class, 'pagosPendientesCount']);
     
     // Estadísticas
-    Route::get('/pedidos/estadisticas', [AdminPedidoController::class, 'estadisticas']);
 
     // Ruta de inicio/dashboard
     Route::get('/dashboard', function (Request $request) {

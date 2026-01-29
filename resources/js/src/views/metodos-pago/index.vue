@@ -244,7 +244,7 @@
                                     <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
                                         <img 
                                             v-if="metodo.logo_banco"
-                                            :src="getImageUrl(metodo.logo_banco)"
+                                            :src="getMetodoPagoImageUrl(metodo.logo_banco, metodo.tipo_pago, metodo.imagen_qr)"
                                             :alt="metodo.nombre_banco"
                                             class="h-8 w-8 rounded-full object-cover"
                                         >
@@ -480,32 +480,45 @@ const confirmDelete = (metodo: MetodoPago) => {
     });
 };
 
-const getImageUrl = (path: string | null | undefined): string => {
-    // Si no hay ruta, retorna un placeholder
-    if (!path) return '/assets/images/placeholder.png';
+const getMetodoPagoImageUrl = (
+    path: string | null | undefined, 
+    tipoPago: string,
+    pathqr: string | null | undefined, 
+): string => {
     
-    // Si ya es una URL completa, retórnala tal cual
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-        return path;
+    // Determinar la ruta base según el tipo de pago
+    let basePath = '';
+    let cleanPath = '';
+    
+    switch(tipoPago) {
+        case 'QR':
+            if (!pathqr) return '/assets/images/placeholder.png';
+            basePath = 'metodos_pago/qr';
+            cleanPath = pathqr;
+            break;
+        case 'Transferencia':
+            if (!path) return '/assets/images/placeholder.png';
+            basePath = 'metodos_pago/logos';
+            cleanPath = path;
+            break;
+        default:
+            basePath = 'metodos_pago';
     }
     
-    // Obtén la URL base desde las variables de entorno
-    const APP_URL = import.meta.env.VITE_APP_URL || 'http://127.0.0.1/tienda/public';
+    // Limpiar la ruta
     
-    // Limpia la ruta
-    let cleanPath = path;
+    // Remover prefijos existentes
+    const prefixes = ['/storage/', 'storage/', 'metodos_pago/logos/', 'metodos_pago/qr/', 'metodos_pago/'];
     
-    // Remueve "/storage/" si existe al inicio
-    if (cleanPath.startsWith('/storage/')) {
-        cleanPath = cleanPath.substring('/storage/'.length);
-    } 
-    // Remueve "storage/" si existe al inicio
-    else if (cleanPath.startsWith('storage/')) {
-        cleanPath = cleanPath.substring('storage/'.length);
+    for (const prefix of prefixes) {
+        if (cleanPath.startsWith(prefix)) {
+            cleanPath = cleanPath.substring(prefix.length);
+            break;
+        }
     }
     
-    // Construye y retorna la URL completa
-    return `${APP_URL}/storage/${cleanPath}`;
+    // Construir la nueva ruta
+    return `/storage/${basePath}/${cleanPath}`;
 };
 
 // Lifecycle

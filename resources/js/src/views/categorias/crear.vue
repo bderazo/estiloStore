@@ -184,6 +184,77 @@
           </div>
         </div>
 
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Logo de la categoria
+          </label>
+          <div
+              @dragover="handleDragOverLogo"
+              @dragleave="handleDragLeaveLogo"
+              @drop="handleDropLogo"
+              :class="[
+                  'border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200',
+                  isDraggingLogo 
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500',
+                  errors.imagen ? 'border-red-300 dark:border-red-700' : ''
+              ]"
+          >
+              <input
+                  ref="logoInput"
+                  type="file"
+                  accept="image/*"
+                  @change="onLogoChange"
+                  class="hidden"
+              >
+              
+              <div v-if="!preview.logo">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                      <span 
+                          class="font-medium text-blue-600 dark:text-blue-400 cursor-pointer" 
+                          @click="openFilePicker('logo')"
+                      >
+                          Haz clic para subir
+                      </span>
+                      o arrastra y suelta tu archivo
+                  </p>
+                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Formatos: PNG, JPG, SVG (máximo 2MB)
+                  </p>
+              </div>
+              
+              <div v-else>
+                  <div class="flex flex-col items-center">
+                      <img :src="preview.logo" alt="Logo preview" class="h-32 w-auto object-contain rounded-lg">
+                      <div class="mt-4 text-center">
+                          <p class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs">
+                              {{ form.imagen?.name || 'Logo seleccionado' }}
+                          </p>
+                          <div class="mt-4 flex items-center justify-center space-x-3">
+                              <button
+                                  type="button"
+                                  @click="openFilePicker('logo')"
+                                  class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                              >
+                                  Cambiar imagen
+                              </button>
+                              <button
+                                  type="button"
+                                  @click="removeLogo"
+                                  class="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                              >
+                                  Eliminar
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
         <!-- Vista previa de la ruta -->
         <div v-if="form.parent_id && selectedParent" class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4">
           <div class="flex items-center">
@@ -244,10 +315,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, reactive } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { useCategoriaStore } from '../../stores/categoriaStore';
 import Swal from 'sweetalert2';
+import { useToast } from 'vue-toastification';
+
+const isDraggingLogo = ref(false);
+const toast = useToast();
+const logoInput = ref<HTMLInputElement>();
 
 // Icons
 import {
@@ -276,7 +352,12 @@ const form = ref<CreateCategoriaRequest>({
   descripcion: '',
   parent_id: null,
   activo: true,
-  orden: undefined
+  orden: undefined,
+  imagen: null as File | null
+});
+
+const preview = reactive({
+    logo: null as string | null,
 });
 
 // Computeds
@@ -328,25 +409,33 @@ const crearCategoria = async () => {
   loading.value = true;
 
   try {
-    // Limpiar datos vacíos
-    const data: CreateCategoriaRequest = {
-      nombre: form.value.nombre.trim(),
-      activo: form.value.activo
-    };
+    // Crear FormData para enviar la imagen
+    const formData = new FormData();
 
+    // Agregar datos básicos
+    formData.append('nombre', form.value.nombre.trim());
+    formData.append('activo', form.value.activo ? '1' : '0');
+    
+    // Agregar imagen si existe
+    if (form.value.imagen instanceof File) {
+      formData.append('imagen', form.value.imagen);
+    }
+
+    // Agregar campos opcionales si tienen valor
     if (form.value.descripcion?.trim()) {
-      data.descripcion = form.value.descripcion.trim();
+      formData.append('descripcion', form.value.descripcion.trim());
     }
 
     if (form.value.parent_id) {
-      data.parent_id = form.value.parent_id;
+      formData.append('parent_id', form.value.parent_id.toString());
     }
 
     if (form.value.orden !== undefined && form.value.orden !== null) {
-      data.orden = form.value.orden;
+      formData.append('orden', form.value.orden.toString());
     }
 
-    const categoria = await categoriaStore.createCategoria(data);
+    // IMPORTANTE: Usar FormData en lugar del objeto data
+    const categoria = await categoriaStore.createCategoria(formData);
 
     await Swal.fire({
       title: '¡Categoría creada!',
@@ -383,14 +472,14 @@ const crearCategoria = async () => {
     loading.value = false;
   }
 };
-
 const resetForm = () => {
   form.value = {
     nombre: '',
     descripcion: '',
     parent_id: null,
     activo: true,
-    orden: undefined
+    orden: undefined,
+    imagen: null
   };
   clearErrors();
 };
@@ -431,6 +520,69 @@ watch(() => form.value.orden, () => {
     delete errors.value.orden;
   }
 });
+
+const handleDragOverLogo = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingLogo.value = true;
+};
+
+const handleDragLeaveLogo = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingLogo.value = false;
+};
+
+const handleDropLogo = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingLogo.value = false;
+    
+    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+        const file = event.dataTransfer.files[0];
+        if (validateImageFile(file)) {
+            form.value.imagen = file;
+            preview.logo = URL.createObjectURL(file);
+        }
+    }
+};
+
+const validateImageFile = (file: File): boolean => {
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+        toast.error('El archivo debe ser una imagen válida');
+        return false;
+    }
+    
+    // Validar tamaño (2MB)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+        toast.error('La imagen es demasiado grande. Tamaño máximo: 2MB');
+        return false;
+    }
+    
+    return true;
+};
+
+const onLogoChange = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file && validateImageFile(file)) {
+        form.value.imagen = file;
+        preview.logo = URL.createObjectURL(file);
+    }
+};
+
+const openFilePicker = (type: 'logo' | 'qr') => {
+    if (type === 'logo' && logoInput.value) {
+        logoInput.value.click();
+    } 
+};
+
+const removeLogo = () => {
+    form.value.imagen = null;
+    if (preview.logo) {
+        URL.revokeObjectURL(preview.logo);
+        preview.logo = null;
+    }
+    if (logoInput.value) logoInput.value.value = '';
+};
 </script>
 
 <style scoped>

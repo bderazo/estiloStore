@@ -18,6 +18,7 @@ class CategoriaResource extends JsonResource
             'id' => $this->id,
             'nombre' => $this->nombre,
             'slug' => $this->slug,
+            'imagen' => $this->imagen,
             'descripcion' => $this->descripcion,
             'parent_id' => $this->parent_id,
             'activo' => (bool) $this->activo,

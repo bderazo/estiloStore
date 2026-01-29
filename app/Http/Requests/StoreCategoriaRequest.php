@@ -28,7 +28,8 @@ class StoreCategoriaRequest extends FormRequest
             'descripcion' => 'nullable|string|max:1000',
             'parent_id' => 'nullable|exists:categorias,id',
             'activo' => 'boolean',
-            'orden' => 'nullable|integer|min:0'
+            'orden' => 'nullable|integer|min:0',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
@@ -51,7 +52,10 @@ class StoreCategoriaRequest extends FormRequest
             'descripcion.max' => 'La descripción no puede exceder los 1000 caracteres.',
             'parent_id.exists' => 'La categoría padre seleccionada no existe.',
             'orden.integer' => 'El orden debe ser un número entero.',
-            'orden.min' => 'El orden debe ser mayor o igual a 0.'
+            'orden.min' => 'El orden debe ser mayor o igual a 0.',
+            'imagen.image' => 'El archivo debe ser una imagen',
+            'imagen.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o svg',
+            'imagen.max' => 'La imagen no puede pesar más de 2MB',
         ];
     }
 

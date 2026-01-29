@@ -327,18 +327,18 @@ const routes: RouteRecordRaw[] = [
         props: true,
         meta: { title: 'Detalle de Pedido', auth: true, admin: true }
     },
-    {
-        path: '/administrador/pedidos/pagos-pendientes',
-        name: 'pedidos.pagos-pendientes',
-        component: () => import('../views/pedidos/PedidosPagosPendientes.vue'),
-        meta: { title: 'Pagos Pendientes', auth: true, admin: true }
-    },
-    {
-        path: '/administrador/pedidos/estadisticas',
-        name: 'pedidos.estadisticas',
-        component: () => import('../views/pedidos/PedidosEstadisticas.vue'),
-        meta: { title: 'Estadísticas de Pedidos', auth: true, admin: true }
-    },
+    // {
+    //     path: '/administrador/pedidos/pagos-pendientes',
+    //     name: 'pedidos.pagos-pendientes',
+    //     component: () => import('../views/pedidos/PedidosPagosPendientes.vue'),
+    //     meta: { title: 'Pagos Pendientes', auth: true, admin: true }
+    // },
+    // {
+    //     path: '/administrador/pedidos/estadisticas',
+    //     name: 'pedidos.estadisticas',
+    //     component: () => import('../views/pedidos/PedidosEstadisticas.vue'),
+    //     meta: { title: 'Estadísticas de Pedidos', auth: true, admin: true }
+    // },
 
     // Sistema de Categorías
     {

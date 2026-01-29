@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 import {
     Categoria,
     CategoriaFilters,
@@ -6,53 +6,68 @@ import {
     UpdateCategoriaRequest,
     CategoriaSelectOption,
     ReorderCategoryItem,
-    CategoriaState
-} from '../types/categoria';
-import categoriaService from '../services/categoriaService';
-import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStore = defineStore('categoria', {
+    CategoriaState,
+} from "../types/categoria";
+import categoriaService from "../services/categoriaService";
+import { isApiCallSafe } from "../utils/authGuard";
+export const useCategoriaStore = defineStore("categoria", {
     state: (): CategoriaState => ({
         categorias: [],
         categoria: null,
         parentOptions: [],
         loading: false,
         filters: {
-            search: '',
+            search: "",
             activo: null,
             parent_id: null,
-            sort_by: 'orden',
-            sort_order: 'asc',
+            sort_by: "orden",
+            sort_order: "asc",
             per_page: 15,
             page: 1,
-            hierarchical: false
+            hierarchical: false,
         },
-        pagination: null
+        pagination: null,
     }),
 
     getters: {
         // Obtener categorías principales (sin parent_id)
         categoriasprincipales: (state): Categoria[] => {
-            return state.categorias.filter(categoria => categoria.parent_id === null);
+            return state.categorias.filter(
+                (categoria) => categoria.parent_id === null,
+            );
         },
 
         // Obtener subcategorías de una categoría padre
-        getSubcategorias: (state) => (parentId: number): Categoria[] => {
-            return state.categorias.filter(categoria => categoria.parent_id === parentId);
-        },
+        getSubcategorias:
+            (state) =>
+            (parentId: number): Categoria[] => {
+                return state.categorias.filter(
+                    (categoria) => categoria.parent_id === parentId,
+                );
+            },
 
         // Verificar si una categoría tiene hijos
-        hasChildren: (state) => (categoriaId: number): boolean => {
-            return state.categorias.some(categoria => categoria.parent_id === categoriaId);
-        },
+        hasChildren:
+            (state) =>
+            (categoriaId: number): boolean => {
+                return state.categorias.some(
+                    (categoria) => categoria.parent_id === categoriaId,
+                );
+            },
 
         // Obtener categorías activas
         categoriasActivas: (state): Categoria[] => {
-            return state.categorias.filter(categoria => categoria.activo);
+            return state.categorias.filter((categoria) => categoria.activo);
         },
 
         // Obtener categorías por nivel
-        getCategoriasByLevel: (state) => (level: number): Categoria[] => {
-            return state.categorias.filter(categoria => categoria.level === level);
-        },
+        getCategoriasByLevel:
+            (state) =>
+            (level: number): Categoria[] => {
+                return state.categorias.filter(
+                    (categoria) => categoria.level === level,
+                );
+            },
 
         // Contar total de categorías
         totalCategorias: (state): number => {
@@ -61,8 +76,9 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
 
         // Contar categorías activas
         totalCategoriasActivas: (state): number => {
-            return state.categorias.filter(categoria => categoria.activo).length;
-        }
+            return state.categorias.filter((categoria) => categoria.activo)
+                .length;
+        },
     },
 
     actions: {
@@ -86,7 +102,7 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
                     this.pagination = response.pagination;
                 }
             } catch (error) {
-                console.error('Error al obtener categorías:', error);
+                console.error("Error al obtener categorías:", error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -101,7 +117,7 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
                 this.categoria = response.data;
                 return response.data;
             } catch (error) {
-                console.error('Error al obtener categoría:', error);
+                console.error("Error al obtener categoría:", error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -109,7 +125,9 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
         },
 
         // Crear nueva categoría
-        async createCategoria(data: CreateCategoriaRequest): Promise<Categoria> {
+        async createCategoria(
+            data: CreateCategoriaRequest | FormData,
+        ): Promise<Categoria> {
             this.loading = true;
             try {
                 const response = await categoriaService.create(data);
@@ -121,33 +139,30 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
 
                 return response.data!;
             } catch (error) {
-                console.error('Error al crear categoría:', error);
+                console.error("Error al crear categoría:", error);
                 throw error;
             } finally {
                 this.loading = false;
             }
         },
 
-        // Actualizar categoría
-        async updateCategoria(id: number, data: UpdateCategoriaRequest): Promise<Categoria> {
+        async updateCategoria(
+            id: number,
+            data: UpdateCategoriaRequest | FormData,
+        ): Promise<Categoria> {
             this.loading = true;
             try {
                 const response = await categoriaService.update(id, data);
 
                 // Actualizar en la lista
-                const index = this.categorias.findIndex(c => c.id === id);
-                if (index !== -1 && response.data) {
-                    this.categorias[index] = response.data;
-                }
-
-                // Actualizar categoría actual si es la misma
-                if (this.categoria?.id === id) {
-                    this.categoria = response.data;
+                const index = this.categorias.findIndex((c) => c.id === id);
+                if (index !== -1) {
+                    this.categorias[index] = response.data!;
                 }
 
                 return response.data!;
             } catch (error) {
-                console.error('Error al actualizar categoría:', error);
+                console.error("Error al actualizar categoría:", error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -161,14 +176,14 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
                 await categoriaService.delete(id);
 
                 // Remover de la lista
-                this.categorias = this.categorias.filter(c => c.id !== id);
+                this.categorias = this.categorias.filter((c) => c.id !== id);
 
                 // Limpiar categoría actual si es la misma
                 if (this.categoria?.id === id) {
                     this.categoria = null;
                 }
             } catch (error) {
-                console.error('Error al eliminar categoría:', error);
+                console.error("Error al eliminar categoría:", error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -182,7 +197,7 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
                 const response = await categoriaService.toggleActivo(id);
 
                 // Actualizar en la lista
-                const index = this.categorias.findIndex(c => c.id === id);
+                const index = this.categorias.findIndex((c) => c.id === id);
                 if (index !== -1 && response.data) {
                     this.categorias[index] = response.data;
                 }
@@ -194,7 +209,7 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
 
                 return response.data!;
             } catch (error) {
-                console.error('Error al cambiar estado de categoría:', error);
+                console.error("Error al cambiar estado de categoría:", error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -212,7 +227,10 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
                 const response = await categoriaService.getForSelect(excludeId);
                 this.parentOptions = response.data;
             } catch (error) {
-                console.error('Error al obtener opciones de categorías padre:', error);
+                console.error(
+                    "Error al obtener opciones de categorías padre:",
+                    error,
+                );
                 throw error;
             }
         },
@@ -225,7 +243,7 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
 
                 // Actualizar el orden en el estado local
                 categories.forEach(({ id, orden }) => {
-                    const categoria = this.categorias.find(c => c.id === id);
+                    const categoria = this.categorias.find((c) => c.id === id);
                     if (categoria) {
                         categoria.orden = orden;
                     }
@@ -234,7 +252,7 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
                 // Reordenar la lista local
                 this.categorias.sort((a, b) => a.orden - b.orden);
             } catch (error) {
-                console.error('Error al reordenar categorías:', error);
+                console.error("Error al reordenar categorías:", error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -249,14 +267,14 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
         // Limpiar filtros
         clearFilters() {
             this.filters = {
-                search: '',
+                search: "",
                 activo: null,
                 parent_id: null,
-                sort_by: 'orden',
-                sort_order: 'asc',
+                sort_by: "orden",
+                sort_order: "asc",
                 per_page: 15,
                 page: 1,
-                hierarchical: false
+                hierarchical: false,
             };
         },
 
@@ -305,11 +323,11 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
         },
 
         // Cambiar ordenamiento
-        changeSorting(sortBy: string, sortOrder: 'asc' | 'desc') {
+        changeSorting(sortBy: string, sortOrder: "asc" | "desc") {
             this.setFilters({
                 sort_by: sortBy as any,
                 sort_order: sortOrder,
-                page: 1
+                page: 1,
             });
             return this.fetchCategorias();
         },
@@ -317,6 +335,6 @@ import { isApiCallSafe } from '../utils/authGuard';export const useCategoriaStor
         // Obtener categorías en estructura jerárquica
         async fetchHierarchicalCategorias() {
             return this.fetchCategorias({ hierarchical: true });
-        }
-    }
+        },
+    },
 });

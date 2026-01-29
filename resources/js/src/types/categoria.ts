@@ -3,6 +3,7 @@ export interface Categoria {
     id: number;
     nombre: string;
     descripcion: string | null;
+    imagen: string | null;
     slug: string;
     parent_id: number | null;
     activo: boolean;
@@ -28,6 +29,7 @@ export interface CreateCategoriaRequest {
     parent_id?: number | null;
     activo?: boolean;
     orden?: number;
+    imagen?: File | null;
 }
 
 // Interfaz para actualizar categoría

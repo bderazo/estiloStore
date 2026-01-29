@@ -190,6 +190,7 @@ import { articuloService } from '../../services/articuloService';
 import articulosImagesForm from './articulosImagesForm.vue';
 import articulosVariantesForm from './articulosVariantesForm.vue';
 import Swal from 'sweetalert2';
+import { ArticuloForm } from '../../types/articulo';
 
 const router = useRouter();
 const route = useRoute();
@@ -359,21 +360,12 @@ const guardar = async () => {
   errores.value = {};
 
   try {
-    // 1. Filtrar solo imágenes que son archivos File válidos
-    const imagenesValidas = formulario.value.imagenes.filter(img => img instanceof File);
-    console.log('Imágenes válidas a enviar:', imagenesValidas);
-
-    // 2. Preparar variantes CORREGIDO - asegurar atributos siempre es objeto
+    // 1. Preparar variantes
     const variantesAEnviar = formulario.value.variantes.map(variante => {
-      console.log('Variante original:', variante);
-      
-      // Crear atributos convertidos o objeto vacío
       const atributosConvertidos: Record<string, string> = {};
       
-      // Si hay atributos en la variante, convertirlos
       if (variante.atributos && typeof variante.atributos === 'object') {
         for (const [tipo, id] of Object.entries(variante.atributos)) {
-          // Solo procesar si el ID es válido
           if (id && id !== '') {
             let lista: Array<{ id: number; nombre: string }> | undefined;
 
@@ -395,105 +387,75 @@ const guardar = async () => {
         }
       }
       
-      // VARIANTE FINAL - Asegurar todos los campos requeridos
-      const varianteFinal = {
+      return {
         ...variante,
         atributos: Object.keys(atributosConvertidos).length > 0 
           ? atributosConvertidos 
-          : {}, // ← OBJETO VACÍO SI NO HAY ATRIBUTOS
+          : {},
         stock: Number(variante.stock) || 0,
         activo: variante.activo !== undefined ? Boolean(variante.activo) : true,
-        // Asegurar que no haya campos undefined
         sku: variante.sku || '',
         precio: variante.precio || 0
       };
-      
-      console.log('Variante procesada:', varianteFinal);
-      return varianteFinal;
     });
 
-    console.log('Todas las variantes a enviar:', variantesAEnviar);
-
-    // 3. Preparar FormData para enviar
-    const formData = new FormData();
-    
-    // Campos básicos
-    formData.append('nombre', formulario.value.nombre);
-    formData.append('slug', formulario.value.slug);
-    formData.append('descripcion', formulario.value.descripcion || '');
-    formData.append('especificaciones', formulario.value.especificaciones || '');
-    formData.append('precio', String(formulario.value.precio || 0));
-    formData.append('sku', formulario.value.sku || '');
-    formData.append('activo', formulario.value.activo ? '1' : '0');
-    formData.append('destacado', formulario.value.destacado ? '1' : '0');
-    
-    if (formulario.value.categoria_id) {
-      formData.append('categoria_id', String(formulario.value.categoria_id));
-    }
-    if (formulario.value.marca_id) {
-      formData.append('marca_id', String(formulario.value.marca_id));
-    }
-
-    // Imágenes
-    imagenesValidas.forEach((imagen, index) => {
-      formData.append(`imagenes[${index}]`, imagen);
+    console.log('Datos preparados para enviar:', {
+      ...formulario.value,
+      variantes: variantesAEnviar
     });
 
-    // Variantes como JSON
-    formData.append('variantes', JSON.stringify(variantesAEnviar));
-
-    // Log para debug
-    console.log('FormData contenido:');
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
-    // 4. Enviar petición
-    let url = '/tienda/public/api/articulos';
-    let method = 'POST';
+    // 2. Usar el servicio en lugar de fetch directo
+    let resultado;
     
+    const datosParaEnviar: ArticuloForm = {
+      nombre: formulario.value.nombre,
+      slug: formulario.value.slug,
+      descripcion: formulario.value.descripcion || '',
+      especificaciones: formulario.value.especificaciones || '',
+      precio: formulario.value.precio || 0,
+      sku: formulario.value.sku || '',
+      categoria_id: formulario.value.categoria_id,
+      marca_id: formulario.value.marca_id,
+      activo: formulario.value.activo,
+      destacado: formulario.value.destacado,
+      imagenes: formulario.value.imagenes.filter(img => img instanceof File),
+      imagenes_eliminar: formulario.value.imagenes_eliminar,
+      imagenes_orden: formulario.value.imagenes_orden,
+      variantes: variantesAEnviar,
+    };
+
     if (isEditing.value) {
-      url = `/tienda/public/api/articulos/${route.params.id}`;
-      method = 'POST'; // o 'PUT' dependiendo de tu backend
-    }
-
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Accept': 'application/json',
-        // NO incluir 'Content-Type': 'multipart/form-data' - fetch lo hace automáticamente
-      },
-      body: formData
-    });
-
-    const data = await response.json();
-    console.log('Respuesta del servidor:', data);
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Error en la petición');
-    }
-
-    if (data.success) {
-      Swal.fire({
-        icon: 'success',
-        title: isEditing.value ? '¡Actualizado!' : '¡Creado!',
-        text: data.message || 'Operación exitosa',
-        timer: 2000
-      });
-      await router.push('/administrador/articulos');
+      // Usar el servicio updateArticulo (ya maneja PUT/FormData)
+      resultado = await articuloService.updateArticulo(
+        Number(route.params.id),
+        datosParaEnviar
+      );
     } else {
-      throw new Error(data.message || 'Error desconocido');
+      // Usar el servicio createArticulo
+      resultado = await articuloService.createArticulo(datosParaEnviar);
     }
+
+    console.log('Respuesta del servidor:', resultado);
+
+    Swal.fire({
+      icon: 'success',
+      title: isEditing.value ? '¡Actualizado!' : '¡Creado!',
+      text: isEditing.value ? 'Artículo actualizado correctamente' : 'Artículo creado correctamente',
+      timer: 2000
+    });
+    
+    await router.push('/administrador/articulos');
 
   } catch (error: any) {
     console.error('Error completo:', error);
     
-    // Mostrar error detallado
     let mensajeError = 'Error al guardar artículo';
-    if (error.response) {
-      const data = await error.response.json();
+    
+    // Manejar errores del servicio
+    if (error.response && error.response.data) {
+      const data = error.response.data;
       mensajeError = data.message || mensajeError;
+      
       if (data.errors) {
         errores.value = data.errors;
         console.log('Errores de validación:', data.errors);

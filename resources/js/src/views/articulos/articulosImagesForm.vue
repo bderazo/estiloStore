@@ -105,13 +105,20 @@ const fileInput = ref<HTMLInputElement>();
 const dragover = ref(false);
 const previsualizaciones = ref<Preview[]>([]);
 
+// Función para obtener URL completa
+const getImageUrl = (path: string): string => {
+  if (!path) return '';
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/tienda/public/storage/${path}`;
+};
+
 // Cargar imágenes existentes cuando cambian las props
 const cargarImagenesExistentes = () => {
   if (props.imagenesExistentes && props.imagenesExistentes.length > 0) {
     const imagenesExistentesFormateadas = props.imagenesExistentes
       .sort((a, b) => a.orden - b.orden)
       .map((img) => ({
-        src: `/storage/${img.ruta}`,
+        src: getImageUrl(img.ruta), // Usar función getImageUrl
         name: `imagen_${img.id}`,
         id: img.id,
         principal: img.principal,

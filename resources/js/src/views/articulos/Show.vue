@@ -183,8 +183,11 @@ const articulo = ref(null);
 const loading = ref(true);
 
 const getImageUrl = (path) => {
+
+  const baseUrl = window.location.origin;
+
   if (!path) return '';
-  return `/storage/${path}`;
+  return `${baseUrl}/tienda/public/storage/${path}`;
 };
 
 const formatDate = (dateString) => {
