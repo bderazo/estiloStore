@@ -43,22 +43,36 @@
 
                 <div class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 gx-5 gy-5" id="catGrid" style="margin-bottom: 50px;">
                     @foreach($categorias as $cat)
-                    <div class="col cat-card-item" style="margin-bottom: 30px;"> <a href="{{ route('tienda.categoria', $cat->slug) }}" class="cat-magazine-card">
-                            <div class="cat-magazine-wrapper">
-                                <img src="{{ asset('storage/'.$cat->imagen) }}" alt="{{ $cat->nombre }}" class="cat-magazine-img">
-                                
-                                <div class="cat-magazine-overlay">
-                                    <div class="cat-info-top">
-                                        <span class="cat-badge">{{ $cat->articulos_count ?? 0 }} Artículos</span>
-                                    </div>
-                                    <div class="cat-info-bottom">
-                                        <h3 class="cat-title">{{ $cat->nombre }}</h3>
-                                        <div class="cat-explore-btn">Explorar Colección <i class="icon-arrow-right"></i></div>
+                        @php
+                            // Determinar qué imagen mostrar (prioridad: logo > imagen)
+                            $imageUrl = $cat->logo 
+                                ? asset('storage/'.$cat->logo)
+                                : ($cat->imagen 
+                                    ? asset('storage/'.$cat->imagen)
+                                    : asset('web/assets/img/placeholder-categoria.jpg'));
+                            
+                            // Clase CSS adicional para logos
+                            $imgClass = $cat->logo ? 'has-logo' : 'has-image';
+                        @endphp
+                        
+                        <div class="col cat-card-item" style="margin-bottom: 30px;">
+                            <a href="{{ route('tienda.categoria', $cat->slug) }}" class="cat-magazine-card">
+                                <div class="cat-magazine-wrapper">
+                                    <img src="{{ $imageUrl }}" alt="{{ $cat->nombre }}" 
+                                         class="cat-magazine-img {{ $imgClass }}">
+                                    
+                                    <div class="cat-magazine-overlay">
+                                        <div class="cat-info-top">
+                                            <span class="cat-badge">{{ $cat->articulos_count ?? 0 }} Artículos</span>
+                                        </div>
+                                        <div class="cat-info-bottom">
+                                            <h3 class="cat-title">{{ $cat->nombre }}</h3>
+                                            <div class="cat-explore-btn">Explorar Colección <i class="icon-arrow-right"></i></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -89,6 +103,18 @@
                 object-fit: cover;
                 transition: transform 0.8s ease;
                 display: block;
+            }
+
+            /* Estilos específicos para logos */
+            .cat-magazine-img.has-logo {
+                object-fit: contain;
+                background: white;
+                padding: 30px;
+            }
+
+            /* Estilos específicos para imágenes normales */
+            .cat-magazine-img.has-image {
+                object-fit: cover;
             }
 
             /* Overlay de Cristal Transparente por defecto */
@@ -141,6 +167,11 @@
                 transform: scale(1.1);
             }
 
+            /* Ajuste de escala para logos en hover */
+            .cat-magazine-card:hover .cat-magazine-img.has-logo {
+                transform: scale(1.05); /* Menos zoom para logos */
+            }
+
             .cat-magazine-card:hover .cat-magazine-overlay {
                 /* Al pasar el mouse, se aplica el desenfoque y el color */
                 background: rgba(var(--primary-color-rgb, 0, 0, 0), 0.6); 
@@ -153,11 +184,32 @@
                 transform: translateY(0);
             }
 
+            /* Indicador visual para logos (opcional) */
+            .cat-info-top::after {
+                content: '';
+                display: block;
+                width: 20px;
+                height: 20px;
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+                background-size: contain;
+                margin-left: 10px;
+                opacity: 0.7;
+                float: right;
+                display: none; /* Oculto por defecto */
+            }
+            
+            .has-logo .cat-info-top::after {
+                display: inline-block; /* Mostrar solo para logos */
+            }
+
             /* Espaciado de Grid */
             .gy-5 { margin-bottom: 40px; } 
 
             @media (max-width: 768px) {
                 .cat-magazine-card { height: 300px; }
+                .cat-magazine-img.has-logo {
+                    padding: 20px;
+                }
             }
         </style>
 

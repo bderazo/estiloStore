@@ -14,11 +14,18 @@ class CategoriaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // URL completa para im芍genes y logos
+        $imagenUrl = $this->imagen ? asset('storage/' . $this->imagen) : null;
+        $logoUrl = $this->logo ? asset('storage/' . $this->logo) : null;
+
         return [
             'id' => $this->id,
             'nombre' => $this->nombre,
             'slug' => $this->slug,
             'imagen' => $this->imagen,
+            'imagen_url' => $imagenUrl, // URL completa
+            'logo' => $this->logo, // AGREGAR
+            'logo_url' => $logoUrl, // AGREGAR URL completa
             'descripcion' => $this->descripcion,
             'parent_id' => $this->parent_id,
             'activo' => (bool) $this->activo,
@@ -33,7 +40,7 @@ class CategoriaResource extends JsonResource
             'children' => self::collection($this->whenLoaded('children')),
             'children_count' => $this->children_count ?? 0,
 
-            // Información adicional
+            // Informaci車n adicional
             'has_children' => $this->when(
                 $this->relationLoaded('children'),
                 $this->children->count() > 0

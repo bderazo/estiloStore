@@ -270,7 +270,7 @@
                 </div>
 
                 <!-- Imagen -->
-                <div>
+                <div class="mt-8">
                     <h3
                         class="text-lg font-medium text-gray-900 dark:text-white mb-4"
                     >
@@ -281,15 +281,15 @@
                         <label
                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                         >
-                            Logo de la categoría
+                            Imagen (Opcional)
                         </label>
                         <div
-                            @dragover="handleDragOverLogo"
-                            @dragleave="handleDragLeaveLogo"
-                            @drop="handleDropLogo"
+                            @dragover="handleDragOverImagen"
+                            @dragleave="handleDragLeaveImagen"
+                            @drop="handleDropImagen"
                             :class="[
                                 'border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200',
-                                isDraggingLogo
+                                isDraggingImagen
                                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                                     : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500',
                                 errors.imagen
@@ -298,10 +298,10 @@
                             ]"
                         >
                             <input
-                                ref="logoInput"
+                                ref="imagenInput"
                                 type="file"
                                 accept="image/*"
-                                @change="onLogoChange"
+                                @change="onImagenChange"
                                 class="hidden"
                             />
 
@@ -312,22 +312,24 @@
                                 >
                                     Imagen actual:
                                 </p>
-                                <img
-                                    :src="getImageUrl(categoria.imagen)"
-                                    :alt="categoria.nombre"
-                                    class="h-32 w-auto mx-auto object-contain rounded-lg"
-                                />
-                                <button
-                                    type="button"
-                                    @click="confirmRemoveImage"
-                                    class="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-                                >
-                                    Eliminar imagen actual
-                                </button>
+                                <div class="flex flex-col items-center">
+                                    <img
+                                        :src="getImageUrl(categoria.imagen)"
+                                        :alt="categoria.nombre"
+                                        class="h-32 w-auto object-contain rounded-lg"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="confirmRemoveImagen"
+                                        class="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                    >
+                                        Eliminar imagen actual
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Zona de carga de nueva imagen -->
-                            <div v-if="!preview.logo && !categoria?.imagen">
+                            <div v-if="!preview.imagen && !categoria?.imagen">
                                 <svg
                                     class="mx-auto h-12 w-12 text-gray-400"
                                     fill="none"
@@ -346,21 +348,21 @@
                                 >
                                     <span
                                         class="font-medium text-blue-600 dark:text-blue-400 cursor-pointer"
-                                        @click="openFilePicker('logo')"
+                                        @click="openFilePicker('imagen')"
                                     >
-                                        Haz clic para subir
+                                        Haz clic para subir imagen
                                     </span>
                                     o arrastra y suelta tu archivo
                                 </p>
                                 <p
                                     class="mt-1 text-xs text-gray-500 dark:text-gray-400"
                                 >
-                                    Formatos: PNG, JPG, SVG (máximo 2MB)
+                                    Formatos: JPG, PNG (máximo 2MB)
                                 </p>
                             </div>
 
                             <!-- Previsualización de nueva imagen seleccionada -->
-                            <div v-else-if="preview.logo">
+                            <div v-else-if="preview.imagen">
                                 <div class="flex flex-col items-center">
                                     <p
                                         class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -368,8 +370,8 @@
                                         Nueva imagen:
                                     </p>
                                     <img
-                                        :src="preview.logo"
-                                        alt="Logo preview"
+                                        :src="preview.imagen"
+                                        alt="Imagen preview"
                                         class="h-32 w-auto object-contain rounded-lg"
                                     />
                                     <div class="mt-4 text-center">
@@ -378,7 +380,7 @@
                                         >
                                             {{
                                                 form.imagen?.name ||
-                                                "Logo seleccionado"
+                                                "Imagen seleccionada"
                                             }}
                                         </p>
                                         <div
@@ -386,14 +388,16 @@
                                         >
                                             <button
                                                 type="button"
-                                                @click="openFilePicker('logo')"
+                                                @click="
+                                                    openFilePicker('imagen')
+                                                "
                                                 class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                                             >
                                                 Cambiar imagen
                                             </button>
                                             <button
                                                 type="button"
-                                                @click="removeLogo"
+                                                @click="removeImagen"
                                                 class="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                                             >
                                                 Eliminar
@@ -417,6 +421,169 @@
                         </div>
                         <div v-if="errors.imagen" class="form-error">
                             {{ errors.imagen[0] }}
+                        </div>
+                        <div class="form-help">
+                            Imagen opcional para mostrar cuando no hay logo o
+                            para fondos más grandes.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo -->
+                <div>
+                    <h3
+                        class="text-lg font-medium text-gray-900 dark:text-white mb-4"
+                    >
+                        Logo de la categoría
+                    </h3>
+
+                    <div class="form-group">
+                        <label
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >
+                            Logo (Prioridad alta)
+                        </label>
+                        <div
+                            @dragover="handleDragOverLogo"
+                            @dragleave="handleDragLeaveLogo"
+                            @drop="handleDropLogo"
+                            :class="[
+                                'border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200',
+                                isDraggingLogo
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                    : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500',
+                                errors.logo
+                                    ? 'border-red-300 dark:border-red-700'
+                                    : '',
+                            ]"
+                        >
+                            <input
+                                ref="logoInput"
+                                type="file"
+                                accept="image/*"
+                                @change="onLogoChange"
+                                class="hidden"
+                            />
+
+                            <!-- Vista previa de logo actual -->
+                            <div v-if="categoria?.logo" class="mb-4">
+                                <p
+                                    class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                >
+                                    Logo actual:
+                                </p>
+                                <div class="flex flex-col items-center">
+                                    <img
+                                        :src="getImageUrl(categoria.logo)"
+                                        :alt="categoria.nombre"
+                                        class="h-32 w-auto object-contain rounded-lg bg-white p-2"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="confirmRemoveLogo"
+                                        class="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                    >
+                                        Eliminar logo actual
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Zona de carga de nuevo logo -->
+                            <div v-if="!preview.logo && !categoria?.logo">
+                                <svg
+                                    class="mx-auto h-12 w-12 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                    />
+                                </svg>
+                                <p
+                                    class="mt-2 text-sm text-gray-600 dark:text-gray-400"
+                                >
+                                    <span
+                                        class="font-medium text-blue-600 dark:text-blue-400 cursor-pointer"
+                                        @click="openFilePicker('logo')"
+                                    >
+                                        Haz clic para subir logo
+                                    </span>
+                                    o arrastra y suelta tu archivo
+                                </p>
+                                <p
+                                    class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                >
+                                    Formatos: PNG, SVG recomendados (máximo 2MB)
+                                </p>
+                            </div>
+
+                            <!-- Previsualización de nuevo logo seleccionado -->
+                            <div v-else-if="preview.logo">
+                                <div class="flex flex-col items-center">
+                                    <p
+                                        class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                    >
+                                        Nuevo logo:
+                                    </p>
+                                    <img
+                                        :src="preview.logo"
+                                        alt="Logo preview"
+                                        class="h-32 w-auto object-contain rounded-lg bg-white p-2"
+                                    />
+                                    <div class="mt-4 text-center">
+                                        <p
+                                            class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs"
+                                        >
+                                            {{
+                                                form.logo?.name ||
+                                                "Logo seleccionado"
+                                            }}
+                                        </p>
+                                        <div
+                                            class="mt-4 flex items-center justify-center space-x-3"
+                                        >
+                                            <button
+                                                type="button"
+                                                @click="openFilePicker('logo')"
+                                                class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                                            >
+                                                Cambiar logo
+                                            </button>
+                                            <button
+                                                type="button"
+                                                @click="removeLogo"
+                                                class="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mensaje si hay logo existente -->
+                            <div
+                                v-else-if="categoria?.logo"
+                                class="text-center"
+                            >
+                                <p
+                                    class="text-sm text-green-600 dark:text-green-400"
+                                >
+                                    ✓ La categoría ya tiene un logo asignado
+                                </p>
+                            </div>
+                        </div>
+                        <div v-if="errors.logo" class="form-error">
+                            {{ errors.logo[0] }}
+                        </div>
+                        <div class="form-help">
+                            El logo tiene prioridad sobre la imagen en
+                            visualizaciones. Se recomienda usar íconos pequeños
+                            con fondo transparente.
                         </div>
                     </div>
                 </div>
@@ -635,9 +802,19 @@ import { useCategoriaStore } from "../../stores/categoriaStore";
 import Swal from "sweetalert2";
 import { useToast } from "vue-toastification";
 
-const isDraggingLogo = ref(false);
 const toast = useToast();
+
+// Refs
+const initialLoading = ref(true);
+const loading = ref(false);
+const loadError = ref<string | null>(null);
+const errors = ref<Record<string, string[]>>({});
+
+// Drag & drop refs
+const isDraggingLogo = ref(false);
+const isDraggingImagen = ref(false);
 const logoInput = ref<HTMLInputElement>();
+const imagenInput = ref<HTMLInputElement>();
 
 // Icons
 import {
@@ -665,11 +842,6 @@ const route = useRoute();
 const categoriaStore = useCategoriaStore();
 
 // Reactive data
-const initialLoading = ref(true);
-const loading = ref(false);
-const loadError = ref<string | null>(null);
-const errors = ref<Record<string, string[]>>({});
-
 const categoria = ref<Categoria | null>(null);
 const parentOptions = ref<CategoriaSelectOption[]>([]);
 
@@ -678,6 +850,8 @@ const form = ref<
         slug?: string;
         imagen?: File | null;
         imagen_eliminar?: boolean;
+        logo?: File | null;
+        logo_eliminar?: boolean;
     }
 >({
     nombre: "",
@@ -687,13 +861,20 @@ const form = ref<
     orden: 0,
     imagen: null,
     imagen_eliminar: false,
+    logo: null,
+    logo_eliminar: false,
 });
 
 const preview = reactive({
     logo: null as string | null,
+    imagen: null as string | null,
 });
 
-const originalForm = ref<UpdateCategoriaRequest & { slug?: string }>({});
+const originalForm = ref<UpdateCategoriaRequest & { 
+    slug?: string;
+    hasLogo?: boolean;
+    hasImagen?: boolean;
+}>({});
 
 // Computeds
 const categoriaId = computed(() => {
@@ -738,7 +919,9 @@ const hasChanges = computed(() => {
         form.value.activo !== originalForm.value.activo ||
         form.value.orden !== originalForm.value.orden ||
         form.value.imagen !== null ||
-        form.value.imagen_eliminar
+        form.value.imagen_eliminar ||
+        form.value.logo !== null ||
+        form.value.logo_eliminar
     );
 });
 
@@ -752,119 +935,9 @@ const changedFields = computed(() => {
         activo: form.value.activo !== originalForm.value.activo,
         orden: form.value.orden !== originalForm.value.orden,
         imagen: form.value.imagen !== null || form.value.imagen_eliminar,
+        logo: form.value.logo !== null || form.value.logo_eliminar,
     };
 });
-
-// Métodos para manejar imágenes
-const handleDragOverLogo = (event: DragEvent) => {
-    event.preventDefault();
-    isDraggingLogo.value = true;
-};
-
-const handleDragLeaveLogo = (event: DragEvent) => {
-    event.preventDefault();
-    isDraggingLogo.value = false;
-};
-
-const handleDropLogo = (event: DragEvent) => {
-    event.preventDefault();
-    isDraggingLogo.value = false;
-
-    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
-        const file = event.dataTransfer.files[0];
-        if (validateImageFile(file)) {
-            form.value.imagen = file;
-            preview.logo = URL.createObjectURL(file);
-            form.value.imagen_eliminar = false; // Si se sube nueva imagen, no eliminar
-        }
-    }
-};
-
-const validateImageFile = (file: File): boolean => {
-    // Validar tipo de archivo
-    if (!file.type.startsWith("image/")) {
-        toast.error("El archivo debe ser una imagen válida");
-        return false;
-    }
-
-    // Validar tamaño (2MB)
-    const maxSize = 2 * 1024 * 1024;
-    if (file.size > maxSize) {
-        toast.error("La imagen es demasiado grande. Tamaño máximo: 2MB");
-        return false;
-    }
-
-    return true;
-};
-
-const onLogoChange = (event: Event) => {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file && validateImageFile(file)) {
-        form.value.imagen = file;
-        preview.logo = URL.createObjectURL(file);
-        form.value.imagen_eliminar = false; // Si se sube nueva imagen, no eliminar
-    }
-};
-
-const openFilePicker = (type: "logo") => {
-    if (type === "logo" && logoInput.value) {
-        logoInput.value.click();
-    }
-};
-
-const removeLogo = () => {
-    form.value.imagen = null;
-    if (preview.logo) {
-        URL.revokeObjectURL(preview.logo);
-        preview.logo = null;
-    }
-    if (logoInput.value) logoInput.value.value = "";
-
-    // Si hay imagen existente, marcar para eliminar
-    if (categoria.value?.imagen) {
-        form.value.imagen_eliminar = true;
-    }
-};
-
-const confirmRemoveImage = async () => {
-    const result = await Swal.fire({
-        title: "¿Eliminar imagen?",
-        text: "Esta acción eliminará la imagen actual de la categoría",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar",
-        confirmButtonColor: "#dc2626",
-    });
-
-    if (result.isConfirmed) {
-        removeLogo();
-    }
-};
-
-// Función para obtener URL de imagen
-const getImageUrl = (path: string) => {
-    if (!path) return '/assets/images/placeholder.png';
-    if (path.startsWith('http')) return path;
-    return `/storage/${path}`;
-};
-
-// Actualizar fillForm para incluir imagen
-const fillForm = (categoriaData: Categoria) => {
-    form.value = {
-        nombre: categoriaData.nombre,
-        descripcion: categoriaData.descripcion || "",
-        parent_id: categoriaData.parent_id,
-        activo: categoriaData.activo,
-        orden: categoriaData.orden,
-        slug: categoriaData.slug,
-        imagen: null, // No cargar File aquí
-        imagen_eliminar: false,
-    };
-
-    // Guardar estado original para detectar cambios
-    originalForm.value = { ...form.value };
-};
 
 const isFormValid = computed(() => {
     return (
@@ -872,7 +945,9 @@ const isFormValid = computed(() => {
         form.value.nombre.trim().length > 0 &&
         Object.keys(errors.value).length === 0
     );
-}); // Methods
+});
+
+// Methods
 const generateSlug = () => {
     if (!form.value.nombre) return;
 
@@ -897,6 +972,207 @@ const getParentChangeName = () => {
     const newParent =
         selectedParent.value?.nombre.replace(/^└─\s*/, "") || "Sin padre";
     return `"${originalParent}" → "${newParent}"`;
+};
+
+// Métodos para manejar logos
+const handleDragOverLogo = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingLogo.value = true;
+};
+
+const handleDragLeaveLogo = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingLogo.value = false;
+};
+
+const handleDropLogo = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingLogo.value = false;
+
+    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+        const file = event.dataTransfer.files[0];
+        if (validateImageFile(file, 'logo')) {
+            form.value.logo = file;
+            preview.logo = URL.createObjectURL(file);
+            form.value.logo_eliminar = false; // Si se sube nuevo logo, no eliminar
+        }
+    }
+};
+
+const onLogoChange = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file && validateImageFile(file, 'logo')) {
+        // Limpiar preview anterior si existe
+        if (preview.logo) URL.revokeObjectURL(preview.logo);
+        form.value.logo = file;
+        preview.logo = URL.createObjectURL(file);
+        form.value.logo_eliminar = false;
+    }
+};
+
+const removeLogo = () => {
+    if (preview.logo) URL.revokeObjectURL(preview.logo);
+    form.value.logo = null;
+    preview.logo = null;
+    if (logoInput.value) logoInput.value.value = "";
+
+    // Si hay logo existente, marcar para eliminar
+    if (categoria.value?.logo) {
+        form.value.logo_eliminar = true;
+    }
+};
+
+const confirmRemoveLogo = async () => {
+    const result = await Swal.fire({
+        title: "¿Eliminar logo?",
+        text: "Esta acción eliminará el logo actual de la categoría",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#dc2626",
+    });
+
+    if (result.isConfirmed) {
+        removeLogo();
+    }
+};
+
+// Métodos para manejar imágenes
+const handleDragOverImagen = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingImagen.value = true;
+};
+
+const handleDragLeaveImagen = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingImagen.value = false;
+};
+
+const handleDropImagen = (event: DragEvent) => {
+    event.preventDefault();
+    isDraggingImagen.value = false;
+
+    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+        const file = event.dataTransfer.files[0];
+        if (validateImageFile(file, 'imagen')) {
+            form.value.imagen = file;
+            preview.imagen = URL.createObjectURL(file);
+            form.value.imagen_eliminar = false;
+        }
+    }
+};
+
+const onImagenChange = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file && validateImageFile(file, 'imagen')) {
+        // Limpiar preview anterior si existe
+        if (preview.imagen) URL.revokeObjectURL(preview.imagen);
+        form.value.imagen = file;
+        preview.imagen = URL.createObjectURL(file);
+        form.value.imagen_eliminar = false;
+    }
+};
+
+const removeImagen = () => {
+    if (preview.imagen) URL.revokeObjectURL(preview.imagen);
+    form.value.imagen = null;
+    preview.imagen = null;
+    if (imagenInput.value) imagenInput.value.value = "";
+
+    // Si hay imagen existente, marcar para eliminar
+    if (categoria.value?.imagen) {
+        form.value.imagen_eliminar = true;
+    }
+};
+
+const confirmRemoveImagen = async () => {
+    const result = await Swal.fire({
+        title: "¿Eliminar imagen?",
+        text: "Esta acción eliminará la imagen actual de la categoría",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#dc2626",
+    });
+
+    if (result.isConfirmed) {
+        removeImagen();
+    }
+};
+
+// Función de validación de archivos
+const validateImageFile = (file: File, type: 'logo' | 'imagen'): boolean => {
+    // Validar tipo de archivo
+    if (!file.type.startsWith("image/")) {
+        toast.error("El archivo debe ser una imagen válida");
+        return false;
+    }
+
+    // Validar tamaño (2MB)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+        toast.error("La imagen es demasiado grande. Tamaño máximo: 2MB");
+        return false;
+    }
+
+    // Validaciones adicionales para logo
+    if (type === 'logo') {
+        const extension = file.name.split('.').pop()?.toLowerCase();
+        const recommendedExtensions = ['png', 'svg', 'ico'];
+        
+        if (!recommendedExtensions.includes(extension || '')) {
+            toast.warning("Para logos se recomienda usar PNG o SVG para mejor calidad");
+            // No bloquear, solo mostrar advertencia
+        }
+    }
+
+    return true;
+};
+
+const openFilePicker = (type: "logo" | "imagen") => {
+    if (type === "logo" && logoInput.value) {
+        logoInput.value.click();
+    } else if (type === "imagen" && imagenInput.value) {
+        imagenInput.value.click();
+    }
+};
+
+// Función para obtener URL de imagen
+const getImageUrl = (path: string | null): string => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `/storage/${path}`;
+};
+
+// Actualizar fillForm para incluir logo e imagen
+const fillForm = (categoriaData: Categoria) => {
+    form.value = {
+        nombre: categoriaData.nombre,
+        descripcion: categoriaData.descripcion || "",
+        parent_id: categoriaData.parent_id,
+        activo: categoriaData.activo,
+        orden: categoriaData.orden,
+        slug: categoriaData.slug,
+        imagen: null, // No cargar File aquí
+        imagen_eliminar: false,
+        logo: null, // No cargar File aquí
+        logo_eliminar: false,
+    };
+
+    // Guardar estado original para detectar cambios
+    originalForm.value = { 
+        ...form.value,
+        hasLogo: !!categoriaData.logo,
+        hasImagen: !!categoriaData.imagen
+    };
+    
+    // Limpiar previews
+    if (preview.logo) URL.revokeObjectURL(preview.logo);
+    if (preview.imagen) URL.revokeObjectURL(preview.imagen);
+    preview.logo = null;
+    preview.imagen = null;
 };
 
 const loadCategoria = async () => {
@@ -955,13 +1231,18 @@ const actualizarCategoria = async () => {
     loading.value = true;
 
     try {
-        // Crear FormData para enviar imagen
+        // Crear FormData para enviar archivos
         const formData = new FormData();
 
         // Agregar datos básicos
         formData.append("nombre", form.value.nombre?.trim() || "");
         formData.append("activo", form.value.activo ? "1" : "0");
         formData.append("orden", (form.value.orden || 0).toString());
+
+        // Agregar slug si existe
+        if (form.value.slug) {
+            formData.append("slug", form.value.slug);
+        }
 
         // Agregar campos opcionales si tienen valor
         if (form.value.descripcion?.trim()) {
@@ -982,13 +1263,18 @@ const actualizarCategoria = async () => {
             formData.append("imagen_eliminar", "1");
         }
 
+        // Manejar logo
+        if (form.value.logo instanceof File) {
+            formData.append("logo", form.value.logo);
+        }
+
+        // Si se marca para eliminar logo existente
+        if (form.value.logo_eliminar && categoria.value.logo) {
+            formData.append("logo_eliminar", "1");
+        }
+
         // Agregar _method PUT para Laravel
         formData.append("_method", "PUT");
-
-        // Debug: mostrar contenido de FormData
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
 
         const categoriaActualizada = await categoriaStore.updateCategoria(
             categoria.value.id,
@@ -1007,11 +1293,11 @@ const actualizarCategoria = async () => {
         categoria.value = categoriaActualizada;
         fillForm(categoriaActualizada);
 
-        // Limpiar preview si existía
-        if (preview.logo) {
-            URL.revokeObjectURL(preview.logo);
-            preview.logo = null;
-        }
+        // Limpiar previews si existían
+        if (preview.logo) URL.revokeObjectURL(preview.logo);
+        if (preview.imagen) URL.revokeObjectURL(preview.imagen);
+        preview.logo = null;
+        preview.imagen = null;
     } catch (error: any) {
         console.error("Error al actualizar categoría:", error);
 
@@ -1098,8 +1384,10 @@ const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     e.returnValue = "";
 };
 
-// Limpiar event listener al desmontar
+// Limpiar previews al desmontar
 onUnmounted(() => {
+    if (preview.logo) URL.revokeObjectURL(preview.logo);
+    if (preview.imagen) URL.revokeObjectURL(preview.imagen);
     window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 </script>

@@ -22,7 +22,7 @@
                     position: relative;
                     border-right: 1px solid #eee;
                     overflow: hidden;
-                    background: #fcfcfc; {{-- Color de fondo por si la imagen es pequeña --}}
+                    background: #fcfcfc;
                 ">
                     <a href="{{ route('tienda.categoria', $cat->slug) }}" style="display: flex; flex-direction: column; height: 100%; text-decoration: none;">
                         
@@ -34,23 +34,29 @@
                             text-align: center;
                             z-index: 10;
                             border-bottom: 1px solid #f5f5f5;
-                            flex-shrink: 0; {{-- Evita que el texto se encoja --}}
+                            flex-shrink: 0;
                         ">
                             <span style="color: var(--secondary-color); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">
                                 {{ $cat->nombre }}
                             </span>
                         </div>
 
-                        {{-- Contenedor de Imagen ajustado --}}
+                        {{-- Contenedor de Logo ajustado --}}
                         <div style="
-                            flex-grow: 1; {{-- Ocupa el resto del espacio --}}
+                            flex-grow: 1; 
                             width: 100%; 
-                            background-image: url('{{ $cat->imagen ? asset('storage/'.$cat->imagen) : 'https://via.placeholder.com/400x600?text='.$cat->nombre }}');
-                            background-size: contain; {{-- CAMBIO CLAVE: Muestra la imagen completa sin cortar --}}
+                            background-image: url('{{ 
+                                $cat->logo 
+                                    ? asset('storage/'.$cat->logo) 
+                                    : ($cat->imagen 
+                                        ? asset('storage/'.$cat->imagen) 
+                                        : 'https://via.placeholder.com/400x600?text='.$cat->nombre)
+                            }}');
+                            background-size: contain; 
                             background-repeat: no-repeat;
-                            background-position: center bottom; {{-- Se apoya en la curva de abajo --}}
+                            background-position: center center; {{-- Cambiado a center para logo --}}
                             transition: transform 0.5s ease;
-                            margin-bottom: 20px; {{-- Margen para que no toque el filo de la curva --}}
+                            margin-bottom: 20px;
                         " class="category-bg">
                         </div>
                     </a>

@@ -10,6 +10,7 @@ use App\Models\Categoria;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
 class CategoriaController extends Controller
 {
     /**
@@ -96,12 +97,19 @@ class CategoriaController extends Controller
         try {
             $data = $request->validated();
 
+            // Manejar la imagen si existe
             if ($request->hasFile('imagen')) {
+                // Opción 1: Guardar en storage público (recomendado)
                 $path = $request->file('imagen')->store('categorias', 'public');
                 $data['imagen'] = $path; // Esto guardará: "categorias/nombre-imagen.jpg"
-
+            }
+            
+            if ($request->hasFile('logo')) {
+                $logoPath = $request->file('logo')->store('categorias', 'public');
+                $data['logo'] = $logoPath;
             }
 
+            // Si no se especifica orden, usar el siguiente disponible
             if (!isset($data['orden'])) {
                 $maxOrden = Categoria::where('parent_id', $data['parent_id'] ?? null)
                     ->max('orden') ?? 0;
@@ -181,6 +189,23 @@ class CategoriaController extends Controller
                 // Guardar nueva imagen
                 $path = $request->file('imagen')->store('categorias', 'public');
                 $data['imagen'] = $path;
+            }
+            
+             // AGREGAR: Manejar eliminación del logo
+            if ($request->has('logo_eliminar') && $request->logo_eliminar) {
+                if ($categoria->logo) {
+                    Storage::disk('public')->delete($categoria->logo);
+                    $data['logo'] = null;
+                }
+            }
+    
+            // AGREGAR: Manejar nuevo logo si existe (como archivo)
+            if ($request->hasFile('logo')) {
+                if ($categoria->logo) {
+                    Storage::disk('public')->delete($categoria->logo);
+                }
+                $logoPath = $request->file('logo')->store('categorias', 'public');
+                $data['logo'] = $logoPath;
             }
 
             // Actualizar categoría

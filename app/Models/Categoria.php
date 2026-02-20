@@ -14,6 +14,7 @@ class Categoria extends Model
         'slug',
         'descripcion',
         'imagen',
+        'logo', 
         'parent_id',
         'activo',
         'orden'

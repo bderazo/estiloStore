@@ -82,7 +82,7 @@
                             ">
                                     {{-- Lado Izquierdo: Imagen --}}
                                     <div style="width: 40%; background: #f9f9f9; position: relative; overflow: hidden;">
-                                        <img src="{{ $prod->imagenes->first() ? asset('storage/' . $prod->imagenes->first()->url) : asset('web/assets/img/no-image.jpg') }}"
+                                        <img src="{{ $prod->imagenes->first() ? asset('storage/' . $prod->imagenes->first()->ruta) : asset('web/assets/img/no-image.jpg') }}"
                                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
                                             class="img-oferta">
 

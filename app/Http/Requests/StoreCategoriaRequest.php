@@ -30,6 +30,7 @@ class StoreCategoriaRequest extends FormRequest
             'activo' => 'boolean',
             'orden' => 'nullable|integer|min:0',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
@@ -56,6 +57,9 @@ class StoreCategoriaRequest extends FormRequest
             'imagen.image' => 'El archivo debe ser una imagen',
             'imagen.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o svg',
             'imagen.max' => 'La imagen no puede pesar más de 2MB',
+            'logo.image' => 'El archivo debe ser una imagen',
+            'logo.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o svg',
+            'logo.max' => 'La imagen no puede pesar más de 2MB',
         ];
     }
 
@@ -72,7 +76,8 @@ class StoreCategoriaRequest extends FormRequest
             'descripcion' => 'descripción',
             'parent_id' => 'categoría padre',
             'activo' => 'estado activo',
-            'orden' => 'orden'
+            'orden' => 'orden',
+            'logo' => 'logo',
         ];
     }
 
@@ -91,6 +96,11 @@ class StoreCategoriaRequest extends FormRequest
         // Convertir string vacío a null para parent_id
         if ($this->parent_id === '') {
             $this->merge(['parent_id' => null]);
+        }
+        
+        // Convertir string vacío a null para logo
+        if ($this->has('logo') && $this->logo === '') {
+            $this->merge(['logo' => null]);
         }
     }
 }

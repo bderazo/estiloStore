@@ -30,6 +30,8 @@ class UpdateCategoriaRequest extends FormRequest
             'orden' => 'nullable|integer|min:0',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'imagen_eliminar' => 'nullable|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo_eliminar' => 'nullable|boolean',
         ];
     }
     /**
@@ -67,6 +69,7 @@ class UpdateCategoriaRequest extends FormRequest
             'nombre' => 'nombre',
             'slug' => 'slug',
             'descripcion' => 'descripción',
+            'logo' => 'logo', 
             'parent_id' => 'categoría padre',
             'activo' => 'estado activo',
             'orden' => 'orden'
@@ -88,6 +91,11 @@ class UpdateCategoriaRequest extends FormRequest
         // Convertir string vacío a null para parent_id
         if ($this->parent_id === '') {
             $this->merge(['parent_id' => null]);
+        }
+        
+        // Convertir string vacío a null para logo
+        if ($this->has('logo') && $this->logo === '') {
+            $this->merge(['logo' => null]);
         }
     }
 

@@ -4,6 +4,7 @@ export interface Categoria {
     nombre: string;
     descripcion: string | null;
     imagen: string | null;
+    logo: string | null; // AGREGAR ESTA LÍNEA
     slug: string;
     parent_id: number | null;
     activo: boolean;
@@ -20,6 +21,10 @@ export interface Categoria {
     path: string;
     has_children: boolean;
     children_count: number;
+
+    // URLs completas (opcionales, si vienen del backend)
+    imagen_url?: string;
+    logo_url?: string;
 }
 
 // Interfaz para crear categoría
@@ -30,6 +35,7 @@ export interface CreateCategoriaRequest {
     activo?: boolean;
     orden?: number;
     imagen?: File | null;
+    logo?: File | null; // AGREGAR ESTA LÍNEA
 }
 
 // Interfaz para actualizar categoría
@@ -39,18 +45,24 @@ export interface UpdateCategoriaRequest {
     parent_id?: number | null;
     activo?: boolean;
     orden?: number;
+    imagen?: File | null;
+    imagen_eliminar?: boolean; // Si ya existe
+    logo?: File | null; // AGREGAR ESTA LÍNEA
+    logo_eliminar?: boolean; // AGREGAR ESTA LÍNEA
 }
 
 // Interfaz para filtros en el listado
 export interface CategoriaFilters {
     search?: string;
     activo?: boolean | null;
-    parent_id?: number | null | 'null';
-    sort_by?: 'nombre' | 'orden' | 'created_at' | 'updated_at';
-    sort_order?: 'asc' | 'desc';
+    parent_id?: number | null | "null";
+    sort_by?: "nombre" | "orden" | "created_at" | "updated_at";
+    sort_order?: "asc" | "desc";
     per_page?: number;
     page?: number;
     hierarchical?: boolean;
+    // Si quieres buscar por logo (poco común pero posible)
+    has_logo?: boolean; // AGREGAR OPCIONAL
 }
 
 // Interfaz para opciones de select
@@ -132,7 +144,7 @@ export interface CategoriaFormProps {
     categoria?: Categoria | null;
     parentOptions?: CategoriaSelectOption[];
     loading?: boolean;
-    mode: 'create' | 'edit';
+    mode: "create" | "edit";
 }
 
 export interface CategoriaSelectProps {
@@ -164,7 +176,10 @@ export interface CategoriaActions {
     fetchCategorias: (filters?: CategoriaFilters) => Promise<void>;
     fetchCategoria: (id: number) => Promise<void>;
     createCategoria: (data: CreateCategoriaRequest) => Promise<Categoria>;
-    updateCategoria: (id: number, data: UpdateCategoriaRequest) => Promise<Categoria>;
+    updateCategoria: (
+        id: number,
+        data: UpdateCategoriaRequest,
+    ) => Promise<Categoria>;
     deleteCategoria: (id: number) => Promise<void>;
     toggleActivo: (id: number) => Promise<Categoria>;
     fetchParentOptions: (excludeId?: number) => Promise<void>;
