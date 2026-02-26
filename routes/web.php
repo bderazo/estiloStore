@@ -14,6 +14,8 @@ use App\Http\Controllers\Web\OrderPaymentController;
 use App\Http\Controllers\Web\PagoController;
 use App\Http\Controllers\Web\PedidoController;
 use App\Http\Controllers\Web\RegisterController;
+use App\Http\Controllers\Web\TestimonialController;
+use App\Http\Controllers\Web\VideoExitoController;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -146,7 +148,7 @@ Route::get('/administrador/{any?}', [AppController::class, 'index'])->where('any
 
 //ruta de categorias
 Route::get('/categoria/{slug}', [CategoriaController::class, 'show'])->name('tienda.categoria');
-Route::get('/categorias', [CategoriaController::class,'index'])->name('categorias');
+Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
 
 // Rutas de Registro
 Route::get('/registro', RegisterController::class)->name('register');
@@ -158,12 +160,12 @@ Route::post('/registro', [RegisterController::class, 'register'])->name('registe
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');   
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 });
- Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::prefix('carrito')->name('web.carrito.')->group(function () {
-    
+
     Route::get('/', [CarritoController::class, 'index'])->name('index');
     Route::post('/agregar', [CarritoController::class, 'agregar'])->name('add');
     Route::get('/buscar', [CarritoController::class, 'buscar'])->name('buscar');
@@ -175,14 +177,14 @@ Route::prefix('carrito')->name('web.carrito.')->group(function () {
 
 });
 
-    Route::prefix('mis-reservas')->name('web.pedidos.')->group(function () {
-        Route::get('/', [PedidoController::class, 'index'])->name('index');
-        Route::get('/{id}', [PedidoController::class, 'show'])->name('show');
-        Route::post('/{id}/subir-pago', [PedidoController::class, 'subirPago'])->name('subir_pago');        
-    });
+Route::prefix('mis-reservas')->name('web.pedidos.')->group(function () {
+    Route::get('/', [PedidoController::class, 'index'])->name('index');
+    Route::get('/{id}', [PedidoController::class, 'show'])->name('show');
+    Route::post('/{id}/subir-pago', [PedidoController::class, 'subirPago'])->name('subir_pago');
+});
 Route::post('/pedidos/{id}/asignar-transporte', [PedidoController::class, 'asignarTransporte'])->name('web.pedidos.asignar_transporte');
 
-Route::group(['middleware' => ['auth']], function () {    
+Route::group(['middleware' => ['auth']], function () {
     // Home del Cliente
     Route::get('/mi-cuenta', CustomerHomeController::class)->name('customer.dashboard');
     // Ruta para subir el Voucher
@@ -209,3 +211,8 @@ Route::get('/pedido-finalizado/{id}', [PagoController::class, 'exito'])->name('w
 
 // Ruta para el buscador global
 Route::get('/buscar', [BusquedaController::class, 'buscar'])->name('web.buscar');
+
+Route::get('/testimonios', [TestimonialController::class, 'index']);
+
+Route::get('/casos-de-exito', [VideoExitoController::class, 'index'])->name('videos.exito');
+Route::get('/casos-de-exito/cargar-mas', [VideoExitoController::class, 'loadMore'])->name('videos.exito.load-more');

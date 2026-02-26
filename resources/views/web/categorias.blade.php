@@ -11,63 +11,71 @@
 
     <main class="main__content_wrapper">
 
-        <section class="breadcrumb__section breadcrumb__bg" 
-                 style="background-image: url('{{ $bannerCategorias ? asset('storage/'.$bannerCategorias->imagen) : asset('web/assets/img/other/breadcrumb-bg.jpg') }}'); min-height: 350px; display: flex; align-items: center; position: relative;">
+        <section class="breadcrumb__section breadcrumb__bg"
+            style="background-image: url('{{ $bannerCategorias ? asset('storage/' . $bannerCategorias->imagen_ruta) : asset('web/assets/img/other/breadcrumb-bg.jpg') }}'); min-height: 350px; display: flex; align-items: center; position: relative;">
             <div class="container" style="position: relative; z-index: 2;">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <h1 class="breadcrumb__content--title text-white mb-20" style="font-size: 3rem; font-weight: 800;">Nuestras Colecciones</h1>
+                        <h1 class="breadcrumb__content--title text-white mb-20"
+                            style="font-size: 3rem; font-weight: 800;">Nuestras Colecciones</h1>
                         <nav class="breadcrumb__content--menu d-flex justify-content-center">
                             <ul class="d-flex align-items-center">
-                                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{{ route('home') }}">Inicio</a></li>
-                                <li class="breadcrumb__content--menu__items"><span class="text-white">Categorías</span></li>
+                                <li class="breadcrumb__content--menu__items"><a class="text-white"
+                                        href="{{ route('home') }}">Inicio</a></li>
+                                <li class="breadcrumb__content--menu__items"><span class="text-white">Categorías</span>
+                                </li>
                             </ul>
                         </nav>
                     </div>
                 </div>
             </div>
+
         </section>
 
-        <section class="categories__page--section section--padding" style="background: #ffffff; padding-top: 80px; padding-bottom: 80px;">
+        <section class="categories__page--section section--padding"
+            style="background: #ffffff; padding-top: 80px; padding-bottom: 80px;">
             <div class="container">
-                
+
                 <div class="row mb-50 justify-content-center">
                     <div class="col-lg-6 text-center">
                         <h2 class="mb-3" style="color: var(--primary-color); font-weight: 700;">Explora por Estilo</h2>
                         <div class="category__search-box">
-                            <input type="text" id="catSearch" class="form-control" placeholder="Busca tu categoría favorita..." 
-                                   style="border-radius: 50px; padding: 15px 30px; border: 2px solid var(--secondary-color-pastel); text-align: center;">
+                            <input type="text" id="catSearch" class="form-control"
+                                placeholder="Busca tu categoría favorita..."
+                                style="border-radius: 50px; padding: 15px 30px; border: 2px solid var(--secondary-color-pastel); text-align: center;">
                         </div>
                     </div>
                 </div>
 
-                <div class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 gx-5 gy-5" id="catGrid" style="margin-bottom: 50px;">
+                <div class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 gx-5 gy-5" id="catGrid"
+                    style="margin-bottom: 50px;">
                     @foreach($categorias as $cat)
                         @php
                             // Determinar qué imagen mostrar (prioridad: logo > imagen)
-                            $imageUrl = $cat->logo 
-                                ? asset('storage/'.$cat->logo)
-                                : ($cat->imagen 
-                                    ? asset('storage/'.$cat->imagen)
+                            $imageUrl = $cat->logo
+                                ? asset('storage/' . $cat->logo)
+                                : ($cat->imagen
+                                    ? asset('storage/' . $cat->imagen)
                                     : asset('web/assets/img/placeholder-categoria.jpg'));
-                            
+
                             // Clase CSS adicional para logos
                             $imgClass = $cat->logo ? 'has-logo' : 'has-image';
                         @endphp
-                        
+
                         <div class="col cat-card-item" style="margin-bottom: 30px;">
                             <a href="{{ route('tienda.categoria', $cat->slug) }}" class="cat-magazine-card">
                                 <div class="cat-magazine-wrapper">
-                                    <img src="{{ $imageUrl }}" alt="{{ $cat->nombre }}" 
-                                         class="cat-magazine-img {{ $imgClass }}">
-                                    
+                                    <img src="{{ $imageUrl }}" alt="{{ $cat->nombre }}"
+                                        class="cat-magazine-img {{ $imgClass }}">
+
                                     <div class="cat-magazine-overlay">
                                         <div class="cat-info-top">
                                             <span class="cat-badge">{{ $cat->articulos_count ?? 0 }} Artículos</span>
                                         </div>
                                         <div class="cat-info-bottom">
                                             <h3 class="cat-title">{{ $cat->nombre }}</h3>
-                                            <div class="cat-explore-btn">Explorar Colección <i class="icon-arrow-right"></i></div>
+                                            <div class="cat-explore-btn">Explorar Colección <i class="icon-arrow-right"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -83,12 +91,14 @@
             .cat-magazine-card {
                 display: block;
                 position: relative;
-                height: 380px; /* Reducido un poco más */
+                height: 380px;
+                /* Reducido un poco más */
                 border-radius: 20px;
                 overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
                 transition: all 0.4s ease;
-                background: #eee; /* Color de carga si no hay imagen */
+                background: #eee;
+                /* Color de carga si no hay imagen */
             }
 
             .cat-magazine-wrapper {
@@ -120,13 +130,14 @@
             /* Overlay de Cristal Transparente por defecto */
             .cat-magazine-overlay {
                 position: absolute;
-                inset: 0; /* Ocupa todo el espacio */
+                inset: 0;
+                /* Ocupa todo el espacio */
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 padding: 25px;
                 /* Gradiente sutil para que el texto sea legible sobre la imagen */
-                background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 50%);
                 transition: all 0.4s ease;
             }
 
@@ -145,7 +156,7 @@
                 font-size: 1.8rem;
                 font-weight: 800;
                 margin-bottom: 8px;
-                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
             }
 
             .cat-explore-btn {
@@ -160,7 +171,7 @@
             /* HOVER: Aquí se activa el efecto de color/cristal */
             .cat-magazine-card:hover {
                 transform: translateY(-10px);
-                box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             }
 
             .cat-magazine-card:hover .cat-magazine-img {
@@ -169,13 +180,15 @@
 
             /* Ajuste de escala para logos en hover */
             .cat-magazine-card:hover .cat-magazine-img.has-logo {
-                transform: scale(1.05); /* Menos zoom para logos */
+                transform: scale(1.05);
+                /* Menos zoom para logos */
             }
 
             .cat-magazine-card:hover .cat-magazine-overlay {
                 /* Al pasar el mouse, se aplica el desenfoque y el color */
-                background: rgba(var(--primary-color-rgb, 0, 0, 0), 0.6); 
-                background-color: rgba(0,0,0,0.4); /* Fallback si no hay variable */
+                background: rgba(var(--primary-color-rgb, 0, 0, 0), 0.6);
+                background-color: rgba(0, 0, 0, 0.4);
+                /* Fallback si no hay variable */
                 backdrop-filter: blur(4px);
             }
 
@@ -195,18 +208,25 @@
                 margin-left: 10px;
                 opacity: 0.7;
                 float: right;
-                display: none; /* Oculto por defecto */
+                display: none;
+                /* Oculto por defecto */
             }
-            
+
             .has-logo .cat-info-top::after {
-                display: inline-block; /* Mostrar solo para logos */
+                display: inline-block;
+                /* Mostrar solo para logos */
             }
 
             /* Espaciado de Grid */
-            .gy-5 { margin-bottom: 40px; } 
+            .gy-5 {
+                margin-bottom: 40px;
+            }
 
             @media (max-width: 768px) {
-                .cat-magazine-card { height: 300px; }
+                .cat-magazine-card {
+                    height: 300px;
+                }
+
                 .cat-magazine-img.has-logo {
                     padding: 20px;
                 }
@@ -214,7 +234,7 @@
         </style>
 
         <script>
-            document.getElementById('catSearch').addEventListener('keyup', function() {
+            document.getElementById('catSearch').addEventListener('keyup', function () {
                 let val = this.value.toLowerCase();
                 document.querySelectorAll('.cat-card-item').forEach(item => {
                     let title = item.querySelector('.cat-title').innerText.toLowerCase();

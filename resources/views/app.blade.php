@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +10,7 @@
     <title>ESTILO STORE</title>
 
     <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
     @vite(['resources/js/src/main.ts'])
@@ -16,9 +18,11 @@
 
 <body>
     <noscript>
-        <strong>We're sorry but Vristo doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+        <strong>We're sorry but Vristo doesn't work properly without JavaScript enabled. Please enable it to
+            continue.</strong>
     </noscript>
 
     <div id="app"></div>
 </body>
+
 </html>

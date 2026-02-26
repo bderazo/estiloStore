@@ -4,6 +4,8 @@ export interface Articulo {
     slug: string;
     descripcion: string;
     especificaciones: string;
+    precio_compra: number;
+    precio_emprendedora: number;
     precio: number;
     sku: string;
     categoria_id: number;
@@ -44,6 +46,8 @@ export interface ArticuloForm {
     slug: string;
     descripcion: string;
     especificaciones: string;
+    precio_compra: number;
+    precio_emprendedora: number;
     precio: number;
     sku: string;
     categoria_id?: number;
@@ -100,6 +104,6 @@ export interface ArticuloListResponse {
 
 export interface StockMovement {
     articulo_variante_id: number;
-    tipo: 'reserva' | 'liberacion' | 'decremento';
+    tipo: "reserva" | "liberacion" | "decremento";
     cantidad: number;
 }

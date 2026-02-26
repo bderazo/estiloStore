@@ -25,6 +25,8 @@ use App\Http\Controllers\API\ArticuloController;
 use App\Http\Controllers\API\ReporteController;
 use App\Http\Controllers\API\TransporteController;
 use App\Http\Controllers\API\AdminPedidoController;
+use App\Http\Controllers\API\TestimonialController;
+use App\Http\Controllers\API\VideoExitoController;
 
 
 /*
@@ -137,51 +139,59 @@ Route::middleware(['jwt.auth'])->group(function () {
         ->name('folletos.estadisticas.publico');
 
     // Rutas protegidas (requieren autenticación)
-        Route::prefix('folletos')->group(function () {
-            Route::get('/', [FolletoController::class, 'index']);
-                // ->middleware('can:folletos.index')
-                // ->name('folletos.index');
-            
-            Route::get('/{folleto}', [FolletoController::class, 'show'])
-                // ->middleware('can:folletos.view')
-                ->name('folletos.show');
-            
-            Route::post('/', [FolletoController::class, 'store'])
-                // ->middleware('can:folletos.create')
-                ->name('folletos.store');
-            
-            Route::put('/{folleto}', [FolletoController::class, 'update'])
-                // ->middleware('can:folletos.edit')
-                ->name('folletos.update');
-            
-            Route::delete('/{folleto}', [FolletoController::class, 'destroy'])
-                // ->middleware('can:folletos.delete')
-                ->name('folletos.destroy');
-            
-            Route::patch('/{folleto}/toggle-estado', [FolletoController::class, 'toggleEstado'])
-                // ->middleware('can:folletos.edit')
-                ->name('folletos.toggle-estado');
-            
-            Route::post('/{folleto}/registrar-descarga', [FolletoController::class, 'incrementarDescargas'])
-                // ->middleware('can:folletos.view')
-                ->name('folletos.registrar-descarga');
-        });
-    
-        // Ruta para métodos de pago
+    Route::prefix('folletos')->group(function () {
+        Route::get('/', [FolletoController::class, 'index']);
+        // ->middleware('can:folletos.index')
+        // ->name('folletos.index');
 
-            Route::apiResource('metodos-pago', MetodoPagoController::class);
-            
-            Route::patch('metodos-pago/{metodoPago}/toggle-activo', 
-                [MetodoPagoController::class, 'toggleActivo']);
-            
-            Route::post('metodos-pago/ordenar', 
-                [MetodoPagoController::class, 'ordenar']);
-        
-        Route::get('metodos-pago-activos', 
-            [MetodoPagoController::class, 'activos']);
+        Route::get('/{folleto}', [FolletoController::class, 'show'])
+            // ->middleware('can:folletos.view')
+            ->name('folletos.show');
 
-    Route::get('metodos-pago-publicos', 
-        [MetodoPagoController::class, 'activos']);
+        Route::post('/', [FolletoController::class, 'store'])
+            // ->middleware('can:folletos.create')
+            ->name('folletos.store');
+
+        Route::put('/{folleto}', [FolletoController::class, 'update'])
+            // ->middleware('can:folletos.edit')
+            ->name('folletos.update');
+
+        Route::delete('/{folleto}', [FolletoController::class, 'destroy'])
+            // ->middleware('can:folletos.delete')
+            ->name('folletos.destroy');
+
+        Route::patch('/{folleto}/toggle-estado', [FolletoController::class, 'toggleEstado'])
+            // ->middleware('can:folletos.edit')
+            ->name('folletos.toggle-estado');
+
+        Route::post('/{folleto}/registrar-descarga', [FolletoController::class, 'incrementarDescargas'])
+            // ->middleware('can:folletos.view')
+            ->name('folletos.registrar-descarga');
+    });
+
+    // Ruta para métodos de pago
+
+    Route::apiResource('metodos-pago', MetodoPagoController::class);
+
+    Route::patch(
+        'metodos-pago/{metodoPago}/toggle-activo',
+        [MetodoPagoController::class, 'toggleActivo']
+    );
+
+    Route::post(
+        'metodos-pago/ordenar',
+        [MetodoPagoController::class, 'ordenar']
+    );
+
+    Route::get(
+        'metodos-pago-activos',
+        [MetodoPagoController::class, 'activos']
+    );
+
+    Route::get(
+        'metodos-pago-publicos',
+        [MetodoPagoController::class, 'activos']
+    );
 
     // Rutas de categorías
     Route::group(['prefix' => 'categorias'], function () {
@@ -336,7 +346,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Rutas públicas
         Route::get('/rutas/disponibles', [TransporteController::class, 'rutasDisponibles']);
         Route::get('/cooperativas', [TransporteController::class, 'cooperativas']);
-        
+
         // Rutas protegidas
         Route::get('/', [TransporteController::class, 'index']);
         Route::get('/estadisticas', [TransporteController::class, 'estadisticas']); // ✅ AÑADIR ESTA RUTA
@@ -354,12 +364,51 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/pedidos/estados', [AdminPedidoController::class, 'estados']);
     Route::get('/pedidos/{id}', [AdminPedidoController::class, 'show']);
     Route::get('/pedidos/{id}/pagos', [AdminPedidoController::class, 'pagos']);
-    
+
     // Pagos
     Route::post('/pagos/{id}/aprobar', [AdminPedidoController::class, 'aprobarPago']);
     Route::post('/pagos/{id}/rechazar', [AdminPedidoController::class, 'rechazarPago']);
     Route::get('/pagos/pendientes/count', [AdminPedidoController::class, 'pagosPendientesCount']);
-    
+
+    // Testimonios API
+    Route::prefix('testimonials')->group(function () {
+        Route::get('/', [TestimonialController::class, 'getTestimonials']);
+        Route::post('/', [TestimonialController::class, 'store']);
+        Route::put('/{id}', [TestimonialController::class, 'update']);
+        Route::delete('/{id}', [TestimonialController::class, 'destroy']);
+        Route::patch('/{id}/toggle', [TestimonialController::class, 'toggleStatus']);
+        Route::post('/config', [TestimonialController::class, 'saveConfig']);
+        Route::get('/config', [TestimonialController::class, 'getConfig']);
+    });
+
+    Route::prefix('/videos-exito')->group(function () {
+        Route::get('/', [VideoExitoController::class, 'getVideos']);
+        Route::get('/config', [VideoExitoController::class, 'getConfig']);
+        Route::post('/', [VideoExitoController::class, 'store']);
+        Route::post('/config', [VideoExitoController::class, 'saveConfig']);
+        Route::put('/{id}', [VideoExitoController::class, 'update']);
+        Route::delete('/{id}', [VideoExitoController::class, 'destroy']);
+        Route::patch('/{id}/toggle', [VideoExitoController::class, 'toggleStatus']);
+        Route::post('/reorder', [VideoExitoController::class, 'reorder']); // Opcional
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        // Sectores
+        Route::get('/sectores', [SectorController::class, 'index']);
+        Route::get('/sectores/{ubicacion}', [SectorController::class, 'byUbicacion']);
+
+        // Direcciones de entrega
+        Route::apiResource('direcciones-entrega', DireccionEntregaController::class);
+        Route::get('/usuarios/{user}/direcciones', [DireccionEntregaController::class, 'byUser']);
+
+        // Entregas por sector
+        Route::apiResource('entregas-sectores', EntregaSectorController::class);
+
+        // Reportes
+        Route::get('/reportes/entregas-sectores', [ReporteEntregaController::class, 'index']);
+        Route::get('/reportes/entregas-sectores/export', [ReporteEntregaController::class, 'export']);
+    });
+
     // Estadísticas
 
     // Ruta de inicio/dashboard

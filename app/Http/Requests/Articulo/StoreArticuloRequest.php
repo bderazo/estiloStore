@@ -55,7 +55,9 @@ class StoreArticuloRequest extends FormRequest
             'slug' => ['required', 'string', 'max:255', 'unique:articulos,slug'],
             'descripcion' => ['nullable', 'string'],
             'especificaciones' => ['nullable', 'string'],
-            'precio' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+            'precio_compra' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+            'precio_emprendedora' => ['required', 'numeric', 'min:0', 'max:999999.99', 'gt:precio_compra'],
+            'precio' => ['required', 'numeric', 'min:0', 'max:999999.99', 'gt:precio_emprendedora'],
             'sku' => ['nullable', 'string', 'max:255', 'unique:articulos,sku'],
             'categoria_id' => ['nullable', 'exists:categorias,id'],
             'marca_id' => ['nullable', 'exists:marcas,id'],
@@ -98,10 +100,22 @@ class StoreArticuloRequest extends FormRequest
             'descripcion.string' => 'La descripción debe ser un texto válido.',
             'especificaciones.string' => 'Las especificaciones deben ser un texto válido.',
 
+            'precio_compra.required' => 'El campo precio es obligatorio.',
+            'precio_compra.numeric' => 'El precio debe ser un número válido.',
+            'precio_compra.min' => 'El precio debe ser mayor o igual a 0.',
+            'precio_compra.max' => 'El precio no puede superar 999999.99.',
+
+            'precio_emprendedora.required' => 'El campo precio es obligatorio.',
+            'precio_emprendedora.numeric' => 'El precio debe ser un número válido.',
+            'precio_emprendedora.min' => 'El precio debe ser mayor o igual a 0.',
+            'precio_emprendedora.max' => 'El precio no puede superar 999999.99.',
+            'precio_emprendedora.gt' => 'El precio emprendedora debe ser mayor al precio de compra',
+
             'precio.required' => 'El campo precio es obligatorio.',
             'precio.numeric' => 'El precio debe ser un número válido.',
             'precio.min' => 'El precio debe ser mayor o igual a 0.',
             'precio.max' => 'El precio no puede superar 999999.99.',
+            'precio.gt' => 'El precio debe ser mayor al precio emprendedora',
 
             'sku.unique' => 'El SKU ya está en uso.',
             'sku.max' => 'El SKU no puede superar 255 caracteres.',

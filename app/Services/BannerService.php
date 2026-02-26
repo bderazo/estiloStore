@@ -48,9 +48,58 @@ class BannerService {
     }
 
     /**
-     * Obtener imagen por sección
+     * Obtener banner por sección (SOLO activos)
      */
     public function getBannerBySeccion(string $seccion) {
-        return Banner::where('seccion', $seccion)->where('estado', true)->first();
+        return Banner::where('seccion', $seccion)
+            ->where('estado', true)
+            ->first();
+    }
+
+    /**
+     * 👇 NUEVO: Obtener banner por sección SIN filtrar por estado (para depuración)
+     */
+    public function getBannerBySeccionDebug(string $seccion) {
+        $banner = Banner::where('seccion', $seccion)->first();
+        
+        if (!$banner) {
+            return [
+                'existe' => false,
+                'mensaje' => "No existe ningún banner para la sección '{$seccion}'",
+                'seccion' => $seccion
+            ];
+        }
+        
+        return [
+            'existe' => true,
+            'id' => $banner->id,
+            'seccion' => $banner->seccion,
+            'titulo' => $banner->titulo,
+            'subtitulo' => $banner->subtitulo,
+            'imagen_ruta' => $banner->imagen_ruta,
+            'estado' => $banner->estado,
+            'estado_texto' => $banner->estado ? 'ACTIVO' : 'INACTIVO',
+            'url_destino' => $banner->url_destino,
+            'created_at' => $banner->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $banner->updated_at->format('Y-m-d H:i:s'),
+            'imagen_url' => $banner->imagen_ruta ? asset('storage/' . $banner->imagen_ruta) : null,
+            'imagen_existe_en_storage' => $banner->imagen_ruta ? Storage::disk('public')->exists($banner->imagen_ruta) : false
+        ];
+    }
+
+    /**
+     * 👇 NUEVO: Listar todas las secciones disponibles
+     */
+    public function listarSecciones() {
+        return Banner::select('seccion', 'estado')
+            ->distinct()
+            ->get()
+            ->map(function($banner) {
+                return [
+                    'seccion' => $banner->seccion,
+                    'estado' => $banner->estado,
+                    'estado_texto' => $banner->estado ? 'ACTIVO' : 'INACTIVO'
+                ];
+            });
     }
 }

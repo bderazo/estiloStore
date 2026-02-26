@@ -62,24 +62,91 @@
         </div>
       </div>
 
-      <!-- Pricing y Stock base -->
+      <!-- Pricing -->
       <div class="space-y-4 rounded-lg bg-gray-50 p-4">
-        <h2 class="text-lg font-semibold text-gray-800">Pricing</h2>
+        <h2 class="text-lg font-semibold text-gray-800">Precios</h2>
 
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <!-- Precio base -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <!-- Precio de Compra -->
           <div>
-            <label class="mb-2 block text-sm font-medium text-gray-700">Precio base *</label>
-            <input
-              v-model.number="formulario.precio"
-              type="number"
-              step="0.01"
-              placeholder="0.00"
-              class="w-full rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            />
-            <span v-if="errores.precio" class="mt-1 text-xs text-red-600">{{ errores.precio[0] }}</span>
+            <label class="mb-2 block text-sm font-medium text-gray-700">Precio de Compra *</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500">$</span>
+              <input
+                v-model.number="formulario.precio_compra"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                class="w-full rounded border border-gray-300 pl-8 pr-3 py-2 focus:border-blue-500 focus:outline-none"
+                @input="calcularGanancias"
+              />
+            </div>
+            <span v-if="errores.precio_compra" class="mt-1 text-xs text-red-600">{{ errores.precio_compra[0] }}</span>
           </div>
 
+          <!-- Precio Emprendedora (Distribuidor) -->
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-700">Precio Emprendedora *</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500">$</span>
+              <input
+                v-model.number="formulario.precio_emprendedora"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                class="w-full rounded border border-gray-300 pl-8 pr-3 py-2 focus:border-blue-500 focus:outline-none"
+                @input="calcularGanancias"
+              />
+            </div>
+            <span v-if="errores.precio_emprendedora" class="mt-1 text-xs text-red-600">{{ errores.precio_emprendedora[0] }}</span>
+          </div>
+
+          <!-- PVP (Precio Venta al Público) -->
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-700">PVP *</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500">$</span>
+              <input
+                v-model.number="formulario.pvp"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                class="w-full rounded border border-gray-300 pl-8 pr-3 py-2 focus:border-blue-500 focus:outline-none"
+                @input="calcularGanancias"
+              />
+            </div>
+            <span v-if="errores.pvp" class="mt-1 text-xs text-red-600">{{ errores.pvp[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Resumen de Ganancias (Solo visual) -->
+        <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="rounded-lg bg-green-50 p-3 border border-green-200">
+            <p class="text-sm text-green-700 font-medium">Ganancia del Distribuidor</p>
+            <p class="text-lg font-bold text-green-800">
+              ${{ (formulario.precio_emprendedora - formulario.precio_compra).toFixed(2) }}
+            </p>
+            <p class="text-xs text-green-600">(Precio Emprendedora - Precio Compra)</p>
+          </div>
+          
+          <div class="rounded-lg bg-blue-50 p-3 border border-blue-200">
+            <p class="text-sm text-blue-700 font-medium">Ganancia de la Distribuidora</p>
+            <p class="text-lg font-bold text-blue-800">
+              ${{ (formulario.pvp - formulario.precio_emprendedora).toFixed(2) }}
+            </p>
+            <p class="text-xs text-blue-600">(PVP - Precio Emprendedora)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock base y SKU -->
+      <div class="space-y-4 rounded-lg bg-gray-50 p-4">
+        <h2 class="text-lg font-semibold text-gray-800">Inventario</h2>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <!-- SKU -->
           <div>
             <label class="mb-2 block text-sm font-medium text-gray-700">SKU</label>
@@ -216,8 +283,11 @@ const formulario = ref({
   slug: '',
   descripcion: '',
   especificaciones: '',
-  precio: 0,
+  precio_compra: 0,
+  precio_emprendedora: 0,
+  pvp: 0,
   sku: '',
+  stock: 0,
   categoria_id: undefined as number | undefined,
   marca_id: undefined as number | undefined,
   activo: true,
@@ -228,6 +298,12 @@ const formulario = ref({
   variantes: [] as any[],
   variantes_eliminar: [] as number[],
 });
+
+// Función para calcular ganancias en tiempo real
+const calcularGanancias = () => {
+  // No necesitamos hacer nada especial aquí, los valores se actualizan
+  // automáticamente por la reactividad de Vue en los displays
+};
 
 onMounted(async () => {
   cargandoDatos.value = true;
@@ -295,8 +371,11 @@ onMounted(async () => {
           slug: art.slug || '',
           descripcion: art.descripcion || '',
           especificaciones: art.especificaciones || '',
-          precio: art.precio || 0,
+          precio_compra: art.precio_compra || 0,
+          precio_emprendedora: art.precio_emprendedora || 0,
+          pvp: art.pvp || 0,
           sku: art.sku || '',
+          stock: art.stock || 0,
           categoria_id: art.categoria_id || undefined,
           marca_id: art.marca_id || undefined,
           activo: art.activo ?? true,
@@ -360,6 +439,27 @@ const guardar = async () => {
   errores.value = {};
 
   try {
+    // Validar que los precios sean coherentes
+    if (formulario.value.precio_emprendedora <= formulario.value.precio_compra) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Verifica los precios',
+        text: 'El precio emprendedora debe ser mayor al precio de compra',
+      });
+      cargando.value = false;
+      return;
+    }
+
+    if (formulario.value.pvp <= formulario.value.precio_emprendedora) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Verifica los precios',
+        text: 'El PVP debe ser mayor al precio emprendedora',
+      });
+      cargando.value = false;
+      return;
+    }
+
     // 1. Preparar variantes
     const variantesAEnviar = formulario.value.variantes.map(variante => {
       const atributosConvertidos: Record<string, string> = {};
@@ -395,7 +495,9 @@ const guardar = async () => {
         stock: Number(variante.stock) || 0,
         activo: variante.activo !== undefined ? Boolean(variante.activo) : true,
         sku: variante.sku || '',
-        precio: variante.precio || 0
+        precio_compra: variante.precio_compra || formulario.value.precio_compra,
+        precio_emprendedora: variante.precio_emprendedora || formulario.value.precio_emprendedora,
+        pvp: variante.pvp || formulario.value.pvp
       };
     });
 
@@ -412,7 +514,9 @@ const guardar = async () => {
       slug: formulario.value.slug,
       descripcion: formulario.value.descripcion || '',
       especificaciones: formulario.value.especificaciones || '',
-      precio: formulario.value.precio || 0,
+      precio_compra: formulario.value.precio_compra || 0,
+      precio_emprendedora: formulario.value.precio_emprendedora || 0,
+      precio: formulario.value.pvp || 0,
       sku: formulario.value.sku || '',
       categoria_id: formulario.value.categoria_id,
       marca_id: formulario.value.marca_id,

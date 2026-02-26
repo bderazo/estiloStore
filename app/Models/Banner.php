@@ -28,6 +28,7 @@ class Banner extends Model
     const SECCIONES = [
         'initial_header' => 'Header Inicial (Home)',
         'nosotros_header' => 'Header Nosotros',
+        'categorias_header' => 'Header Categorías',
         'publicidad_uno' => 'Publicidad Uno',
         'publicidad_dos' => 'Publicidad Dos',
         'panel_cuenta_uno' => 'Panel Cuenta Uno',

@@ -1,3 +1,4 @@
+
 @if($publicidadUno && $publicidadUno->imagen_ruta)
 <!-- Inicio banner ancho completo -->
         <section class="banner__section section--padding pt-0">

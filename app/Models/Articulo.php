@@ -23,6 +23,8 @@ class Articulo extends Model
         'slug',
         'descripcion',
         'especificaciones',
+        'precio_compra',
+        'precio_emprendedora',
         'precio',
         'sku',
         'categoria_id',
@@ -42,6 +44,8 @@ class Articulo extends Model
      */
     protected $casts = [
         'precio' => 'decimal:2',
+        'precio_compra' => 'decimal:2',
+        'precio_emprendedora' => 'decimal:2',
         'activo' => 'boolean',
         'destacado' => 'boolean',
         'created_at' => 'datetime',

@@ -5,33 +5,35 @@
 
 @section('content')
 
-@php
-$carouselItems = ($carouselItems ?? collect())->values();
-@endphp
-<!-- Sección: Slider principal -->
-@include('web.index.partials.slider-hero')
+    @php
+        $carouselItems = ($carouselItems ?? collect())->values();
+    @endphp
+    <!-- Sección: Slider principal -->
+    @include('web.index.partials.slider-hero')
 
-<!--Sección categorias -->
-@include('web.index.partials.carrusel-categoria')
+    <!--Sección categorias -->
+    @include('web.index.partials.carrusel-categoria')
 
-<!--Sección ofertas -->
-@include('web.index.partials.carrusel-ofertas')
+    <!--Sección ofertas -->
+    @include('web.index.partials.carrusel-ofertas')
 
-<!-- Start shipping section -->
+    <!-- Start shipping section -->
 
-<!-- End shipping section -->
-@include('web.index.partials.shipping')
+    <!-- End shipping section -->
+    @include('web.index.partials.shipping')
 
-<!-- Sección: Promociones dobles -->
-{{--@include('web.index.partials.banner-promos-dobles')--}}
+    @include('web.index.partials.testimonials-carousel')
 
-<!-- Sección: Banner ancho completo -->
-@include('web.index.partials.banner-fullwidth')
-@include('web.index.partials.banner-dos-fullwidth')
+    <!-- Sección: Promociones dobles -->
+    @include('web.index.partials.banner-promos-dobles')
 
-@push('scripts')
-<script id="carousel-data" type="application/json">
-    {!! $carouselItems->toJson(JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
-</script>
-@endpush
+    <!-- Sección: Banner ancho completo -->
+    @include('web.index.partials.banner-fullwidth')
+    @include('web.index.partials.banner-dos-fullwidth')
+
+    @push('scripts')
+        <script id="carousel-data" type="application/json">
+            {!! $carouselItems->toJson(JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+        </script>
+    @endpush
 @endsection

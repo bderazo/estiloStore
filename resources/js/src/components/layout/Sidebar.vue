@@ -692,6 +692,73 @@
                             </vue-collapsible>
                         </li>
 
+                        <!-- Gestión de Testimonios -->
+                        <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'testimonios' }"
+                                @click="activeDropdown === 'testimonios' ? (activeDropdown = null) : (activeDropdown = 'testimonios')"
+                            >
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 13.4875 3.36068 14.891 4 16.1272L3 21L7.8728 20C9.109 20.6393 10.5125 21 12 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M8 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M8 14H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Testimonios</span>
+                                </div>
+                                <div class="rtl:rotate-180" :class="{ '!rotate-90': activeDropdown === 'testimonios' }">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </button>
+                            
+                            <vue-collapsible :isOpen="activeDropdown === 'testimonios'">
+                                <ul class="sub-menu text-gray-500">
+                                    <!-- Testimonios List -->
+                                    <li>
+                                        <router-link to="/administrador/testimonios">
+                                            <svg class="ltr:mr-2 rtl:ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20 7L9 18L4 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Lista de Testimonios
+                                        </router-link>
+                                    </li>
+                                    
+                                    <!-- Form Config -->
+                                    <li>
+                                        <router-link to="/administrador/testimonios/configuracion">
+                                            <svg class="ltr:mr-2 rtl:ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M19.6224 10.3954L18.5247 7.7448L20 6L18 4L16.2647 5.48295L13.5578 4.36974L12.9353 1.43573H11.0647L10.4422 4.36974L7.73525 5.48295L6 4L4 6L5.47528 7.7448L4.37764 10.3954L1.44366 11.0192V12.9808L4.37764 13.6046L5.47528 16.2552L4 18L6 20L7.73525 18.517L10.4422 19.6303L11.0647 22.5643H12.9353L13.5578 19.6303L16.2647 18.517L18 20L20 18L18.5247 16.2552L19.6224 13.6046L22.5563 12.9808V11.0192L19.6224 10.3954Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Configuración
+                                        </router-link>
+                                    </li>
+
+                                    <!-- Separador visual -->
+                                    <li class="relative my-2">
+                                        <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                                        <span class="absolute left-4 -top-2.5 bg-white dark:bg-[#0e1726] px-2 text-xs text-gray-400">Videos</span>
+                                    </li>
+                                    
+                                    <!-- Videos de Éxito -->
+                                    <li>
+                                        <router-link to="/administrador/videos-exito">
+                                            <svg class="ltr:mr-2 rtl:ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                                                <path d="M10 9L15 12L10 15V9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Videos de Éxito
+                                        </router-link>
+                                    </li>
+                                    
+                                </ul>
+                            </vue-collapsible>
+                        </li>
+
                     </ul>
                 </perfect-scrollbar>
             </div>
