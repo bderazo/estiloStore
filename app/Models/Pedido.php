@@ -7,23 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 class Pedido extends Model
 {
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'transporte_id',
-        'codigo_reserva', 
-        'subtotal', 
-        'total', 
+        'codigo_reserva',
+        'subtotal',
+        'total',
         'costo_envio',
-        'estado'];
+        'estado'
+    ];
 
-    public function detalles() {
+    public function detalles()
+    {
         return $this->hasMany(PedidoDetalle::class);
     }
 
-    public function pagos() {
+    public function pagos()
+    {
         return $this->hasMany(PedidoPago::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
     /**
@@ -32,5 +36,10 @@ class Pedido extends Model
     public function transporte()
     {
         return $this->belongsTo(Transporte::class, 'transporte_id');
+    }
+
+    public function direccionEntrega()
+    {
+        return $this->hasOne(DireccionEntrega::class);
     }
 }

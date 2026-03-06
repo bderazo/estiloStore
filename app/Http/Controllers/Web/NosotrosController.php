@@ -34,7 +34,6 @@ class NosotrosController extends Controller
         
         $bannerNosotrosHeader = $bannerService->getBannerBySeccion('nosotros_header');
 
-
         $imagenes = [
             'portada' => $this->resolveImageUrl($nosotros->imagen_portada_url ?? null),
             'cuerpo_1' => $this->resolveImageUrl($nosotros->imagen_cuerpo_1_url ?? null),

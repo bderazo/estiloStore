@@ -184,6 +184,10 @@ Route::prefix('mis-reservas')->name('web.pedidos.')->group(function () {
 });
 Route::post('/pedidos/{id}/asignar-transporte', [PedidoController::class, 'asignarTransporte'])->name('web.pedidos.asignar_transporte');
 
+Route::post('/pedidos/guardar-direccion', 
+        [App\Http\Controllers\Web\PedidoController::class, 'guardarDireccion'])
+        ->name('web.pedidos.guardar_direccion');
+
 Route::group(['middleware' => ['auth']], function () {
     // Home del Cliente
     Route::get('/mi-cuenta', CustomerHomeController::class)->name('customer.dashboard');

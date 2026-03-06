@@ -115,6 +115,102 @@
                     <i class="fas fa-chevron-down ms-2" id="iconToggle"></i>
                 </button>
             </div>
+
+            {{-- NUEVO: Formulario de dirección detallada para Quevedo --}}
+            <div id="seccion_direccion_quevedo" class="mb-4 p-3 bg-light rounded-4 border {{ $pedido->transporte && str_contains($pedido->transporte->ruta, 'QUEVEDO') ? '' : 'd-none' }}">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-map-marker-alt text-primary me-2 fs-5"></i>
+                    <h6 class="fw-bold mb-0">Dirección de entrega en Quevedo</h6>
+                </div>
+                
+                @php
+                    $direccion = $pedido->direccionEntrega;
+                @endphp
+                
+                <form id="form_direccion_quevedo" onsubmit="event.preventDefault(); guardarDireccionQuevedo();">
+                    @csrf
+                    <input type="hidden" id="pedido_id" value="{{ $pedido->id }}">
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Barrio <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                class="form-control @error('barrio') is-invalid @enderror" 
+                                id="barrio" 
+                                name="barrio" 
+                                value="{{ $direccion->barrio ?? old('barrio') }}"
+                                placeholder="Ej: Las Orquídeas"
+                                style="font-size: 1.2rem; padding: 0.6rem 0.75rem;"
+                                required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Calle Principal <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                class="form-control @error('calle_principal') is-invalid @enderror" 
+                                id="calle_principal" 
+                                name="calle_principal" 
+                                value="{{ $direccion->calle_principal ?? old('calle_principal') }}"
+                                placeholder="Ej: Av. Quito"
+                                style="font-size: 1.2rem; padding: 0.6rem 0.75rem;"
+                                required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Calle Secundaria <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                class="form-control @error('calle_secundaria') is-invalid @enderror" 
+                                id="calle_secundaria" 
+                                name="calle_secundaria" 
+                                value="{{ $direccion->calle_secundaria ?? old('calle_secundaria') }}"
+                                placeholder="Ej: Calle 10 de Agosto"
+                                style="font-size: 1.2rem; padding: 0.6rem 0.75rem;"
+                                required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Color de la Casa</label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="color_casa" 
+                                name="color_casa" 
+                                value="{{ $direccion->color_casa ?? old('color_casa') }}"
+                                placeholder="Ej: Blanca con rejas negras"
+                                style="font-size: 1.2rem; padding: 0.6rem 0.75rem;">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Referencia</label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="referencia" 
+                                name="referencia" 
+                                value="{{ $direccion->referencia ?? old('referencia') }}"
+                                placeholder="Ej: Frente al parque central"
+                                style="font-size: 1.2rem; padding: 0.6rem 0.75rem;">
+                        </div>
+                        
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100 fw-bold mt-3" id="btn_guardar_direccion" style="font-size: 1.2rem; padding: 0.7rem;">
+                                <i class="fas fa-save me-2"></i>Guardar Dirección
+                            </button>
+                        </div>
+                        
+                        <div id="mensaje_direccion" class="col-12 small d-none"></div>
+                        
+                        {{-- Indicador de estado --}}
+                        @if($direccion)
+                        <div class="col-12">
+                            <div class="alert alert-success small mb-0">
+                                <i class="fas fa-check-circle me-1"></i> Dirección guardada: 
+                                <strong>{{ $direccion->barrio }}</strong>, 
+                                {{ $direccion->calle_principal }} y {{ $direccion->calle_secundaria }}
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </form>
+            </div>
             
             {{-- Sección de Métodos de Pago (oculta inicialmente) --}}
             <div id="seccionMetodosPago" class="d-none">
@@ -253,6 +349,22 @@
                                     <input type="file" name="comprobante" class="form-control" accept="image/*" required
                                         {{ !$pedido->transporte_id ? 'disabled' : '' }}>
                                 </div>
+                                {{-- Validación adicional para Quevedo -- MEJORADA --}}
+                                @if($pedido->transporte && str_contains($pedido->transporte->ruta, 'QUEVEDO'))
+                                    <div id="alerta_direccion_quevedo" class="alert alert-warning border-0 bg-warning bg-opacity-10 py-3 mb-3 rounded-4 {{ ($pedido->direccionEntrega) ? 'd-none' : '' }}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-warning bg-opacity-25 p-2 rounded-circle me-3">
+                                                <i class="fas fa-exclamation-triangle text-warning fs-5"></i>
+                                            </div>
+                                            <div>
+                                                <span class="fw-bold d-block mb-1">Dirección pendiente</span>
+                                                <span class="small">Para entregas en Quevedo, completa la dirección antes de subir el pago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div id="alerta_direccion_quevedo" class="d-none"></div>
+                                @endif
                                 <button type="submit" id="btn_subir_pago" class="btn btn-dark w-100 fw-bold py-3 shadow-sm" {{ !$pedido->transporte_id ? 'disabled' : '' }}>
                                     <i class="fas fa-cloud-upload-alt me-2"></i>SUBIR PAGO Y ENVIAR A VALIDACIÓN
                                 </button>
@@ -270,81 +382,260 @@
     </div>
 
     <script>
- function actualizarEnvio(transporteId) {
-    const infoEnvio = document.getElementById('info_envio');
-    const resumenEnvio = document.getElementById('resumen_envio');
-    const seccionPago = document.getElementById('seccion_pago');
-    const formElements = document.getElementById('form_abono').querySelectorAll('input, button');
-    const msgBloqueo = document.getElementById('msg_bloqueo');
+        function actualizarEnvio(transporteId) {
+            const infoEnvio = document.getElementById('info_envio');
+            const resumenEnvio = document.getElementById('resumen_envio');
+            const seccionPago = document.getElementById('seccion_pago');
+            const formElements = document.getElementById('form_abono').querySelectorAll('input, button');
+            const msgBloqueo = document.getElementById('msg_bloqueo');
+            const seccionDireccion = document.getElementById('seccion_direccion_quevedo');
+            const select = document.getElementById('select_transporte');
+            
+            // Obtener el texto de la opción seleccionada para saber si es Quevedo
+            const selectedOption = select.options[select.selectedIndex];
+            const nombreRuta = selectedOption ? selectedOption.text : '';
+            const esQuevedo = nombreRuta.includes('QUEVEDO'); // Cambiado a mayúsculas
 
-    // SI DEJA EN BLANCO: Limpiar y bloquear todo
-    if (!transporteId || transporteId === "") {
-        infoEnvio.classList.add('d-none'); // Oculta "Cooperativa: ..."
-        resumenEnvio.innerText = 'Pendiente selección'; // Texto original en la tabla
-        
-        // Bloquear pagos nuevamente
-        seccionPago.classList.add('opacity-50');
-        formElements.forEach(el => el.disabled = true);
-        if(msgBloqueo) msgBloqueo.classList.remove('d-none');
-        
-        // Opcional: Resetear el total a solo el valor del pedido
-        document.getElementById('resumen_total').innerText = '$' + "{{ number_format($pedido->total, 2) }}";
-        return; 
-    }
+            // SI DEJA EN BLANCO: Limpiar y bloquear todo
+            if (!transporteId || transporteId === "") {
+                infoEnvio.classList.add('d-none');
+                resumenEnvio.innerText = 'Pendiente selección';
+                
+                // Bloquear pagos nuevamente
+                seccionPago.classList.add('opacity-50');
+                formElements.forEach(el => el.disabled = true);
+                if(msgBloqueo) msgBloqueo.classList.remove('d-none');
+                
+                // Ocultar sección de dirección
+                if (seccionDireccion) seccionDireccion.classList.add('d-none');
+                
+                // Resetear el total
+                document.getElementById('resumen_total').innerText = '$' + "{{ number_format($pedido->total, 2) }}";
+                return; 
+            }
 
-    // SI HAY VALOR: Ejecutar AJAX
-    const loader = document.getElementById('loader_transporte');
-    const select = document.getElementById('select_transporte');
-    loader.classList.remove('d-none');
-    select.disabled = true;
+            // SI HAY VALOR: Ejecutar AJAX
+            const loader = document.getElementById('loader_transporte');
+            loader.classList.remove('d-none');
+            select.disabled = true;
 
-    fetch("{{ route('web.pedidos.asignar_transporte', $pedido->id) }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ transporte_id: transporteId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('resumen_envio').innerText = '$' + data.costo_envio;
-            document.getElementById('resumen_total').innerText = '$' + data.total_final;
-            document.getElementById('txt_cooperativa').innerText = data.cooperativa;
-            infoEnvio.classList.remove('d-none');
+            fetch("{{ route('web.pedidos.asignar_transporte', $pedido->id) }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ transporte_id: transporteId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('resumen_envio').innerText = '$' + data.costo_envio;
+                    document.getElementById('resumen_total').innerText = '$' + data.total_final;
+                    document.getElementById('txt_cooperativa').innerText = data.cooperativa;
+                    infoEnvio.classList.remove('d-none');
 
-            seccionPago.classList.remove('opacity-50');
-            formElements.forEach(el => el.disabled = false);
-            if(msgBloqueo) msgBloqueo.classList.add('d-none');
+                    // 🟢 NUEVO: Mostrar u ocultar formulario de dirección según la ruta
+                    if (esQuevedo) {
+                        console.log('Mostrando formulario para Quevedo');
+                        if (seccionDireccion) seccionDireccion.classList.remove('d-none');
+                    } else {
+                        console.log('Ocultando formulario (no es Quevedo)');
+                        if (seccionDireccion) seccionDireccion.classList.add('d-none');
+                    }
+
+                    seccionPago.classList.remove('opacity-50');
+                    formElements.forEach(el => el.disabled = false);
+                    if(msgBloqueo) msgBloqueo.classList.add('d-none');
+                    
+                    // 🟢 NUEVO: Verificar requisitos de pago
+                    verificarRequisitosPago();
+                }
+            })
+            .catch(err => {
+                console.error("Error al procesar:", err);
+                alert("Error al procesar la selección de transporte");
+            })
+            .finally(() => {
+                loader.classList.add('d-none');
+                select.disabled = false;
+            });
         }
-    })
-    .catch(err => alert("Error al procesar"))
-    .finally(() => {
-        loader.classList.add('d-none');
-        select.disabled = false;
-    });
-}
-function toggleMediosPago() {
-    const seccion = document.getElementById('seccionMetodosPago');
-    const icon = document.getElementById('iconToggle');
-    const btn = document.getElementById('btnTogglePagos');
-    
-    if (seccion.classList.contains('d-none')) {
-        // Mostrar
-        seccion.classList.remove('d-none');
-        icon.classList.remove('fa-chevron-down');
-        icon.classList.add('fa-chevron-up');
-        btn.classList.remove('btn-outline-primary');
-        btn.classList.add('btn-primary', 'text-white');
-    } else {
-        // Ocultar
-        seccion.classList.add('d-none');
-        icon.classList.remove('fa-chevron-up');
-        icon.classList.add('fa-chevron-down');
-        btn.classList.remove('btn-primary', 'text-white');
-        btn.classList.add('btn-outline-primary');
-    }
-}
+
+        function toggleMediosPago() {
+            const seccion = document.getElementById('seccionMetodosPago');
+            const icon = document.getElementById('iconToggle');
+            const btn = document.getElementById('btnTogglePagos');
+            
+            if (seccion.classList.contains('d-none')) {
+                seccion.classList.remove('d-none');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+                btn.classList.remove('btn-outline-primary');
+                btn.classList.add('btn-primary', 'text-white');
+            } else {
+                seccion.classList.add('d-none');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+                btn.classList.remove('btn-primary', 'text-white');
+                btn.classList.add('btn-outline-primary');
+            }
+        }
+
+        // 🟢 NUEVA FUNCIÓN: Verificar requisitos antes de permitir el pago
+        function verificarRequisitosPago() {
+            const select = document.getElementById('select_transporte');
+            const selectedOption = select.options[select.selectedIndex];
+            const nombreRuta = selectedOption ? selectedOption.text : '';
+            const esQuevedo = nombreRuta.includes('QUEVEDO');
+            
+            const btnPago = document.getElementById('btn_subir_pago');
+            const alertaDireccion = document.getElementById('alerta_direccion_quevedo');
+            
+            console.log('Verificando requisitos - ¿Es Quevedo?', esQuevedo);
+            
+            if (esQuevedo) {
+                // Verificar si la dirección está completa
+                const barrio = document.getElementById('barrio').value.trim();
+                const callePrincipal = document.getElementById('calle_principal').value.trim();
+                const calleSecundaria = document.getElementById('calle_secundaria').value.trim();
+                
+                const direccionCompleta = barrio && callePrincipal && calleSecundaria;
+                
+                if (!direccionCompleta) {
+                    btnPago.disabled = true;
+                    if (alertaDireccion) {
+                        alertaDireccion.classList.remove('d-none');
+                        alertaDireccion.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Para entregas en Quevedo, debes completar la dirección de entrega antes de subir el pago.';
+                    }
+                } else {
+                    btnPago.disabled = false;
+                    if (alertaDireccion) alertaDireccion.classList.add('d-none');
+                }
+            } else {
+                // Si no es Quevedo, habilitar si hay transporte seleccionado
+                btnPago.disabled = !select.value;
+                if (alertaDireccion) alertaDireccion.classList.add('d-none');
+            }
+        }
+
+        function guardarDireccionQuevedo() {
+            const btnGuardar = document.getElementById('btn_guardar_direccion');
+            const mensajeDiv = document.getElementById('mensaje_direccion');
+            
+            // Validar campos requeridos
+            const barrio = document.getElementById('barrio').value.trim();
+            const callePrincipal = document.getElementById('calle_principal').value.trim();
+            const calleSecundaria = document.getElementById('calle_secundaria').value.trim();
+            
+            if (!barrio || !callePrincipal || !calleSecundaria) {
+                mostrarMensaje(mensajeDiv, 'Barrio, calle principal y calle secundaria son obligatorios', 'danger');
+                return;
+            }
+            
+            // Deshabilitar botón mientras se guarda
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+            
+            // Recopilar datos
+            const data = {
+                pedido_id: document.getElementById('pedido_id').value,
+                barrio: barrio,
+                calle_principal: callePrincipal,
+                calle_secundaria: calleSecundaria,
+                color_casa: document.getElementById('color_casa').value.trim(),
+                referencia: document.getElementById('referencia').value.trim(),
+                _token: '{{ csrf_token() }}'
+            };
+            
+            // Enviar petición AJAX
+            fetch('{{ route("web.pedidos.guardar_direccion") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarMensaje(mensajeDiv, '✓ Dirección guardada correctamente', 'success');
+                    
+                    // Actualizar la vista con la dirección guardada
+                    const direccionHtml = `
+                        <div class="alert alert-success small mb-0">
+                            <i class="fas fa-check-circle me-1"></i> Dirección guardada: 
+                            <strong>${barrio}</strong>, ${callePrincipal} y ${calleSecundaria}
+                        </div>
+                    `;
+                    
+                    // Buscar si ya existe un alert y reemplazarlo
+                    const existingAlert = document.querySelector('#seccion_direccion_quevedo .alert-success');
+                    if (existingAlert) {
+                        existingAlert.outerHTML = direccionHtml;
+                    } else {
+                        document.querySelector('#seccion_direccion_quevedo .row.g-3').insertAdjacentHTML('beforeend', 
+                            '<div class="col-12">' + direccionHtml + '</div>'
+                        );
+                    }
+                    
+                    // Verificar requisitos para pago
+                    verificarRequisitosPago();
+                    
+                    // Ocultar mensaje después de 3 segundos
+                    setTimeout(() => {
+                        mensajeDiv.classList.add('d-none');
+                    }, 3000);
+                } else {
+                    mostrarMensaje(mensajeDiv, data.message || 'Error al guardar la dirección', 'danger');
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                mostrarMensaje(mensajeDiv, 'Error de conexión al guardar la dirección', 'danger');
+            })
+            .finally(() => {
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Dirección';
+            });
+        }
+
+        function mostrarMensaje(elemento, texto, tipo) {
+            elemento.className = `col-12 small text-${tipo}`;
+            elemento.innerText = texto;
+            elemento.classList.remove('d-none');
+        }
+
+        // 🟢 Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página cargada, verificando requisitos...');
+            
+            // Verificar si ya hay una ruta seleccionada al cargar
+            const select = document.getElementById('select_transporte');
+            const seccionDireccion = document.getElementById('seccion_direccion_quevedo');
+            
+            if (select.value) {
+                const selectedOption = select.options[select.selectedIndex];
+                const nombreRuta = selectedOption ? selectedOption.text : '';
+                const esQuevedo = nombreRuta.includes('QUEVEDO');
+                
+                if (esQuevedo && seccionDireccion) {
+                    seccionDireccion.classList.remove('d-none');
+                }
+            }
+            
+            verificarRequisitosPago();
+            
+            // Eventos para validación en tiempo real
+            const camposDireccion = ['barrio', 'calle_principal', 'calle_secundaria'];
+            camposDireccion.forEach(campoId => {
+                const campo = document.getElementById(campoId);
+                if (campo) {
+                    campo.addEventListener('input', verificarRequisitosPago);
+                }
+            });
+        });
     </script>
 @endsection
